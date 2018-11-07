@@ -292,18 +292,6 @@
             </plugin>
 
             <plugin>
-                <groupId>com.github.s4u.plugins</groupId>
-                <artifactId>sitemapxml-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>gen</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <executions>
@@ -316,6 +304,19 @@
                 </executions>
             </plugin>
 
+            <!--  deploy site documentation to github pages -->
+            <!--  in CI use mvn site com.github.github:site-maven-plugin:site -->
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <configuration>
+                    <server>github</server>
+                    <message>Updated site documentation from jenkins</message>
+                     <!-- <merge>true</merge> -->
+                     <skip>false</skip>
+                     <path>${project.version}/${project.artifactId}</path>
+                </configuration>
+            </plugin>
         </plugins>
 
         <pluginManagement>

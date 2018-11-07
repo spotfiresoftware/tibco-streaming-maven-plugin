@@ -60,6 +60,7 @@
 
     <scm>
         <connection>scm:git:https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</connection>
+        <url>https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</url>
     </scm>
 
     <prerequisites>
@@ -302,6 +303,18 @@
     </dependencyManagement>
 
     <build>
+        <!-- skip site docs in this aggregator -->
+        <plugins>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <configuration>
+                    <message>Updated site documentation from jenkins</message>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+
         <pluginManagement>
             <plugins>
 
@@ -387,6 +400,12 @@
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
                     <version>3.1.6</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.github.github</groupId>
+                    <artifactId>site-maven-plugin</artifactId>
+                    <version>0.12</version>
                 </plugin>
 
             </plugins>
