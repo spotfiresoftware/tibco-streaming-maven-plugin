@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.1.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLHierarchy</id>
+    <coordinates>
+      <x>40</x>
+      <y>10</y>
+      <w>570</w>
+      <h>460</h>
+    </coordinates>
+    <panel_attributes>type=Package
+ep-eventflow-fragment - pom.xml
+
+	src
+		main
+			eventflow - sbapp, ssql and sbint files
+			java - java functions (if any)
+			configurations - HOCON configuration files
+			resources - sbfs, sbref, upgrade plan and other resources
+		test
+			java - sbunit test case source
+			configurations - HOCON test configuration files
+			resources - other test resources
+		site - documentation
+	target - built artifacts
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
