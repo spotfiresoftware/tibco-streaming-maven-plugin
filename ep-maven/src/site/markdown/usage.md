@@ -9,8 +9,6 @@
 
 The following sections provides an introduction to the TIBCO Event Processing 
 (EP) Build Maven plugin.
-  
-For further details see the [Goals](./goals.html) section.
 
 ## Build artifacts
 
@@ -330,20 +328,4 @@ ep:administer-nodes
 ....
 ```
 
-
-## Further examples
-
-* [General examples](./general_examples.html)
-
-* [Java fragment examples](./java_examples.html)
-
-* [EventFlow fragment examples](./eventflow_examples.html)
-
-* [LiveView fragment examples](./liveview_examples.html)
-
-* [Application archive examples](./application_examples.html)
-
-* [Continuous integration examples](./contint_examples.html)
-
-* [Cloud examples](./cloud_examples.html)
 

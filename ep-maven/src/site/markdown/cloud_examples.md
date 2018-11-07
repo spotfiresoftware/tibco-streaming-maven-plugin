@@ -176,8 +176,7 @@ Additional build rules can be added to start test nodes :
 </project>
 ```
 
-Such a project can be created from the maven archetype ( see [Maven_Archetypes](./general_examples.html#Maven_Archetypes) )
-using the following command :
+Such a project can be created from the maven archetype using the following command :
 
 ``` shell
 mvn archetype:generate -B \

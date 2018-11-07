@@ -27,9 +27,3 @@ EP maven plugin you can:
 * Utilize other maven plugins for further functionality such as test on the cloud
   
 * TIBCO product auto installation
-
-
-# Usage
-
-General instructions on how to use this plugin can be found in the
-[usage page](./usage.html). 
