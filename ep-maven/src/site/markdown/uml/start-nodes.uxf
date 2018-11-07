@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>390</w>
+      <h>180</h>
+    </coordinates>
+    <panel_attributes>halign=left
+bg=light_gray
+&lt;plugin&gt;
+  &lt;groupId&gt;com.tibco.ep&lt;/groupId&gt;
+  &lt;artifactId&gt;ep-maven-plugin&lt;/artifactId&gt;
+  &lt;extensions&gt;true&lt;/extensions&gt;
+  &lt;configuration&gt;
+    &lt;installArguments&gt;
+      &lt;substitutions&gt;NAME=VALUE&lt;/substitutions&gt;
+    &lt;/installArguments&gt;
+  &lt;/configuration&gt;
+&lt;/plugin&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

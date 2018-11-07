@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.1.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLHierarchy</id>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>400</w>
+      <h>300</h>
+    </coordinates>
+    <panel_attributes>type=Package
+META-INF
+	MANIFEST.MF - generated manifest file
+classes
+	... built java classes
+engine.conf - engine configuration file
+... any other resource
+dependencies
+	java
+		... any java jar dependencies required
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

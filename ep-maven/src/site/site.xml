@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2018, TIBCO Software Inc.
+  
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright notice,
+     this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its contributors
+     may be used to endorse or promote products derived from this software
+     without specific prior written permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
+-->
+<project>
+
+	<skin>
+		<groupId>org.apache.maven.skins</groupId>
+		<artifactId>maven-fluido-skin</artifactId>
+		<version>1.6</version>
+	</skin>
+
+	<custom>
+		<fluidoSkin>
+			<sourceLineNumbersEnabled>true</sourceLineNumbersEnabled>
+			<leftColumnClass>span2</leftColumnClass>
+			<bodyColumnClass>span10</bodyColumnClass>
+			<googleSearch/>
+		</fluidoSkin>
+	</custom>
+
+	<poweredBy>
+		<logo name="Tibco" href="http://www.tibco.com/" img="images/Tibco.svg" />
+	</poweredBy>
+
+	<publishDate format="yyy-MM-dd 'Milestone: ${project.site.milestone} '" />
+
+	<body>
+
+		<!-- See https://www.google.com/webmasters/tools - tied to plord12@googlemail.com but sharable since Tibco doesn't allow access -->
+		<head><![CDATA[<meta name="google-site-verification" content="i-h_VPB6E527ymTK_WL8muCfqYYOeFoYr_qkw4CXyT0" />]]></head>
+
+		<menu name="Overview">
+			<item name="Introduction" href="index.html" />
+			<item name="Usage" href="usage.html" collapse="true">
+				<item name="General examples" href="general_examples.html" />
+				<item name="Java fragment examples" href="java_examples.html" />
+				<item name="Java jar examples" href="java_jar_examples.html" />
+				<item name="EventFlow fragment examples" href="eventflow_examples.html" />
+				<item name="LiveView fragment examples" href="liveview_examples.html" />
+				<item name="Application examples" href="application_examples.html" />
+				<item name="CI examples" href="contint_examples.html" />
+				<item name="Cloud examples" href="cloud_examples.html" />
+			</item>
+			<item name="Goals" href="goals.html" collapse="true">
+				<item name="Java - package" href="package-java-fragment-mojo.html" />
+				<item name="Java - unit test" href="test-java-fragment-mojo.html" />
+				<item name="EventFlow - package" href="package-eventflow-fragment-mojo.html" />
+				<item name="EventFlow - unit test" href="test-eventflow-fragment-mojo.html" />
+				<item name="LiveView - package" href="package-liveview-fragment-mojo.html" />
+				<item name="LiveView - unit test" href="test-liveview-fragment-mojo.html" />
+				<item name="Application - package" href="package-application-mojo.html" />
+				<item name="Manage - start nodes" href="start-nodes-mojo.html" />
+				<item name="Manage - stop nodes" href="stop-nodes-mojo.html" />
+				<item name="Manage - administer" href="administer-nodes-mojo.html" />
+				<item name="Manage - install product" href="install-product-mojo.html" />
+				<item name="Manage - deploy fragment" href="deploy-fragment-mojo.html" />
+				<item name="Unpack - nar" href="unpack-nar-mojo.html" />
+				<item name="Unpack - fragment" href="unpack-fragment-mojo.html" />
+                <item name="Test - check for test cases" href="check-testcases-mojo.html" />
+				<item name="Help" href="help-mojo.html" />
+			</item>
+		</menu>
+
+		<menu ref="reports" />
+
+		<links>
+			<item name="DevZone" href="https://devzone.tibco.com/dashboard.action" />
+			<item name="Component Exchange" href="https://devzone.tibco.com/display/comp/TIBCO+Component+Exchange" />
+		</links>
+	</body>
+</project>

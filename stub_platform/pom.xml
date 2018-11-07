@@ -1,0 +1,73 @@
+<!--
+  Copyright (C) 2018, TIBCO Software Inc.
+  
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright notice,
+     this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its contributors
+     may be used to endorse or promote products derived from this software
+     without specific prior written permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- vim: set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab : -->
+
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>stub-platform</artifactId>
+    <packaging>pom</packaging>
+    <groupId>com.tibco.ep.ep-maven</groupId>
+
+    <name>Stub Platform</name>
+
+    <parent>
+        <groupId>com.tibco.ep</groupId>
+        <artifactId>ep-maven</artifactId>
+        <version>1.5.0-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>  
+
+    <properties>
+        <maven.site.skip>true</maven.site.skip>
+        <maven.site.deploy.skip>true</maven.site.deploy.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
+    <modules>
+        <module>dtm/pom-dtm-linuxaarch64.xml</module>
+        <module>dtm/pom-dtm-linuxx86_64.xml</module>
+        <module>dtm/pom-dtm-osxx86_64.xml</module>
+        <module>dtm/pom-dtm-windowsx64.xml</module>
+        <module>sb/pom-sb-linuxaarch64.xml</module>
+        <module>sb/pom-sb-linuxx86_64.xml</module>
+        <module>sb/pom-sb-osxx86_64.xml</module>
+        <module>sb/pom-sb-windowsx64.xml</module>
+        <module>sdk</module>
+        <module>deploy</module>
+        <module>hoconschema</module>        
+        <module>logging</module>
+        <module>management</module>
+    </modules>
+
+</project>
