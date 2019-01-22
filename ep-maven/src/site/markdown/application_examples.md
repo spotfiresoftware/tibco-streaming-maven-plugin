@@ -79,7 +79,7 @@ will extract into $TIBCO\_EP_HOME.
 a application archive zip file in the build directory (by default, set to 
 target) and attaches it to the build.
 
-3. Uses [start-nodes](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/start-nodes-mojo.html}start-nodes) to start a test cluster.  
+3. Uses [start-nodes](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/start-nodes-mojo.html) to start a test cluster.  
 Since this pom.xml has no configuration, a single node is started 
 A.helloworld with a random but unused discovery port.  Also, the
 application archive is deployed to the cluster using the supplied node

@@ -7,7 +7,7 @@
 
 ## Docker images
 
-Using an appropriate maven plugin, such as [docker-maven-plugin](https://github.com/fabric8io/docker-maven-plugin}docker-maven-plugin),
+Using an appropriate maven plugin, such as [docker-maven-plugin](https://github.com/fabric8io/docker-maven-plugin),
 docker images can be created.  A typical base image would contain :
 
 * Base operating system ( such as CentOs )
