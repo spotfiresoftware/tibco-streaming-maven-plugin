@@ -6,11 +6,15 @@
 * [Java dependencies](#java-dependencies)
 * [Code coverage via cobertura](#code-coverage-via-cobertura)
 
+<a name="codeline-structure"></a>
+
 ## Codeline structure
   
 The recommended java codeline structure is :
   
 ![Java directory structure](uml/java-structure.svg)
+
+<a name="basic-build-junit-test-and-install"></a>
 
 ## Basic build, junit test and install
 
@@ -79,14 +83,18 @@ The java fragment application code, test cases and junit are deployed to the
 test node :
   
 ![One node junit test](uml/one-node-junit.svg)
- 
+
+<a name="adding-additional-files-to-the-java-fragment"></a>
+
 ## Adding additional files to the java fragment
 
 To add in any additional files, such as HOCON configurations or
 ast.properties files, add them into a resource directory (by default, 
 maven sets this to src/main/resources) and they will be included in the 
 fragment zip.
-  
+
+<a name="java-dependencies"></a>
+
 ## Java dependencies
 
 If the project defines any java runtime dependencies, these jars are added
@@ -108,7 +116,9 @@ For example the following dependency in a pom.xml :
 
 Will result in the zip file containing dependencies/java/org.slf4j-slf4j-api-1.7.12.jar.
 Any further transitive dependencies are also added.
- 
+
+<a name="code-coverage-via-cobertura"></a>
+
 ## Code coverage via cobertura
 
 Java code coverage is supported using the [cobertura-maven-plugin](http://www.mojohaus.org/cobertura-maven-plugin/) -

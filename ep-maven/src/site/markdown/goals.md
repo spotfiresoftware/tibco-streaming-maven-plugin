@@ -1,7 +1,9 @@
 # Goals
 
-* [Goals](#goals2)
+* [Goals](#goals)
 * [Lifecycle bindings](#lifecycle-bindings)
+
+<a name="goals"></a>
 
 ## Goals
 
@@ -38,6 +40,8 @@ The maven goals available are :
 * [com.tibco.ep:ep-maven-plugin:check-testcases](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/check-testcases-mojo.html)
 
 * [ep-maven-plugin:help](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/help-mojo.html)
+
+<a name="lifecycle-bindings"></a>
 
 ## Lifecycle bindings
 

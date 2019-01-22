@@ -8,6 +8,8 @@
 * [External programs](#external-programs)
 * [Additional files in application archive](#additional-files-in-application-archive)
 
+<a name="codeline-structure"></a>
+
 ## Codeline structure
   
 The recommended application codeline structure is :
@@ -92,6 +94,8 @@ to install the built and tested artifacts to the local maven repository.
 Note that the application definition file is detected by its configuration
 type ( **type = "com.tibco.ep.dtm.configuration.application"** ).
 
+<a name="application-dependencies"></a>
+
 ## Application dependencies
 
 Usually, all dependencies are included into the fragment zip files and so
@@ -121,6 +125,8 @@ See below for an example :
     </dependencies>
 ....
 ```
+
+<a name="feed-playback"></a>
 
 ## Feed playback
 
@@ -177,6 +183,8 @@ injecting tuples to streams.
     </build>
 ....
 ```
+
+<a name="feed-recording"></a>
 
 ## Feed recording
 
@@ -257,6 +265,8 @@ An example of recording a playback is shown below :-
                 </executions>
 ....
 ```
+
+<a name="admin-targets"></a>
 
 ## Admin targets
 
@@ -386,6 +396,8 @@ $ mvn install
 [INFO] ------------------------------------------------------------------------
 ```
 
+<a name="external-programs"></a>
+
 ## External programs
 
 Test cases may need supporting programs to run - for example a database server.
@@ -444,6 +456,8 @@ run and stopped after the test cases have been completed.
                 </executions>
             </plugin>
 ```
+
+<a name="additional-files-in-application-archive"></a>
 
 ## Additional files in application archive
 

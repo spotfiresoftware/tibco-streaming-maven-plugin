@@ -10,6 +10,8 @@
 The following sections provides an introduction to the TIBCO Event Processing 
 (EP) Build Maven plugin.
 
+<a name="build-artifacts"></a>
+
 ## Build artifacts
 
 The overall goal is to build an application archive which can be deployed to
@@ -18,7 +20,9 @@ application definition file.  A node deployment file is required to map the
 application archive to the runtime topology :
 
 ![Build fragments](uml/fragments.svg)
-  
+
+<a name="packaging-types"></a>
+
 ## Packaging types
 
 The maven plugin supports the following packaging types :
@@ -46,6 +50,8 @@ other maven artifact.
 The maven plugin has been designed to require minimal configuration for most
 cases and yet allow for extensive configuration.  
 
+<a name="tibco-product-installation"></a>
+
 ## TIBCO product installation
 
 The location of the product installation is **product-group/product-artifact/product-version/**
@@ -58,7 +64,9 @@ of the **$TIBCO_EP_HOME** environment variable.
 
 This directory is used to install the product (if missing) and is used for 
 administration commands.
-  
+
+<a name="codeline-structure"></a>
+
 ## Codeline structure
   
 The recommend overall codeline structure is :
@@ -103,6 +111,8 @@ $ mvn install
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------                               
 ```
+
+<a name="example-project-object-model-files-pom-xml"></a>
 
 ## Example project object model files ( pom.xml )
 
@@ -291,6 +301,8 @@ download the appropriate version before using.
     </build>
 </project>
 ```
+
+<a name="plugin-prefixes"></a>
 
 ## Plugin prefixes
 

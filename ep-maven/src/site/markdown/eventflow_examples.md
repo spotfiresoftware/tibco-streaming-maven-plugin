@@ -10,6 +10,8 @@
 * [Java adapters](#java-adapters)
 * [EventFlow fragment referencing another EventFlow fragment](#eventflow-fragment-referencing-another-eventflow-fragment)
 
+<a name="directory-structure"></a>
+
 # Directory structure
 
 The recommended EventFlow directory structure is :
@@ -18,7 +20,9 @@ The recommended EventFlow directory structure is :
 
 Note that the default source directory is set by the plugin to 
 src/main/eventflow.
-  
+
+<a name="basic-build-sbunit-test-and-install"></a>
+
 ## Basic build, sbunit test and install
 
 The following pom.xml will build, unit test and install to the local maven 
@@ -193,11 +197,15 @@ $ mvn install
 [INFO] ------------------------------------------------------------------------
 ```
 
+<a name="calling-out-to-java"></a>
+
 ## Calling out to java
 
 Java code that needs to be included with the application can be placed in 
 java source directory ( src/main/java ).  This code will be added to the 
 fragment and included with any test cases.
+
+<a name="external-dependency"></a>
 
 ## External dependency
 
@@ -222,6 +230,8 @@ For example :
     </dependencies>
 ...
 ```
+
+<a name="building-native-libraries"></a>
 
 ## Building native libraries
 
@@ -310,6 +320,8 @@ See [aol](http://maven-nar.github.io/aol.html) for the list of
 Architecture-OperatingSystem-Linker (AOL) values references in the classifer
 above.  The maven plugin will map these to the internal paths when the 
 fragment is built.
+
+<a name="third-party-native-libraries"></a>
 
 ## Third party native libraries
 
@@ -418,11 +430,15 @@ and the shared libraries will be included in the runtime library path.
     </profiles>
 ```
 
+<a name="multiple-sbapps"></a>
+
 ## Multiple sbapps
 
 There is no difference between a fragment consisting of one sbapp file
 and a fragment consisting of multiple sbapp files.  Multiple sbapp and
 sbint files are added to the EventFlow fragment.
+
+<a name="java-adapters"></a>
 
 ## Java adapters
 
@@ -460,6 +476,8 @@ To use this adapter in a EventFlow application just set as a dependency :
 
         ....
 ```
+
+<a name="eventflow-fragment-referencing-another-eventflow-fragment"></a>
 
 ## EventFlow fragment referencing another EventFlow fragment
 

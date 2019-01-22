@@ -6,6 +6,8 @@
     * [Build step](#build-step)
     * [Other configurations](#other-configurations)
 
+<a name="jenkins"></a>
+
 # Jenkins
 
 The [Jenkins continuous integration server](https://jenkins-ci.org/) contains
@@ -13,11 +15,15 @@ a [maven project plugin](https://wiki.jenkins-ci.org/display/JENKINS/Maven+Proje
 that can easily be configured to build, test and deploy
 projects with the event processing maven plugin.
 
+<a name="project-type"></a>
+
 ## Project type
 
   When creating a job, use the **Maven project** type :
 
 ![Jenkins new project](images/jenkins-new-project.png)
+
+<a name="set-environment"></a>
 
 ## Set environment
 
@@ -25,6 +31,8 @@ The environment variable **TIBCO_EP_HOME** must be defined - setting it to the
 jenkins workspace is recommended :
 
 ![Jenkins environment](images/jenkins-env.png)
+
+<a name="build-step"></a>
 
 ## Build step
 
@@ -40,6 +48,8 @@ so that jenkins can find and kill any left over processes :
 ``` shell
 $ mvn -DenvironmentVariables=BUILD_ID=${BUILD_ID} ...
 ```
+
+<a name="other-configurations"></a>
 
 ## Other configurations
 

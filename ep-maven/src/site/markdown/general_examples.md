@@ -37,7 +37,9 @@ technologies - so the non-specific usages are discussed here.
 
 Maven has a [standard directory layout](https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html)
 - this forms the basis of the recommended structure.
-  
+
+<a name="dependency-scope"></a>
+
 ## Dependency scope
 
 Maven defines a [dependency scope](https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope) 
@@ -65,6 +67,8 @@ One exception to this rule is cobertura - if set a a provided dependency <<and>>
 cobertura:cobertura goal is being run, then the maven plugin will include
 cobertura on the classpath when testing
 
+<a name="parent-poms"></a>
+
 ## Parent poms
 
 Parent poms are provided to simplify project poms as much as possible and 
@@ -80,6 +84,8 @@ These are :
 | Liveview fragment       | com.tibco.ep.sb.parent | ep-liveview-fragment | StreamBase product version ( eg 10.4.0 )  |
 | Application             | com.tibco.ep.sb.parent | ep-application       | StreamBase product version ( eg 10.4.0 )  |
 | Application with docker | com.tibco.ep.sb.parent | ep-application-docker| StreamBase product version ( eg 10.4.0 )  |
+
+<a name="build-test-and-install"></a>
 
 ## Build, test and install
 
@@ -187,6 +193,8 @@ $ mvn install
 [INFO] ------------------------------------------------------------------------
 ```
 
+<a name="cleaning-up"></a>
+
 ## Cleaning up
 
 To clean up after either a failed or successful test run, use the clean 
@@ -221,6 +229,8 @@ $ mvn clean
 [INFO] ------------------------------------------------------------------------
 ```
 
+<a name="build-only"></a>
+
 ## Build only
 
 To only build the java fragment (ie skip running test cases) use :
@@ -228,6 +238,8 @@ To only build the java fragment (ie skip running test cases) use :
 ``` shell
 $ mvn -DskipTests install
 ```
+
+<a name="skipping-start-and-stop-nodes"></a>
 
 ## Skipping start and stop nodes
 
@@ -274,7 +286,9 @@ If no test cases are found, **skipTests** is automatically set to true.
 Note that in the default case (discovery port is not specified), the selected
 discovery port is persisted in the build directory 
 (by default target/discovery.port) and will be used on subsequent runs.
-  
+
+<a name="summary-of-command-line-flags"></a>
+
 ## Summary of command-line flags
 
 |  Options         | Install nodes | Start nodes | Run test | Stop nodes | Remove nodes |
@@ -287,6 +301,8 @@ discovery port is persisted in the build directory
 | -DskipInstall    | no            | yes         | yes      | yes        | yes          |
 | -DskipStart -DskipStop | no      | no          | yes      | no         | no           |
 | -DinstallOnly    | yes           | no          | no       | no         | no           |
+
+<a name="multiple-test-nodes"></a>
 
 ## Multiple test nodes
 
@@ -360,7 +376,9 @@ start a test application on all nodes before starting junit :
 ```
 
 ![Test main](uml/testmain.svg)
- 
+
+<a name="install-node-parameters"></a>
+
 ## Install node parameters
 
 Install node parameters can be specified via <<installArguments>>
@@ -382,6 +400,8 @@ For example :
             </plugin>
 ...
 ```
+
+<a name="start-node-parameters"></a>
 
 ## Start node parameters
 
@@ -405,6 +425,8 @@ For example :
 ...
 ```
 
+<a name="run-a-single-junit-test-case"></a>
+
 ## Run a single junit test case
 
 Running a single junit test case is possible by passing the <<test>> maven
@@ -413,6 +435,8 @@ property. for example :
 ``` shell
 $ mvn install -Dtest=FilterTest
 ```
+
+<a name="administration-commands-when-unit-testing"></a>
 
 ## Administration commands when unit testing
 
@@ -498,6 +522,7 @@ One such use is failover testing with the **kill node** commmand :
 ....
 ```
 
+<a name="usernames-and-passwords"></a>
 
 ## Usernames and passwords
 
@@ -524,6 +549,7 @@ however, the user name and password can be provided if required :
 ....
 ```
 
+<a name="discovery-port"></a>
 
 ## Discovery port
 
@@ -551,6 +577,8 @@ Or on the command line :
 ``` shell
   $ mvn -DiscoveryPort=4000 ...
 ```
+
+<a name="creating-additional-artifacts"></a>
 
 ## Creating additional artifacts
 
@@ -595,6 +623,8 @@ The [maven-source-plugin](https://maven.apache.org/plugins/maven-source-plugin/)
 will include any files found in source directory paths - so will include
 java, eventflow and liveview source files.
 
+<a name="javaoptions-and-nodeoptions"></a>
+
 ## javaOptions and nodeOptions
 
 Node deployment supports both java options and node options.
@@ -608,6 +638,8 @@ Node deployment supports both java options and node options.
     parameters.  See **java -jar $TIBCO_EP_HOME/distrib/kabira/java/deploy.jar help**.
     Node options may also be set on the maven command line using
     **-DnodeOptions**.
+
+<a name="debugging"></a>
 
 ## Debugging
 
@@ -714,6 +746,8 @@ debug=true option can be passed on the command line :
 $ mvn -Doptions=debug=true ..  
 ```
 
+<a name="system-variables"></a>
+
 ## System variables
 
 Java system variables may be set using the **systemPropertyVariables** 
@@ -747,6 +781,8 @@ System variables can also be set using javaOptions :
             </plugin>  
 ```
 
+<a name="environment-variables"></a>
+
 ## Environment variables
 
 Occasionally environment variables need to be set to support 3rdparty 
@@ -771,6 +807,8 @@ These can also be set on the command-line :
 ``` shell
 $ mvn -DenvironmentVariables=ORACLE_HOME=/home/oracle,SYBASE_HOME=/home/sybase ...
 ```
+
+<a name="running-tests-more-than-once"></a>
 
 ## Running tests more than once
 
@@ -812,6 +850,8 @@ in DEVELOPMENT mode first then PRODUCTION :
             </plugin>  
 ```
 
+<a name="jvm-exit"></a>
+
 ## JVM exit
 
 As with any JVM running on a node, the JVM exits when all non-daemon
@@ -830,6 +870,8 @@ call exit thus allowing the test case to always complete :
                 </configuration>
             </plugin>  
 ```
+
+<a name="managed-object-leak-detection-support"></a>
 
 ## Managed object leak detection support
 
@@ -901,7 +943,9 @@ example :
                 </configuration>
             </plugin>
 ```
-  
+
+<a name="migrating-from-surefire"></a>
+
 ## Migrating from surefire
 
 To migrate junit test cases running under maven-surefire-plugin to 
@@ -925,6 +969,8 @@ with :
             </plugin>
 ```
 
+<a name="additional-support-product"></a>
+
 ## Additional support product
 
 On occasion, support may request installing the additional support release - 
@@ -942,6 +988,8 @@ diagnosing problems.  This can be included in a project build thus :
         </dependency>
     </dependencies>
 ```
+
+<a name="maven-archetypes"></a>
 
 ## Maven Archetypes
 
@@ -1129,6 +1177,8 @@ and use this in the project pom.xml :
     </parent>
 ....
 ```
+
+<a name="sonarqube-analysis"></a>
 
 ## SonarQube analysis
 

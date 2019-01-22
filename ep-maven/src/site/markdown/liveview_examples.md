@@ -4,6 +4,8 @@
 * [Basic build](#basic-build)
 * [Launch liveview fragment](#launch-liveview-fragment)
 
+<a name="directory-structure"></a>
+
 ## Directory structure
   
 The recommended LiveView directory structure is :
@@ -12,7 +14,9 @@ The recommended LiveView directory structure is :
 
 Note that the default source directory is set by the plugin to 
 src/main/liveview.
-  
+
+<a name="basic-build"></a>
+
 ## Basic build
 
 The following pom.xml will build, unit test and install to the local maven 
@@ -73,6 +77,8 @@ maven to perform the following steps :
 7. Uses the standard maven plugin [maven-install-plugin:install](https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html)
     to install the built and tested artifacts to the local maven repository.
     
+
+<a name="launch-liveview-fragment"></a>
 
 ## Launch liveview fragment
 
