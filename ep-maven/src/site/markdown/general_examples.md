@@ -31,6 +31,8 @@
 Much of how to use the maven plugin is consistent across event processing
 technologies - so the non-specific usages are discussed here.
 
+<a name="codeline-structure"></a>
+
 ## Codeline structure
 
 Maven has a [standard directory layout](https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html)
