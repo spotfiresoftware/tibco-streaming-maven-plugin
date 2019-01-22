@@ -83,16 +83,20 @@
 </ul>
 </li>
 </ul>
+<p><a name="jenkins"></a></p>
 <h1>Jenkins</h1>
 <p>The <a class="externalLink" href="https://jenkins-ci.org/">Jenkins continuous integration server</a> contains a <a class="externalLink" href="https://wiki.jenkins-ci.org/display/JENKINS/Maven+Project+Plugin">maven project plugin</a> that can easily be configured to build, test and deploy projects with the event processing maven plugin.</p>
+<p><a name="project-type"></a></p>
 <div class="section">
 <h2><a name="Project_type"></a>Project type</h2>
 <p>When creating a job, use the <b>Maven project</b> type :</p>
-<p><img src="images/jenkins-new-project.png" alt="Jenkins new project" /></p></div>
+<p><img src="images/jenkins-new-project.png" alt="Jenkins new project" /></p>
+<p><a name="set-environment"></a></p></div>
 <div class="section">
 <h2><a name="Set_environment"></a>Set environment</h2>
 <p>The environment variable <b>TIBCO_EP_HOME</b> must be defined - setting it to the jenkins workspace is recommended :</p>
-<p><img src="images/jenkins-env.png" alt="Jenkins environment" /></p></div>
+<p><img src="images/jenkins-env.png" alt="Jenkins environment" /></p>
+<p><a name="build-step"></a></p></div>
 <div class="section">
 <h2><a name="Build_step"></a>Build step</h2>
 <p>The maven goal has to be defined - typically this will be <b>deploy</b> so that the full default lifecycle is executed.  Its also recommended to use a maven repository private to the workspace :</p>
@@ -103,7 +107,8 @@
 <div>
 <pre class="source">$ mvn -DenvironmentVariables=BUILD_ID=${BUILD_ID} ...
 </pre></div></div>
-</div>
+
+<p><a name="other-configurations"></a></p></div>
 <div class="section">
 <h2><a name="Other_configurations"></a>Other configurations</h2>
 <ol style="list-style-type: decimal">

@@ -77,11 +77,13 @@
 <li><a href="#basic-build">Basic build</a></li>
 <li><a href="#launch-liveview-fragment">Launch liveview fragment</a></li>
 </ul>
+<p><a name="directory-structure"></a></p>
 <div class="section">
 <h2><a name="Directory_structure"></a>Directory structure</h2>
 <p>The recommended LiveView directory structure is :</p>
 <p><img src="uml/liveview-structure.svg" alt="LiveView directory structure" /></p>
-<p>Note that the default source directory is set by the plugin to src/main/liveview.</p></div>
+<p>Note that the default source directory is set by the plugin to src/main/liveview.</p>
+<p><a name="basic-build"></a></p></div>
 <div class="section">
 <h2><a name="Basic_build"></a>Basic build</h2>
 <p>The following pom.xml will build, unit test and install to the local maven repository, a LiveView fragment.</p>
@@ -143,7 +145,8 @@ Since this pom.xml has no configuration, a single node is started A.${artifactId
 
 <p>Uses the standard maven plugin <a class="externalLink" href="https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html">maven-install-plugin:install</a> to install the built and tested artifacts to the local maven repository.</p>
 </li>
-</ol></div>
+</ol>
+<p><a name="launch-liveview-fragment"></a></p></div>
 <div class="section">
 <h2><a name="Launch_liveview_fragment"></a>Launch liveview fragment</h2>
 <p>Whilst launching of liveview is usually done when an application archive is deployed, its possible to start the fragment using <a class="externalLink" href="https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/deploy-fragment-mojo.html">deploy-fragment</a>. For example a test case might want to start liveview and use playback to inject test data.</p>

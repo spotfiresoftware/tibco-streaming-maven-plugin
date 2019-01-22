@@ -83,10 +83,12 @@
 <li><a href="#java-adapters">Java adapters</a></li>
 <li><a href="#eventflow-fragment-referencing-another-eventflow-fragment">EventFlow fragment referencing another EventFlow fragment</a></li>
 </ul>
+<p><a name="directory-structure"></a></p>
 <h1>Directory structure</h1>
 <p>The recommended EventFlow directory structure is :</p>
 <p><img src="uml/eventflow-structure.svg" alt="EventFlow directory structure" /></p>
 <p>Note that the default source directory is set by the plugin to src/main/eventflow.</p>
+<p><a name="basic-build-sbunit-test-and-install"></a></p>
 <div class="section">
 <h2><a name="Basic_build.2C_sbunit_test_and_install"></a>Basic build, sbunit test and install</h2>
 <p>The following pom.xml will build, unit test and install to the local maven repository, an eventflow fragment.</p>
@@ -261,10 +263,12 @@ Since this pom.xml has no configuration, a single node is started A.${artifactId
 [INFO] Final Memory: 38M/580M
 [INFO] ------------------------------------------------------------------------
 </pre></div></div>
-</div>
+
+<p><a name="calling-out-to-java"></a></p></div>
 <div class="section">
 <h2><a name="Calling_out_to_java"></a>Calling out to java</h2>
-<p>Java code that needs to be included with the application can be placed in java source directory ( src/main/java ).  This code will be added to the fragment and included with any test cases.</p></div>
+<p>Java code that needs to be included with the application can be placed in java source directory ( src/main/java ).  This code will be added to the fragment and included with any test cases.</p>
+<p><a name="external-dependency"></a></p></div>
 <div class="section">
 <h2><a name="External_dependency"></a>External dependency</h2>
 <p>External java (jar) dependencies can be added to the maven pom.xml - these are then included in build, test and package steps.</p>
@@ -287,7 +291,8 @@ Since this pom.xml has no configuration, a single node is started A.${artifactId
     &lt;/dependencies&gt;
 ...
 </pre></div></div>
-</div>
+
+<p><a name="building-native-libraries"></a></p></div>
 <div class="section">
 <h2><a name="Building_native_libraries"></a>Building native libraries</h2>
 <p>Whilst a maven build could use <a class="externalLink" href="http://www.mojohaus.org/exec-maven-plugin/">exec-maven-plugin</a> to call the native toolchain ( make, g++ etc ), the maven plugin <a class="externalLink" href="http://maven-nar.github.io/">nar-maven-plugin</a> is recommended - this plugin performs the native build and creates a nar archive.  The nar archive can be treated like any other maven dependency.</p>
@@ -366,7 +371,8 @@ Since this pom.xml has no configuration, a single node is started A.${artifactId
 </pre></div></div>
 
 <p>Note that if the nar module is built on different platforms, the EventFlow fragment module will add all architectures to the fragment zip.</p>
-<p>See <a class="externalLink" href="http://maven-nar.github.io/aol.html">aol</a> for the list of Architecture-OperatingSystem-Linker (AOL) values references in the classifer above.  The maven plugin will map these to the internal paths when the fragment is built.</p></div>
+<p>See <a class="externalLink" href="http://maven-nar.github.io/aol.html">aol</a> for the list of Architecture-OperatingSystem-Linker (AOL) values references in the classifer above.  The maven plugin will map these to the internal paths when the fragment is built.</p>
+<p><a name="third-party-native-libraries"></a></p></div>
 <div class="section">
 <h2><a name="Third_party_native_libraries"></a>Third party native libraries</h2>
 <p>Its also possible to build a nar archive containing shared libraries from a third party - ie when the source isn&#x2019;t available.  The directory structure for such a nar project is :</p>
@@ -469,10 +475,12 @@ Since this pom.xml has no configuration, a single node is started A.${artifactId
         &lt;/profile&gt;
     &lt;/profiles&gt;
 </pre></div></div>
-</div>
+
+<p><a name="multiple-sbapps"></a></p></div>
 <div class="section">
 <h2><a name="Multiple_sbapps"></a>Multiple sbapps</h2>
-<p>There is no difference between a fragment consisting of one sbapp file and a fragment consisting of multiple sbapp files.  Multiple sbapp and sbint files are added to the EventFlow fragment.</p></div>
+<p>There is no difference between a fragment consisting of one sbapp file and a fragment consisting of multiple sbapp files.  Multiple sbapp and sbint files are added to the EventFlow fragment.</p>
+<p><a name="java-adapters"></a></p></div>
 <div class="section">
 <h2><a name="Java_adapters"></a>Java adapters</h2>
 <p>EventFlow adapters written in java can be built in a maven module with a packaging type of jar and use a EventFlow application with sbunit to test.</p>
@@ -509,7 +517,8 @@ Since this pom.xml has no configuration, a single node is started A.${artifactId
 
         ....
 </pre></div></div>
-</div>
+
+<p><a name="eventflow-fragment-referencing-another-eventflow-fragment"></a></p></div>
 <div class="section">
 <h2><a name="EventFlow_fragment_referencing_another_EventFlow_fragment"></a>EventFlow fragment referencing another EventFlow fragment</h2>
 <p>To import a EventFlow application add the fragment to the pom.xml dependencies :-</p>

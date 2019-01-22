@@ -79,10 +79,12 @@
 <li><a href="#java-dependencies">Java dependencies</a></li>
 <li><a href="#code-coverage-via-cobertura">Code coverage via cobertura</a></li>
 </ul>
+<p><a name="codeline-structure"></a></p>
 <div class="section">
 <h2><a name="Codeline_structure"></a>Codeline structure</h2>
 <p>The recommended java codeline structure is :</p>
-<p><img src="uml/java-structure.svg" alt="Java directory structure" /></p></div>
+<p><img src="uml/java-structure.svg" alt="Java directory structure" /></p>
+<p><a name="basic-build-junit-test-and-install"></a></p></div>
 <div class="section">
 <h2><a name="Basic_build.2C_junit_test_and_install"></a>Basic build, junit test and install</h2>
 <p>The following pom.xml will build, unit test and install to the local maven repository, a java fragment.</p>
@@ -150,10 +152,12 @@ Since this pom.xml has no configuration, a single node is started A.${artifactId
 </li>
 </ol>
 <p>The java fragment application code, test cases and junit are deployed to the test node :</p>
-<p><img src="uml/one-node-junit.svg" alt="One node junit test" /></p></div>
+<p><img src="uml/one-node-junit.svg" alt="One node junit test" /></p>
+<p><a name="adding-additional-files-to-the-java-fragment"></a></p></div>
 <div class="section">
 <h2><a name="Adding_additional_files_to_the_java_fragment"></a>Adding additional files to the java fragment</h2>
-<p>To add in any additional files, such as HOCON configurations or ast.properties files, add them into a resource directory (by default, maven sets this to src/main/resources) and they will be included in the fragment zip.</p></div>
+<p>To add in any additional files, such as HOCON configurations or ast.properties files, add them into a resource directory (by default, maven sets this to src/main/resources) and they will be included in the fragment zip.</p>
+<p><a name="java-dependencies"></a></p></div>
 <div class="section">
 <h2><a name="Java_dependencies"></a>Java dependencies</h2>
 <p>If the project defines any java runtime dependencies, these jars are added into the java fragment zip file.</p>
@@ -172,7 +176,8 @@ Since this pom.xml has no configuration, a single node is started A.${artifactId
     &lt;/dependencies&gt;
 </pre></div></div>
 
-<p>Will result in the zip file containing dependencies/java/org.slf4j-slf4j-api-1.7.12.jar. Any further transitive dependencies are also added.</p></div>
+<p>Will result in the zip file containing dependencies/java/org.slf4j-slf4j-api-1.7.12.jar. Any further transitive dependencies are also added.</p>
+<p><a name="code-coverage-via-cobertura"></a></p></div>
 <div class="section">
 <h2><a name="Code_coverage_via_cobertura"></a>Code coverage via cobertura</h2>
 <p>Java code coverage is supported using the <a class="externalLink" href="http://www.mojohaus.org/cobertura-maven-plugin/">cobertura-maven-plugin</a> - this needs to be configured in both the dependencies and reporting sections of the pom.xml :</p>

@@ -81,10 +81,12 @@
 <li><a href="#plugin-prefixes">Plugin prefixes</a></li>
 </ul>
 <p>The following sections provides an introduction to the TIBCO Event Processing (EP) Build Maven plugin.</p>
+<p><a name="build-artifacts"></a></p>
 <div class="section">
 <h2><a name="Build_artifacts"></a>Build artifacts</h2>
 <p>The overall goal is to build an application archive which can be deployed to a cluster.  The application archive consists of one or more fragments plus an application definition file.  A node deployment file is required to map the application archive to the runtime topology :</p>
-<p><img src="uml/fragments.svg" alt="Build fragments" /></p></div>
+<p><img src="uml/fragments.svg" alt="Build fragments" /></p>
+<p><a name="packaging-types"></a></p></div>
 <div class="section">
 <h2><a name="Packaging_types"></a>Packaging types</h2>
 <p>The maven plugin supports the following packaging types :</p>
@@ -113,12 +115,14 @@
 </ul>
 <p>One maven module ( or directory ) is able to build one of the above packaging types.  Each module will typically build, unit test, install and deploy either a fragment or application archive, where the application archive will import the fragments.</p>
 <p>Since the fragments and application archives are first class maven artifacts, then can be deployed and downloaded from a repository in the same way as any other maven artifact.</p>
-<p>The maven plugin has been designed to require minimal configuration for most cases and yet allow for extensive configuration.</p></div>
+<p>The maven plugin has been designed to require minimal configuration for most cases and yet allow for extensive configuration.</p>
+<p><a name="tibco-product-installation"></a></p></div>
 <div class="section">
 <h2><a name="TIBCO_product_installation"></a>TIBCO product installation</h2>
 <p>The location of the product installation is <b>product-group/product-artifact/product-version/</b> in a sibling directory to the local maven repository.  Thus, with the default maven configuration, <b>$HOME/.m2/product-group/product-artifact/product-version/</b> or <b>$HOME/.m2/com.tibco.ep.sb.rt/platform_osxx86_64/10.4.0/</b>&gt;.</p>
 <p>This can be overridden with the <b>com.tibco.ep.ep-maven.product</b> property or the value of the <b>$TIBCO_EP_HOME</b> environment variable.</p>
-<p>This directory is used to install the product (if missing) and is used for administration commands.</p></div>
+<p>This directory is used to install the product (if missing) and is used for administration commands.</p>
+<p><a name="codeline-structure"></a></p></div>
 <div class="section">
 <h2><a name="Codeline_structure"></a>Codeline structure</h2>
 <p>The recommend overall codeline structure is :</p>
@@ -160,7 +164,8 @@
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------                               
 </pre></div></div>
-</div>
+
+<p><a name="example-project-object-model-files-pom-xml"></a></p></div>
 <div class="section">
 <h2><a name="Example_project_object_model_files_.28_pom.xml_.29"></a>Example project object model files ( pom.xml )</h2>
 <p>The top-level pom.xml file is likely to simply list the contained modules :</p>
@@ -340,7 +345,8 @@
     &lt;/build&gt;
 &lt;/project&gt;
 </pre></div></div>
-</div>
+
+<p><a name="plugin-prefixes"></a></p></div>
 <div class="section">
 <h2><a name="Plugin_prefixes"></a>Plugin prefixes</h2>
 <p>The maven documentation here references shortcut goals such as <b>ep:help</b>. For these to work, maven needs to know the mapping between the prefix and the actual package.  This can be configured on the maven repository or in a local settings.xml file.  For example :</p>

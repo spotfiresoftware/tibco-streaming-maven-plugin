@@ -81,6 +81,7 @@
 <li><a href="#external-programs">External programs</a></li>
 <li><a href="#additional-files-in-application-archive">Additional files in application archive</a></li>
 </ul>
+<p><a name="codeline-structure"></a></p>
 <div class="section">
 <h2><a name="Codeline_structure"></a>Codeline structure</h2>
 <p>The recommended application codeline structure is :</p>
@@ -163,7 +164,8 @@ Since this pom.xml has no configuration, a single node is started A.helloworld w
 <p>Uses the standard maven plugin <a class="externalLink" href="https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html">maven-install-plugin:install</a> to install the built and tested artifacts to the local maven repository.</p>
 </li>
 </ol>
-<p>Note that the application definition file is detected by its configuration type ( <b>type = &#x201c;com.tibco.ep.dtm.configuration.application&#x201d;</b> ).</p></div>
+<p>Note that the application definition file is detected by its configuration type ( <b>type = &#x201c;com.tibco.ep.dtm.configuration.application&#x201d;</b> ).</p>
+<p><a name="application-dependencies"></a></p></div>
 <div class="section">
 <h2><a name="Application_dependencies"></a>Application dependencies</h2>
 <p>Usually, all dependencies are included into the fragment zip files and so don&#x2019;t need to be included again in the application archive.  However sometimes including additional dependencies into the application archive is required - for example late bound drivers.</p>
@@ -190,7 +192,8 @@ Since this pom.xml has no configuration, a single node is started A.helloworld w
     &lt;/dependencies&gt;
 ....
 </pre></div></div>
-</div>
+
+<p><a name="feed-playback"></a></p></div>
 <div class="section">
 <h2><a name="Feed_playback"></a>Feed playback</h2>
 <p>The administration target <b>playback</b> can be used for injecting tuples to streams.</p>
@@ -246,7 +249,8 @@ Since this pom.xml has no configuration, a single node is started A.helloworld w
     &lt;/build&gt;
 ....
 </pre></div></div>
-</div>
+
+<p><a name="feed-recording"></a></p></div>
 <div class="section">
 <h2><a name="Feed_recording"></a>Feed recording</h2>
 <p>The administration target <b>record</b> can be used for recording tuples from streams.</p>
@@ -325,7 +329,8 @@ Since this pom.xml has no configuration, a single node is started A.helloworld w
                 &lt;/executions&gt;
 ....
 </pre></div></div>
-</div>
+
+<p><a name="admin-targets"></a></p></div>
 <div class="section">
 <h2><a name="Admin_targets"></a>Admin targets</h2>
 <p>In the case of testing an application archive, the pre-integration-test phase is used to start the nodes, the integration-test to run the test cases and post-integration-test to stop the nodes.  This allows running administration commands around the test case.</p>
@@ -451,7 +456,8 @@ Since this pom.xml has no configuration, a single node is started A.helloworld w
 [INFO] Final Memory: 14M/309M
 [INFO] ------------------------------------------------------------------------
 </pre></div></div>
-</div>
+
+<p><a name="external-programs"></a></p></div>
 <div class="section">
 <h2><a name="External_programs"></a>External programs</h2>
 <p>Test cases may need supporting programs to run - for example a database server. This can be achieved using the <a class="externalLink" href="http://www.mojohaus.org/exec-maven-plugin/">exec-maven-plugin</a> plugin.  Typically the external program should be started before the tests are run and stopped after the test cases have been completed.</p>
@@ -508,7 +514,8 @@ Since this pom.xml has no configuration, a single node is started A.helloworld w
                 &lt;/executions&gt;
             &lt;/plugin&gt;
 </pre></div></div>
-</div>
+
+<p><a name="additional-files-in-application-archive"></a></p></div>
 <div class="section">
 <h2><a name="Additional_files_in_application_archive"></a>Additional files in application archive</h2>
 <p>Sometimes its useful to add additional files to the application archive - once added these will be available at runtime in the application/shared directory.</p>

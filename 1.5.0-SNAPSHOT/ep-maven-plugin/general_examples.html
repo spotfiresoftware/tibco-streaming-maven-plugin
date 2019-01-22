@@ -105,7 +105,8 @@
 <p><a name="codeline-structure"></a></p>
 <div class="section">
 <h2><a name="Codeline_structure"></a>Codeline structure</h2>
-<p>Maven has a <a class="externalLink" href="https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html">standard directory layout</a> - this forms the basis of the recommended structure.</p></div>
+<p>Maven has a <a class="externalLink" href="https://maven.apache.org/guides/introduction/introduction-to-the-standard-directory-layout.html">standard directory layout</a> - this forms the basis of the recommended structure.</p>
+<p><a name="dependency-scope"></a></p></div>
 <div class="section">
 <h2><a name="Dependency_scope"></a>Dependency scope</h2>
 <p>Maven defines a <a class="externalLink" href="https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html#Dependency_Scope">dependency scope</a> for each dependency.  So :</p>
@@ -128,7 +129,8 @@
 <p><b>test</b> - dependency is included when compiling test cases and running test cases.  Dependency is not included when compiling application.  Dependency is included in shipped artifacts.</p>
 </li>
 </ul>
-<p>One exception to this rule is cobertura - if set a a provided dependency &#xab;and&#xbb; cobertura:cobertura goal is being run, then the maven plugin will include cobertura on the classpath when testing</p></div>
+<p>One exception to this rule is cobertura - if set a a provided dependency &#xab;and&#xbb; cobertura:cobertura goal is being run, then the maven plugin will include cobertura on the classpath when testing</p>
+<p><a name="parent-poms"></a></p></div>
 <div class="section">
 <h2><a name="Parent_poms"></a>Parent poms</h2>
 <p>Parent poms are provided to simplify project poms as much as possible and includes dependency version management and any common build rules.</p>
@@ -174,7 +176,8 @@
 <td> ep-application-docker</td>
 <td> StreamBase product version ( eg 10.4.0 )  </td></tr>
 </tbody>
-</table></div>
+</table>
+<p><a name="build-test-and-install"></a></p></div>
 <div class="section">
 <h2><a name="Build.2C_test_and_install"></a>Build, test and install</h2>
 <p>Run <b>mvn install</b>.  For example:</p>
@@ -281,7 +284,8 @@
 [INFO] Final Memory: 31M/507M
 [INFO] ------------------------------------------------------------------------
 </pre></div></div>
-</div>
+
+<p><a name="cleaning-up"></a></p></div>
 <div class="section">
 <h2><a name="Cleaning_up"></a>Cleaning up</h2>
 <p>To clean up after either a failed or successful test run, use the clean target.  If any nodes are still running they will be stopped and removed before the directory is cleaned.</p>
@@ -313,7 +317,8 @@
 [INFO] Final Memory: 17M/309M
 [INFO] ------------------------------------------------------------------------
 </pre></div></div>
-</div>
+
+<p><a name="build-only"></a></p></div>
 <div class="section">
 <h2><a name="Build_only"></a>Build only</h2>
 <p>To only build the java fragment (ie skip running test cases) use :</p>
@@ -322,7 +327,8 @@
 <div>
 <pre class="source">$ mvn -DskipTests install
 </pre></div></div>
-</div>
+
+<p><a name="skipping-start-and-stop-nodes"></a></p></div>
 <div class="section">
 <h2><a name="Skipping_start_and_stop_nodes"></a>Skipping start and stop nodes</h2>
 <p>To examine the node runtime after the test cases, the node stop step can be skipped :</p>
@@ -365,7 +371,8 @@ $ mvn -DskipStart -DskipStop install
 </pre></div></div>
 
 <p>If no test cases are found, <b>skipTests</b> is automatically set to true.</p>
-<p>Note that in the default case (discovery port is not specified), the selected discovery port is persisted in the build directory (by default target/discovery.port) and will be used on subsequent runs.</p></div>
+<p>Note that in the default case (discovery port is not specified), the selected discovery port is persisted in the build directory (by default target/discovery.port) and will be used on subsequent runs.</p>
+<p><a name="summary-of-command-line-flags"></a></p></div>
 <div class="section">
 <h2><a name="Summary_of_command-line_flags"></a>Summary of command-line flags</h2>
 <table border="0" class="table table-striped">
@@ -437,7 +444,8 @@ $ mvn -DskipStart -DskipStop install
 <td> no         </td>
 <td> no           </td></tr>
 </tbody>
-</table></div>
+</table>
+<p><a name="multiple-test-nodes"></a></p></div>
 <div class="section">
 <h2><a name="Multiple_test_nodes"></a>Multiple test nodes</h2>
 <p>Multiple test nodes can be defined to override a single node named A. For example :</p>
@@ -506,7 +514,8 @@ $ mvn -DskipStart -DskipStop install
 ...
 </pre></div></div>
 
-<p><img src="uml/testmain.svg" alt="Test main" /></p></div>
+<p><img src="uml/testmain.svg" alt="Test main" /></p>
+<p><a name="install-node-parameters"></a></p></div>
 <div class="section">
 <h2><a name="Install_node_parameters"></a>Install node parameters</h2>
 <p>Install node parameters can be specified via &#xab;installArguments&#xbb; option - see epadmin help for permitted parameters</p>
@@ -527,7 +536,8 @@ $ mvn -DskipStart -DskipStop install
             &lt;/plugin&gt;
 ...
 </pre></div></div>
-</div>
+
+<p><a name="start-node-parameters"></a></p></div>
 <div class="section">
 <h2><a name="Start_node_parameters"></a>Start node parameters</h2>
 <p>Start node parameters can be specified via &#xab;startArguments&#xbb; option - see epadmin help for permitted parameters.</p>
@@ -548,7 +558,8 @@ $ mvn -DskipStart -DskipStop install
             &lt;/plugin&gt;
 ...
 </pre></div></div>
-</div>
+
+<p><a name="run-a-single-junit-test-case"></a></p></div>
 <div class="section">
 <h2><a name="Run_a_single_junit_test_case"></a>Run a single junit test case</h2>
 <p>Running a single junit test case is possible by passing the &#xab;test&#xbb; maven property. for example :</p>
@@ -557,7 +568,8 @@ $ mvn -DskipStart -DskipStop install
 <div>
 <pre class="source">$ mvn install -Dtest=FilterTest
 </pre></div></div>
-</div>
+
+<p><a name="administration-commands-when-unit-testing"></a></p></div>
 <div class="section">
 <h2><a name="Administration_commands_when_unit_testing"></a>Administration commands when unit testing</h2>
 <p>Since maven has only one phase (test) for unit testing, its not possible to configure administration commands in a unit test.  However, it is possible to use integration instead of unit testing in the java-fragment which does allow for administration commands.  An example is shown below :</p>
@@ -640,7 +652,8 @@ $ mvn -DskipStart -DskipStop install
                     &lt;/execution&gt;
 ....
 </pre></div></div>
-</div>
+
+<p><a name="usernames-and-passwords"></a></p></div>
 <div class="section">
 <h2><a name="Usernames_and_passwords"></a>Usernames and passwords</h2>
 <p>Usually when testing, node authentication works via the platform credentials - however, the user name and password can be provided if required :</p>
@@ -665,7 +678,8 @@ $ mvn -DskipStart -DskipStop install
                     &lt;/execution&gt;
 ....
 </pre></div></div>
-</div>
+
+<p><a name="discovery-port"></a></p></div>
 <div class="section">
 <h2><a name="Discovery_port"></a>Discovery port</h2>
 <p>It is assumed that running builds and test cases with maven might be on a shared development server - hence the default for the discovery port is to choose a unused port to avoid conflicts with other developers.</p>
@@ -691,7 +705,8 @@ $ mvn -DskipStart -DskipStop install
 <div>
 <pre class="source">  $ mvn -DiscoveryPort=4000 ...
 </pre></div></div>
-</div>
+
+<p><a name="creating-additional-artifacts"></a></p></div>
 <div class="section">
 <h2><a name="Creating_additional_artifacts"></a>Creating additional artifacts</h2>
 <p>Other maven plugins can be configured to generate additional artifacts.<br />
@@ -732,7 +747,8 @@ Some examples are shown below :</p>
 ....
 </pre></div></div>
 
-<p>The <a class="externalLink" href="https://maven.apache.org/plugins/maven-source-plugin/">maven-source-plugin</a> will include any files found in source directory paths - so will include java, eventflow and liveview source files.</p></div>
+<p>The <a class="externalLink" href="https://maven.apache.org/plugins/maven-source-plugin/">maven-source-plugin</a> will include any files found in source directory paths - so will include java, eventflow and liveview source files.</p>
+<p><a name="javaoptions-and-nodeoptions"></a></p></div>
 <div class="section">
 <h2><a name="javaOptions_and_nodeOptions"></a>javaOptions and nodeOptions</h2>
 <p>Node deployment supports both java options and node options.</p>
@@ -746,7 +762,8 @@ Some examples are shown below :</p>
 
 <p><b>nodeOptions</b> in the pom.xml allows setting of the node deployment parameters.  See <b>java -jar $TIBCO_EP_HOME/distrib/kabira/java/deploy.jar help</b>. Node options may also be set on the maven command line using <b>-DnodeOptions</b>.</p>
 </li>
-</ul></div>
+</ul>
+<p><a name="debugging"></a></p></div>
 <div class="section">
 <h2><a name="Debugging"></a>Debugging</h2>
 <p>To see what classes are being loaded by the deployed application, enable the verbose flag to the jvm :</p>
@@ -845,7 +862,8 @@ Some examples are shown below :</p>
 <div>
 <pre class="source">$ mvn -Doptions=debug=true ..  
 </pre></div></div>
-</div>
+
+<p><a name="system-variables"></a></p></div>
 <div class="section">
 <h2><a name="System_variables"></a>System variables</h2>
 <p>Java system variables may be set using the <b>systemPropertyVariables</b> configuration option :</p>
@@ -879,7 +897,8 @@ Some examples are shown below :</p>
                 &lt;/configuration&gt;
             &lt;/plugin&gt;  
 </pre></div></div>
-</div>
+
+<p><a name="environment-variables"></a></p></div>
 <div class="section">
 <h2><a name="Environment_variables"></a>Environment variables</h2>
 <p>Occasionally environment variables need to be set to support 3rdparty libraries.  The <b>environmentVariables</b> configuration option allows setting environment variables to created processes :</p>
@@ -904,7 +923,8 @@ Some examples are shown below :</p>
 <div>
 <pre class="source">$ mvn -DenvironmentVariables=ORACLE_HOME=/home/oracle,SYBASE_HOME=/home/sybase ...
 </pre></div></div>
-</div>
+
+<p><a name="running-tests-more-than-once"></a></p></div>
 <div class="section">
 <h2><a name="Running_tests_more_than_once"></a>Running tests more than once</h2>
 <p>Its possible to run tests multiple time = for example with different configurations.  An example is show below that runs tests with the runtime in DEVELOPMENT mode first then PRODUCTION :</p>
@@ -943,7 +963,8 @@ Some examples are shown below :</p>
                 &lt;/executions&gt;
             &lt;/plugin&gt;  
 </pre></div></div>
-</div>
+
+<p><a name="jvm-exit"></a></p></div>
 <div class="section">
 <h2><a name="JVM_exit"></a>JVM exit</h2>
 <p>As with any JVM running on a node, the JVM exits when all non-daemon threads complete - see <a class="externalLink" href="http://devzone.tibco.com/sites/streambase/latest/sb/sb-product/documentation/developersguide/ch04s01.html">the developers guide</a>. However, sometimes test cases do have threads that are not designed to complete - in this case, the JVM running the tests can be forced to call exit thus allowing the test case to always complete :</p>
@@ -959,7 +980,8 @@ Some examples are shown below :</p>
                 &lt;/configuration&gt;
             &lt;/plugin&gt;  
 </pre></div></div>
-</div>
+
+<p><a name="managed-object-leak-detection-support"></a></p></div>
 <div class="section">
 <h2><a name="Managed_object_leak_detection_support"></a>Managed object leak detection support</h2>
 <p>The DTM unit test framework supports detecting managed object leaks.  Sometimes a package is designed to create managed objects and never delete them - such objects need to be masked from leak detection to avoid false results.</p>
@@ -1025,7 +1047,8 @@ Implementation-Vendor: TIBCO Software Inc.
                 &lt;/configuration&gt;
             &lt;/plugin&gt;
 </pre></div></div>
-</div>
+
+<p><a name="migrating-from-surefire"></a></p></div>
 <div class="section">
 <h2><a name="Migrating_from_surefire"></a>Migrating from surefire</h2>
 <p>To migrate junit test cases running under maven-surefire-plugin to ep-maven-plugin so that tests cases are run on a node simply replace the surefire plugin :</p>
@@ -1048,7 +1071,8 @@ Implementation-Vendor: TIBCO Software Inc.
                 &lt;extensions&gt;true&lt;/extensions&gt;
             &lt;/plugin&gt;
 </pre></div></div>
-</div>
+
+<p><a name="additional-support-product"></a></p></div>
 <div class="section">
 <h2><a name="Additional_support_product"></a>Additional support product</h2>
 <p>On occasion, support may request installing the additional support release - this includes additional files to run the product in DEVELOPMENT mode to aid diagnosing problems.  This can be included in a project build thus :</p>
@@ -1065,7 +1089,8 @@ Implementation-Vendor: TIBCO Software Inc.
         &lt;/dependency&gt;
     &lt;/dependencies&gt;
 </pre></div></div>
-</div>
+
+<p><a name="maven-archetypes"></a></p></div>
 <div class="section">
 <h2><a name="Maven_Archetypes"></a>Maven Archetypes</h2>
 <p><a class="externalLink" href="https://maven.apache.org/guides/introduction/introduction-to-archetypes.html">Maven archetypes</a> are templates that can be quickly instantiated into a project after providing some variables.</p>
@@ -1251,7 +1276,8 @@ Downloaded: http://artifacts.tibco.com/ep-maven-virtual/com/tibco/ep/eventflow-f
     &lt;/parent&gt;
 ....
 </pre></div></div>
-</div>
+
+<p><a name="sonarqube-analysis"></a></p></div>
 <div class="section">
 <h2><a name="SonarQube_analysis"></a>SonarQube analysis</h2>
 <p>A standard maven plugin for SonarQube can be used to gather and publish data to a <a class="externalLink" href="http://www.sonarqube.org/">SonarQube</a> server.  An example pom.xml is shown below :</p>
