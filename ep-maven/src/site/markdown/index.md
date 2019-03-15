@@ -18,6 +18,8 @@ EP maven plugin you can:
 
 * Build **TIBCO&reg; Live Datamart** ( including **TIBCO&reg; LiveView Web** ) fragments
   
+* Build **TIBCO&reg; TIBCO Cloud Streaming** fragments
+  
 * Build application archives
 
 * Integration test application archives

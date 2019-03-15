@@ -1,0 +1,19 @@
+{
+  "$schema" = "http://json-schema.org/draft-04/schema#"
+  id = "/com/tibco/ep/testmavenplugin/Test.schema" 
+  title = "Sample Schema"
+  description = "Sample Schema."
+  type = "object"
+  properties = {
+    propA = {
+      type = "string"
+    }
+    propB = {
+      type = "boolean"
+    }
+    propC = {
+      type = "integer"
+    }
+  }
+  additionalProperties = false
+}

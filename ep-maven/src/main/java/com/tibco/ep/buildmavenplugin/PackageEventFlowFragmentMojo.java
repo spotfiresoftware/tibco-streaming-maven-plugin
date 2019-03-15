@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, TIBCO Software Inc.
+ * Copyright (C) 2018 - 2019, TIBCO Software Inc.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -146,7 +146,7 @@ public class PackageEventFlowFragmentMojo extends BasePackageMojo {
             String type = dependency.getType();
             String destName = dependency.getGroupId()+"-"+dependency.getArtifactId()+"-"+dependency.getBaseVersion();
 
-            if (type != null && (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(LIVEVIEW_TYPE))) {
+            if (type != null && (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type.equals(LIVEVIEW_TYPE))) {
                 destName += "-"+type+".zip";
             } else {
                 if (dependency.hasClassifier()) {
@@ -163,7 +163,7 @@ public class PackageEventFlowFragmentMojo extends BasePackageMojo {
 
             if (dependency.getType().equals("nar")) {
                 nativeClassPath += destName+" ";
-            } else if (type != null && (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(LIVEVIEW_TYPE))) {
+            } else if (type != null && (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type.equals(LIVEVIEW_TYPE))) {
                 fragmentList += destName+" ";
             } else {
                 classPath += destName+" ";

@@ -17,6 +17,8 @@ The maven goals available are :
 
 * [com.tibco.ep:ep-maven-plugin:test-eventflow-fragment](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/test-eventflow-fragment-mojo.html)
 
+* [com.tibco.ep:ep-maven-plugin:package-tcs-fragment](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/package-tcs-fragment-mojo.html)
+
 * [com.tibco.ep:ep-maven-plugin:package-liveview-fragment](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/package-liveview-fragment-mojo.html)
 
 * [com.tibco.ep:ep-maven-plugin:test-liveview-fragment](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/test-liveview-fragment-mojo.html)
@@ -108,6 +110,28 @@ Default lifecycle :
 | test-compile         | [org.apache.maven.plugins:maven-compiler-plugin:testCompile](https://maven.apache.org/plugins/maven-compiler-plugin/testCompile-mojo.html)
 | test                 | <br>[com.tibco.ep:ep-maven-plugin:check-testcases](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/check-testcases-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:start-nodes](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/start-nodes-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:test-eventflow-fragment](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/test-eventflow-fragment-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:stop-nodes](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/stop-nodes-mojo.html)</br>
 | package              | [com.tibco.ep:ep-maven-plugin:package-eventflow-fragment](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/package-eventflow-fragment-mojo.html)
+| install              | [org.apache.maven.plugins:maven-install-plugin:install](https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html)
+| deploy               | [org.apache.maven.plugins:maven-deploy-plugin:deploy](https://maven.apache.org/plugins/maven-deploy-plugin/)
+
+Clean lifecycle :-
+  
+| phase                | goals |
+|----------------------|-------|
+| pre-clean            | [com.tibco.ep:ep-maven-plugin:install-product](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/install-product-mojo.html)
+| clean                | <br>[com.tibco.ep:ep-maven-plugin:stop-nodes](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/stop-nodes-mojo.html),</br><br>[org.apache.maven.plugins:maven-clean-plugin:clean](https://maven.apache.org/plugins/maven-clean-plugin/clean-mojo.html)</br>
+
+* Packaging **ep-tcs-fragment**
+
+Default lifecycle :
+  
+| phase                | goals |
+|----------------------|-------|
+| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/install-set-resources.html)</br>
+| process-resources    | [org.apache.maven.plugins:maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/)
+| compile              | [org.apache.maven.plugins:maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.htm)
+| process-test-resources | [org.apache.maven.plugins:maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/)
+| test-compile         | [org.apache.maven.plugins:maven-compiler-plugin:testCompile](https://maven.apache.org/plugins/maven-compiler-plugin/testCompile-mojo.html)
+| package              | [com.tibco.ep:ep-maven-plugin:package-tcs-fragment](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.5.0-SNAPSHOT/ep-maven-plugin/package-tcs-fragment-mojo.html)
 | install              | [org.apache.maven.plugins:maven-install-plugin:install](https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html)
 | deploy               | [org.apache.maven.plugins:maven-deploy-plugin:deploy](https://maven.apache.org/plugins/maven-deploy-plugin/)
 

@@ -1,32 +1,10 @@
 /*******************************************************************************
- * Copyright (C) 2018 - 2019, TIBCO Software Inc.
- * 
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
- * 
- * 1. Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
- * 
- * 2. Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
- * 
- * 3. Neither the name of the copyright holder nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- * 
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
- * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
- * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
- * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
- * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
- * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
- * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
- * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ *
+ * COPYRIGHT
+ *      Copyright 2019 TIBCO Software Inc. ALL RIGHTS RESERVED.
+ *      TIBCO Software Inc. Confidential Information
+ *      
+ *******************************************************************************/
 package com.tibco.ep.buildmavenplugin;
 
 import org.apache.maven.artifact.Artifact;
@@ -47,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>Build a LiveView fragment</p>
+ * <p>Build a TCS fragment</p>
  * 
  * <p>The packaging rules are as follows :-</p>
  * <ol>
@@ -72,42 +50,11 @@ import java.util.Map;
  * from the nar AOL values (http://maven-nar.github.io/aol.html) to internal
  * values.</p>
  * 
- * <p>The generated filename is &lt;artifactId&gt;-&lt;version&gt;-ep-liveview-fragment.zip</p>
+ * <p>The generated filename is &lt;artifactId&gt;-&lt;version&gt;-ep-tcs-fragment.zip</p>
  * 
  */
-@Mojo(name = "package-liveview-fragment", defaultPhase = PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME)
-public class PackageLiveViewFragmentMojo extends BasePackageMojo {
-
-    /**
-     * <p>Eventflow source directories</p>
-     * 
-     * <p>If no eventflowDirectories is specified, a single directory of
-     * ${project.basedir}/src/main/eventflow is used.</p>
-     * 
-     * <p>Example use in pom.xml:</p>
-     * <img src="uml/eventflowDirectories.svg" alt="pom">
-     * 
-     * <p>Example use on commandline:</p>
-     * <img src="uml/eventflowDirectories-commandline.svg" alt="pom">
-     * 
-     * @since 1.0.0
-     */
-    @Parameter( required = false, property = "eventflowDirectories" )
-    File[] eventflowDirectories;
-
-    /**
-     * <p>Liveview source directory</p>
-     * 
-     * <p>Example use in pom.xml:</p>
-     * <img src="uml/liveviewDirectory.svg" alt="pom">
-     * 
-     * <p>Example use on commandline:</p>
-     * <img src="uml/liveviewDirectory-commandline.svg" alt="pom">
-     * 
-     * @since 1.0.0
-     */
-    @Parameter( defaultValue = "${project.basedir}/src/main/liveview", required = true, property = "liveviewDirectory" )
-    File liveviewDirectory;
+@Mojo(name = "package-tcs-fragment", defaultPhase = PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME)
+public class PackageTCSFragmentMojo extends BasePackageMojo {
 
     /**
      * <p>Additional resources directory for HOCON configurations</p>
@@ -137,11 +84,7 @@ public class PackageLiveViewFragmentMojo extends BasePackageMojo {
 
 
     public void execute() throws MojoExecutionException {
-        getLog().debug( "Creating liveview fragment" );
-
-        if (eventflowDirectories == null || eventflowDirectories.length == 0) {
-            eventflowDirectories = new File[] { new File(project.getBasedir(), "/src/main/eventflow") };
-        }
+        getLog().debug( "Creating TCS fragment" );
 
         prechecks();
 
@@ -185,19 +128,6 @@ public class PackageLiveViewFragmentMojo extends BasePackageMojo {
             }
         }
 
-        // add files in our source directories
-        //
-        for (File eventflowDirectory : eventflowDirectories) {
-            FileSet fileSet = new FileSet();
-            fileSet.setDirectory(eventflowDirectory.getAbsolutePath());
-            fileSet.setOutputDirectory("");
-            assembly.addFileSet(fileSet);
-        }
-        FileSet fileSet = new FileSet();
-        fileSet.setDirectory(liveviewDirectory.getAbsolutePath());
-        fileSet.setOutputDirectory("");
-        assembly.addFileSet(fileSet);
-        
         // build a manifest file and add as first file to the zip
         //
         Map<String, String> extras = new HashMap<String, String>();
@@ -222,7 +152,7 @@ public class PackageLiveViewFragmentMojo extends BasePackageMojo {
         // this should include resources ( already copied here ) and
         // eventflow files
         //
-        fileSet = new FileSet();
+        FileSet fileSet = new FileSet();
         fileSet.setDirectory(project.getBuild().getOutputDirectory());
         fileSet.setOutputDirectory("");
         assembly.addFileSet(fileSet);
@@ -231,7 +161,5 @@ public class PackageLiveViewFragmentMojo extends BasePackageMojo {
         //
         writeAssembly(assembly);
         manifest.delete();
-
     }
-
 }

@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- vim: set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab : -->
+    <!-- Copyright 2019 TIBCO Software Inc. ALL RIGHTS RESERVED -->
+    <!-- TIBCO Software Inc. Confidential Information -->
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.tibco.ep.testmavenplugin</groupId>
+    <artifactId>tcs</artifactId>
+    <packaging>ep-tcs-fragment</packaging>
+
+    <parent>
+        <groupId>com.tibco.ep.testmavenplugin</groupId>
+        <artifactId>parent</artifactId>
+        <version>${project.version}</version>
+        <relativePath>..</relativePath>
+    </parent>  
+
+    <dependencies>
+        <dependency>
+            <groupId>com.tibco.ep.testmavenplugin</groupId>
+            <artifactId>eventflow</artifactId>
+            <type>ep-eventflow-fragment</type>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+        
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.tibco.ep</groupId>
+                <artifactId>ep-maven-plugin</artifactId>
+                <version>${project.version}</version>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

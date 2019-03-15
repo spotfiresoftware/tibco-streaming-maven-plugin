@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, TIBCO Software Inc.
+ * Copyright (C) 2018 - 2019, TIBCO Software Inc.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -222,6 +222,11 @@ abstract class BaseMojo extends AbstractMojo {
      * LiveView packaging and type
      */
     protected static String LIVEVIEW_TYPE = "ep-liveview-fragment";
+
+    /**
+     * TIBCO Cloud Streaming packaging and type
+     */
+    protected static String TCS_TYPE = "ep-tcs-fragment";
 
     /**
      * system property for reports
@@ -775,7 +780,7 @@ abstract class BaseMojo extends AbstractMojo {
             //
             if (artifact.getFile().getName().equals("classes")) {
                 String type = artifact.getType();
-                if (type != null && (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(LIVEVIEW_TYPE))) {
+                if (type != null && (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type.equals(LIVEVIEW_TYPE))) {
                     File fixedPath = new File(artifact.getFile().getParentFile(), artifact.getArtifactId()+"-"+artifact.getVersion()+"-"+artifact.getType()+".zip");
                     artifact.setFile(fixedPath);
                 }
@@ -900,9 +905,9 @@ abstract class BaseMojo extends AbstractMojo {
                         //
                         deps.add(artifact);
                         
-                        // fragments don't decend into dependencies
+                        // fragments don't descend into dependencies
                         //
-                        if (type != null && (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(LIVEVIEW_TYPE))) {
+                        if (type != null && (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type.equals(LIVEVIEW_TYPE))) {
                             getLog().debug(indent+node.getArtifact()+" [adding]");
                             return false;
                         } else {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, TIBCO Software Inc.
+ * Copyright (C) 2018 - 2019, TIBCO Software Inc.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -222,6 +222,45 @@ public class PackageTest extends BetterAbstractMojoTestCase  {
         //
         assertFalse(zipContains("target/projects/eventflow2/target/eventflow2-"+pomVersion+"-ep-eventflow-fragment.zip", "engine.conf"));
 
+       logger.info("TCS packaging");
+       simulatedLog = new SimulatedLog(false);
+
+       pom = new File( "target/projects/tcs", "pom.xml" );
+       Assert.assertNotNull(pom);
+       Assert.assertTrue(pom.exists());
+
+       // simulate process resources
+       //
+       new File("target/projects/tcs/target/classes").mkdirs();
+       Files.copy(new File("target/projects/tcs/src/main/configurations/engine.conf").toPath(), new File("target/projects/tcs/target/classes/engine.conf").toPath(), StandardCopyOption.REPLACE_EXISTING);
+       Files.copy(new File("target/projects/tcs/src/main/configurations/flow.conf").toPath(), new File("target/projects/tcs/target/classes/flow.conf").toPath(), StandardCopyOption.REPLACE_EXISTING);
+       Files.copy(new File("target/projects/tcs/src/main/resources/logback.xml").toPath(), new File("target/projects/tcs/target/classes/logback.xml").toPath(), StandardCopyOption.REPLACE_EXISTING);
+        
+       new File("target/projects/tcs/target/classes/com/tibco/ep/testmavenplugin").mkdirs();
+       Files.copy(new File("target/projects/tcs/src/main/resources/com/tibco/ep/testmavenplugin/Test.schema").toPath(),
+                  new File("target/projects/tcs/target/classes/com/tibco/ep/testmavenplugin/Test.schema").toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+       logger.info("   Package");
+       PackageTCSFragmentMojo packageTCS = (PackageTCSFragmentMojo) lookupConfiguredMojo(pom, "package-tcs-fragment");
+       Assert.assertNotNull(packageTCS);  
+       pomVersion = packageTCS.project.getVersion();
+       simulatedLog.reset();
+       packageTCS.setLog(simulatedLog);
+       packageTCS.execute();
+       assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
+       assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
+       assertTrue(new File("target/projects/tcs/target/tcs-"+pomVersion+"-ep-tcs-fragment.zip").exists());
+       assertTrue(zipContains("target/projects/tcs/target/tcs-"+pomVersion+"-ep-tcs-fragment.zip", "engine.conf"));
+       assertTrue(zipContains("target/projects/tcs/target/tcs-"+pomVersion+"-ep-tcs-fragment.zip", "flow.conf"));
+       assertTrue(zipContains("target/projects/tcs/target/tcs-"+pomVersion+"-ep-tcs-fragment.zip", "logback.xml"));
+       assertTrue(zipContains("target/projects/tcs/target/tcs-"+pomVersion+"-ep-tcs-fragment.zip", "com/tibco/ep/testmavenplugin/Test.schema"));
+        
+       // simulate install
+       //
+       File tcsDestDir = new File(this.regressionRepository, "com/tibco/ep/testmavenplugin/tcs/"+pomVersion+"");
+       tcsDestDir.mkdirs();
+       Files.copy(new File("target/projects/tcs/target/tcs-"+pomVersion+"-ep-tcs-fragment.zip").toPath(), new File(tcsDestDir, "tcs-"+pomVersion+".zip").toPath(), StandardCopyOption.REPLACE_EXISTING);
+        
         logger.info("LiveView packaging");
         simulatedLog = new SimulatedLog(false);
 
@@ -296,6 +335,7 @@ public class PackageTest extends BetterAbstractMojoTestCase  {
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "com.tibco.ep.testmavenplugin-java-"+pomVersion+"-ep-java-fragment.zip"));
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "com.tibco.ep.testmavenplugin-eventflow-"+pomVersion+"-ep-eventflow-fragment.zip"));
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "com.tibco.ep.testmavenplugin-liveview-"+pomVersion+"-ep-liveview-fragment.zip"));
+        assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "com.tibco.ep.testmavenplugin-tcs-"+pomVersion+"-ep-tcs-fragment.zip"));
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "org.slf4j-slf4j-api-1.7.25.jar"));
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "app.conf"));
         

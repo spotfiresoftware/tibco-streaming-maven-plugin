@@ -35,6 +35,8 @@ The maven plugin supports the following packaging types :
   
 * **ep-liveview-fragment** - LiveView fragment
   
+* **ep-tcs-fragment** - TIBCO Cloud Streaming fragment
+  
 * **ep-application** - Application archive
 
   
@@ -244,6 +246,46 @@ This is sufficient to build the eventflow fragment, unit test using sbunit on
 a default environment and install the fragment to the local maven repository 
 for use by other modules.
   
+A TIBCO Cloud Streaming fragment module has a packaging type of 
+**ep-tcs-fragment**, a list of project dependencies and build rules.
+
+``` xml
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    
+    <groupId>com.tibco.ep.dtmexamples.eventflowfragment</groupId>
+    <artifactId>my-tcs-project</artifactId>
+    <packaging>ep-tcs-fragment</packaging>
+    <version>3.0.0</version>
+    <name>TCS Fragment - my-tcs-project</name>
+
+    <!-- common definitions for this version of StreamBase -->
+    <parent>
+        <groupId>com.tibco.ep.sb.parent</groupId>
+        <artifactId>ep-tcs-fragment</artifactId>
+        <version>${sbrtVersion}</version>
+    </parent>
+
+    <build>
+        <plugins>
+
+            <!-- maven plugin with all configurations defaulted -->
+            <plugin>
+                <groupId>com.tibco.ep</groupId>
+                <artifactId>ep-maven-plugin</artifactId>
+                <extensions>true</extensions>
+            </plugin>
+
+        </plugins>
+    </build>
+</project>
+```
+
+This is sufficient to build the TCS fragment and install the fragment to the local maven
+repository for use by other modules.
+
+
 The application archive is a little different since it depends on other 
 fragments - these fragments can be from other builds in the current directory
 structure or be external dependencies.  In the latter case, maven will 
