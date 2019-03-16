@@ -7,7 +7,7 @@
 <body>
 <div class="sourceContainer">
 <pre><span class="sourceLineNo">001</span>/*******************************************************************************<a name="line.1"></a>
-<span class="sourceLineNo">002</span> * Copyright (C) 2018, TIBCO Software Inc.<a name="line.2"></a>
+<span class="sourceLineNo">002</span> * Copyright (C) 2018 - 2019, TIBCO Software Inc.<a name="line.2"></a>
 <span class="sourceLineNo">003</span> * <a name="line.3"></a>
 <span class="sourceLineNo">004</span> * Redistribution and use in source and binary forms, with or without<a name="line.4"></a>
 <span class="sourceLineNo">005</span> * modification, are permitted provided that the following conditions are met:<a name="line.5"></a>
@@ -124,7 +124,7 @@
 <span class="sourceLineNo">116</span>            String type = dependency.getType();<a name="line.116"></a>
 <span class="sourceLineNo">117</span>            String destName = dependency.getGroupId()+"-"+dependency.getArtifactId()+"-"+dependency.getBaseVersion();<a name="line.117"></a>
 <span class="sourceLineNo">118</span><a name="line.118"></a>
-<span class="sourceLineNo">119</span>            if (type != null &amp;&amp; (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(LIVEVIEW_TYPE))) {<a name="line.119"></a>
+<span class="sourceLineNo">119</span>            if (type != null &amp;&amp; (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type.equals(LIVEVIEW_TYPE))) {<a name="line.119"></a>
 <span class="sourceLineNo">120</span>                destName += "-"+type+".zip";<a name="line.120"></a>
 <span class="sourceLineNo">121</span>            } else {<a name="line.121"></a>
 <span class="sourceLineNo">122</span>                if (dependency.hasClassifier()) {<a name="line.122"></a>
@@ -141,7 +141,7 @@
 <span class="sourceLineNo">133</span><a name="line.133"></a>
 <span class="sourceLineNo">134</span>            if (dependency.getType().equals("nar")) {<a name="line.134"></a>
 <span class="sourceLineNo">135</span>                nativeClassPath += destName+" ";<a name="line.135"></a>
-<span class="sourceLineNo">136</span>            } else if (type != null &amp;&amp; (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(LIVEVIEW_TYPE))) {<a name="line.136"></a>
+<span class="sourceLineNo">136</span>            } else if (type != null &amp;&amp; (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type.equals(LIVEVIEW_TYPE))) {<a name="line.136"></a>
 <span class="sourceLineNo">137</span>                fragmentList += destName+" ";<a name="line.137"></a>
 <span class="sourceLineNo">138</span>            } else {<a name="line.138"></a>
 <span class="sourceLineNo">139</span>                classPath += destName+" ";<a name="line.139"></a>

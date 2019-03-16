@@ -7,7 +7,7 @@
 <body>
 <div id="overview"><a href="../../../../../apidocs/com/tibco/ep/buildmavenplugin/PackageLiveViewFragmentMojo.html">View Javadoc</a></div><pre>
 <a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_javadoccomment">/*******************************************************************************</em>
-<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_javadoccomment"> * Copyright (C) 2018, TIBCO Software Inc.</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_javadoccomment"> * Copyright (C) 2018 - 2019, TIBCO Software Inc.</em>
 <a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_javadoccomment"> * </em>
 <a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_javadoccomment"> * Redistribution and use in source and binary forms, with or without</em>
 <a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_javadoccomment"> * modification, are permitted provided that the following conditions are met:</em>
@@ -169,7 +169,7 @@
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>             String type = dependency.getType();
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>             String destName = dependency.getGroupId()+<span class="jxr_string">"-"</span>+dependency.getArtifactId()+<span class="jxr_string">"-"</span>+dependency.getBaseVersion();
 <a class="jxr_linenumber" name="L163" href="#L163">163</a> 
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>             <strong class="jxr_keyword">if</strong> (type != <strong class="jxr_keyword">null</strong> &amp;&amp; (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(LIVEVIEW_TYPE))) {
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>             <strong class="jxr_keyword">if</strong> (type != <strong class="jxr_keyword">null</strong> &amp;&amp; (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type.equals(LIVEVIEW_TYPE))) {
 <a class="jxr_linenumber" name="L165" href="#L165">165</a>                 destName += <span class="jxr_string">"-"</span>+type+<span class="jxr_string">".zip"</span>;
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>             } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L167" href="#L167">167</a>                 <strong class="jxr_keyword">if</strong> (dependency.hasClassifier()) {
@@ -186,7 +186,7 @@
 <a class="jxr_linenumber" name="L178" href="#L178">178</a> 
 <a class="jxr_linenumber" name="L179" href="#L179">179</a>             <strong class="jxr_keyword">if</strong> (dependency.getType().equals(<span class="jxr_string">"nar"</span>)) {
 <a class="jxr_linenumber" name="L180" href="#L180">180</a>                 nativeClassPath += destName+<span class="jxr_string">" "</span>;
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (type != <strong class="jxr_keyword">null</strong> &amp;&amp; (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(LIVEVIEW_TYPE))) {
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>             } <strong class="jxr_keyword">else</strong> <strong class="jxr_keyword">if</strong> (type != <strong class="jxr_keyword">null</strong> &amp;&amp; (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type.equals(LIVEVIEW_TYPE))) {
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>                 fragmentList += destName+<span class="jxr_string">" "</span>;
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>             } <strong class="jxr_keyword">else</strong> {
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>                 classPath += destName+<span class="jxr_string">" "</span>;
