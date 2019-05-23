@@ -32,12 +32,15 @@ package com.tibco.ep.dtm.management;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.IIOException;
+
 /**
  * Stub DtmDeployFragmentCommand
  */
 public final class DtmDeployFragmentCommand extends DtmCommand
 {
     
+    private boolean fail = false;
     
     public enum FragmentType
     {
@@ -63,6 +66,9 @@ public final class DtmDeployFragmentCommand extends DtmCommand
     {
         System.out.println("[STUB] DtmDeployFragmentCommand: execute("+parameters+")");
 
+        if (fail) {
+            throw new IllegalStateException("Invalid parameters");
+        }
         if (command.equals("deploy") && target.equals("com.tibco.ep.buildmavenplugin.surefire.Runner")) {
             DtmResults results = new DtmResults();
             results.plainText = "Failures: 0, Errors: 0, Skipped: 0";
@@ -90,6 +96,17 @@ public final class DtmDeployFragmentCommand extends DtmCommand
     
     public void setExecutionOptions(final List<String> options)
     {
+        System.out.println("[STUB] DtmDeployFragmentCommand: setExecutionOptions("+options+")");
+        long count=0;
+        for (String s : options) {
+            if (s.startsWith("ignoreoptionsfile")) {
+               count++;
+            }
+        }
+        this.fail=false;
+        if (count > 1) {
+            this.fail = true;
+        }
     }
     
     public void clearExecutionOptions()
@@ -98,6 +115,7 @@ public final class DtmDeployFragmentCommand extends DtmCommand
     
     public void setApplicationArguments(final List<String> arguments)
     {
+        System.out.println("[STUB] DtmDeployFragmentCommand: setApplicationArguments("+arguments+")");
     }
 
 }

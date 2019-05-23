@@ -232,7 +232,7 @@ public class UnitTest extends BetterAbstractMojoTestCase  {
             simulatedLog.reset();
             testMojo.setLog(simulatedLog);
             testMojo.optionsProperty = new String[]{ "-verbose" };
-            testMojo.nodeOptionsProperty = new String[]{ "debug=true" };
+            testMojo.nodeOptionsProperty = new String[]{ "debug=true", "ignoreoptionsfile=cwxxx" };
             testMojo.execute();
             assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
             assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());

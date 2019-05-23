@@ -485,9 +485,17 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
             if (buildtype != null && buildtype != BuldType.ALL && buildtype != BuldType.TESTCOV) {
                 finalNodeOptions.put("buildtype", buildtype.toString());
             }
-            
+
             if (nodeOptions != null) {
                 finalNodeOptions.putAll(nodeOptions);
+            }
+            
+            if (nodeOptionsProperty != null) {
+                for (String s : nodeOptionsProperty) {
+                    if (s.startsWith("ignoreoptionsfile")) {
+                        finalNodeOptions.remove("ignoreoptionsfile");
+                    }
+                }
             }
             
             for (Entry<String, String> entry : finalNodeOptions.entrySet()) {
