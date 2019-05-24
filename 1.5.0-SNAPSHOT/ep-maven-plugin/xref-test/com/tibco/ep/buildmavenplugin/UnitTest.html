@@ -240,7 +240,7 @@
 <a class="jxr_linenumber" name="L232" href="#L232">232</a>             simulatedLog.reset();
 <a class="jxr_linenumber" name="L233" href="#L233">233</a>             testMojo.setLog(simulatedLog);
 <a class="jxr_linenumber" name="L234" href="#L234">234</a>             testMojo.optionsProperty = <strong class="jxr_keyword">new</strong> String[]{ <span class="jxr_string">"-verbose"</span> };
-<a class="jxr_linenumber" name="L235" href="#L235">235</a>             testMojo.nodeOptionsProperty = <strong class="jxr_keyword">new</strong> String[]{ <span class="jxr_string">"debug=true"</span> };
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>             testMojo.nodeOptionsProperty = <strong class="jxr_keyword">new</strong> String[]{ <span class="jxr_string">"debug=true"</span>, <span class="jxr_string">"ignoreoptionsfile=cwxxx"</span> };
 <a class="jxr_linenumber" name="L236" href="#L236">236</a>             testMojo.execute();
 <a class="jxr_linenumber" name="L237" href="#L237">237</a>             assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
 <a class="jxr_linenumber" name="L238" href="#L238">238</a>             assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());

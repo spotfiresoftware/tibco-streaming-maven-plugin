@@ -240,7 +240,7 @@
 <span class="sourceLineNo">232</span>            simulatedLog.reset();<a name="line.232"></a>
 <span class="sourceLineNo">233</span>            testMojo.setLog(simulatedLog);<a name="line.233"></a>
 <span class="sourceLineNo">234</span>            testMojo.optionsProperty = new String[]{ "-verbose" };<a name="line.234"></a>
-<span class="sourceLineNo">235</span>            testMojo.nodeOptionsProperty = new String[]{ "debug=true" };<a name="line.235"></a>
+<span class="sourceLineNo">235</span>            testMojo.nodeOptionsProperty = new String[]{ "debug=true", "ignoreoptionsfile=cwxxx" };<a name="line.235"></a>
 <span class="sourceLineNo">236</span>            testMojo.execute();<a name="line.236"></a>
 <span class="sourceLineNo">237</span>            assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());<a name="line.237"></a>
 <span class="sourceLineNo">238</span>            assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());<a name="line.238"></a>
