@@ -82,4 +82,8 @@ public class DtmCommand
         System.out.println("[STUB] DtmCommand: cancel()");
     }
     
+    public DtmDestination getDestination() {
+        return this.destination;
+    }
+    
 }

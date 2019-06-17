@@ -260,6 +260,7 @@ abstract class BaseMojo extends AbstractMojo {
     private static String DTMNODE_CLASSNAME = "com.tibco.ep.dtm.management.DtmNode";
     private static String DTMINSTALLNODECOMMAND_CLASSNAME = "com.tibco.ep.dtm.management.DtmInstallNodeCommand";
     private static String DTMCOMMAND_CLASSNAME = "com.tibco.ep.dtm.management.DtmCommand";
+    private static String DTMBROWSESERVICESCOMMAND_CLASSNAME = "com.tibco.ep.dtm.management.DtmBrowseServicesCommand";
     private static String DTMDESTINATION_CLASSNAME = "com.tibco.ep.dtm.management.DtmDestination";
     private static String DTMRESULTS_CLASSNAME = "com.tibco.ep.dtm.management.DtmResults";
     private static String DTMRESULTSET_CLASSNAME = "com.tibco.ep.dtm.management.DtmResultSet";
@@ -274,6 +275,7 @@ abstract class BaseMojo extends AbstractMojo {
     private Class<?> dtmContextClass = null;
     private Class<?> dtmInstallNodeCommandClass = null;
     private Class<?> dtmCommandClass = null;
+    private Class<?> dtmBrowseServicesCommandClass = null;
     private Class<?> dtmDestinationClass = null;
     private Class<?> dtmResultsClass = null;
     private Class<?> dtmResultsSetClass = null;
@@ -293,6 +295,7 @@ abstract class BaseMojo extends AbstractMojo {
     /** DtmNode username/password constructor */ protected Constructor<?> dtmNodeConstructorUsernamePassword = null;
     /** DtmInstallNode constructor */ protected Constructor<?> dtmInstallNodeConstructor = null;
     /** DtmCommand constructor */ protected Constructor<?> dtmCommandConstructor = null;
+    /** DtmBrowseServicesCommand constructor */ protected Constructor<?> dtmBrowseServicesCommandConstructor = null;
     /** DtmDestination constructor */ protected Constructor<?> dtmDestinationConstructor = null;
     /** DtmDestination username/password constructor */ protected Constructor<?> dtmDestinationConstructorUsernamePassword = null;
     /** DtmDeployFragment constructor */ protected Constructor<?> dtmDeployFragmentCommandConstructor = null;
@@ -304,7 +307,10 @@ abstract class BaseMojo extends AbstractMojo {
     /** DtmInstallNode waitForCompletion method */ protected Method dtmInstallNodeCommand_waitForCompletion = null;
     /** DtmInstallNode cancel method */ protected Method dtmInstallNodeCommand_cancel = null;
     /** DtmCommand execute method */ protected Method dtmCommand_execute = null;
+    /** DtmBrowseServicesCommand execute method */ protected Method dtmBrowseServicesCommand_execute = null;
     /** DtmCommand waitForCompletion execute method */ protected Method dtmCommand_waitForCompletion = null;
+    /** DtmBrowseServicesCommand waitForCompletion execute method */ protected Method dtmBrowseServicesCommand_waitForCompletion = null;
+    /** DtmBrowseServicesCommand getDestination execute method */ protected Method dtmBrowseServicesCommand_getDestination = null;
     /** DtmDestination addDiscoveryHost execute method */ protected Method dtmDestination_addDiscoveryHost = null;
     /** DtmDestination setDiscoveryPort method */ protected Method dtmDestination_setDiscoveryPort = null;
     /** DtmDeployFragmentCommand execute method */ protected Method dtmDeployFragmentCommand_execute = null;
@@ -361,6 +367,7 @@ abstract class BaseMojo extends AbstractMojo {
                 dtmNodeClass = Class.forName(DTMNODE_CLASSNAME, true, classLoader);
                 dtmInstallNodeCommandClass = Class.forName(DTMINSTALLNODECOMMAND_CLASSNAME, true, classLoader);
                 dtmCommandClass = Class.forName(DTMCOMMAND_CLASSNAME, true, classLoader);
+                dtmBrowseServicesCommandClass = Class.forName(DTMBROWSESERVICESCOMMAND_CLASSNAME, true, classLoader);
                 dtmDestinationClass = Class.forName(DTMDESTINATION_CLASSNAME, true, classLoader);
                 dtmResultsClass = Class.forName(DTMRESULTS_CLASSNAME, true, classLoader);
                 dtmResultsSetClass = Class.forName(DTMRESULTSET_CLASSNAME, true, classLoader);
@@ -376,6 +383,7 @@ abstract class BaseMojo extends AbstractMojo {
                 dtmDestinationConstructor = dtmDestinationClass.getConstructor(String.class, dtmContextClass);
                 dtmDestinationConstructorUsernamePassword = dtmDestinationClass.getConstructor(String.class, dtmContextClass, String.class, String.class);
                 dtmCommandConstructor = dtmCommandClass.getConstructor(String.class, String.class, dtmDestinationClass);
+                dtmBrowseServicesCommandConstructor = dtmBrowseServicesCommandClass.getConstructor(dtmContextClass);
                 dtmDeployFragmentCommandConstructor = dtmDeployFragmentCommandClass.getConstructor(fragmentTypeClass, String.class, dtmDestinationClass);
                 dtmFreeFormCommandConstructor = dtmFreeFormCommandClass.getConstructor(dtmContextClass);
 
@@ -447,6 +455,24 @@ abstract class BaseMojo extends AbstractMojo {
                     }
                 }
 
+                for (Method m : dtmBrowseServicesCommandClass.getMethods()) {
+                    switch (m.getName()) {
+                    case "execute": 
+                        if (m.getParameterTypes().length == 2) {
+                            dtmBrowseServicesCommand_execute = m;
+                        }
+                        break;
+                    case "waitForCompletion": 
+                        if (m.getParameterTypes().length == 0) {
+                            dtmBrowseServicesCommand_waitForCompletion = m;
+                        }
+                        break;
+                    case "getDestination": 
+                        dtmBrowseServicesCommand_getDestination = m;
+                        break;
+                    }
+                }
+                
                 for (Method m : dtmDestinationClass.getMethods()) {
                     switch (m.getName()) {
                     case "addDiscoveryHost": 

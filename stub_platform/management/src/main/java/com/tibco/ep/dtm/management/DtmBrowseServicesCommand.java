@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, TIBCO Software Inc.
+ * Copyright (C) 2019, TIBCO Software Inc.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -29,42 +29,24 @@
  ******************************************************************************/
 package com.tibco.ep.dtm.management;
 
-/**
- * Stub DtmDestination
- */
-public class DtmDestination
-{
-    String name;
-    
-    public DtmDestination(
-        final String name,
-        final DtmContext context)
-    {
-        System.out.println("[STUB] DtmDestination: constructor("+name+")");
+import java.util.Map;
 
-        this.name = name;
-    }
-    
-    public DtmDestination(
-        final String name,
-        final DtmContext context,
-        final String username, 
-        final String password)
-    {
-        System.out.println("[STUB] DtmDestination: constructor("+name+","+username+","+password+")");
+public class DtmBrowseServicesCommand extends DtmCommand {
 
-        this.name = name;
-    }
-    
-    public DtmDestination(DtmContext context) {
-        System.out.println("[STUB] DtmDestination: constructor");
+    public DtmBrowseServicesCommand(String command, String target, DtmDestination destination) {
+        super(command, target, destination);
+        // TODO Auto-generated constructor stub
     }
 
-    public void setDiscoveryPort(int port)
-    {
+    public DtmBrowseServicesCommand(DtmContext context) {
+        super("browse", "services", new DtmDestination(context));
     }
     
-    public void addDiscoveryHost(final String hostname)
-    {
+    @Override
+    public void execute(
+        Map<String, String> parameters, 
+        IDtmProgress progress) 
+        throws IllegalStateException {
+        super.execute(parameters, progress);
     }
 }

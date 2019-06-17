@@ -327,40 +327,72 @@ abstract class BaseExecuteMojo extends BaseMojo {
             } else {
                 destination = dtmDestinationConstructor.newInstance(serviceName, dtmContext);
             }
-            Object start = dtmCommandConstructor.newInstance(command, target, destination); 
-            if (discoveryHosts != null && discoveryHosts.length > 0) {
-                for (String discoveryHost : discoveryHosts) {
-                    try {
-                        dtmDestination_addDiscoveryHost.invoke(destination, discoveryHost);
-                    } catch (IllegalArgumentException e) {
-                        throw new MojoExecutionException("Invalid arguments to management API "+dtmDestination_addDiscoveryHost.toString());
+            if (command.equals("browse") && target.equals("services")) {
+                Object start = dtmBrowseServicesCommandConstructor.newInstance(dtmContext); 
+
+                try {
+                    destination = dtmBrowseServicesCommand_getDestination.invoke(start);
+                } catch (IllegalArgumentException e) {
+                    throw new MojoExecutionException("Invalid arguments to management API "+dtmBrowseServicesCommand_getDestination.toString());
+                }
+                try {
+                    dtmDestination_setDiscoveryPort.invoke(destination, actualDiscoveryPort);
+                } catch (IllegalArgumentException e) {
+                    throw new MojoExecutionException("Invalid arguments to management API "+dtmDestination_setDiscoveryPort.toString());
+                }
+                
+                Object monitor = createMonitor(command+" "+target, serviceName, failOnError, false);
+                try {
+                    dtmBrowseServicesCommand_execute.invoke(start, parameters, monitor);
+                } catch (IllegalArgumentException e) {
+                    throw new MojoExecutionException("Invalid arguments to management API "+dtmBrowseServicesCommand_execute.toString()+" "+e.getMessage());
+                }
+
+                int rc;
+                try {
+                    rc = (int)dtmBrowseServicesCommand_waitForCompletion.invoke(start);
+                } catch (IllegalArgumentException e) {
+                    throw new MojoExecutionException("Invalid arguments to management API "+dtmBrowseServicesCommand_waitForCompletion.toString());
+                }
+
+                if (failOnError && rc != 0) {
+                    throw new MojoExecutionException("command: "+command+" "+target+" failed: node " + serviceName + " error code " + rc);
+                }
+            } else {
+                Object start = dtmCommandConstructor.newInstance(command, target, destination); 
+                if (discoveryHosts != null && discoveryHosts.length > 0) {
+                    for (String discoveryHost : discoveryHosts) {
+                        try {
+                            dtmDestination_addDiscoveryHost.invoke(destination, discoveryHost);
+                        } catch (IllegalArgumentException e) {
+                            throw new MojoExecutionException("Invalid arguments to management API "+dtmDestination_addDiscoveryHost.toString());
+                        }
                     }
                 }
-            }
-            try {
-                dtmDestination_setDiscoveryPort.invoke(destination, actualDiscoveryPort);
-            } catch (IllegalArgumentException e) {
-                throw new MojoExecutionException("Invalid arguments to management API "+dtmDestination_setDiscoveryPort.toString());
-            }
+                try {
+                    dtmDestination_setDiscoveryPort.invoke(destination, actualDiscoveryPort);
+                } catch (IllegalArgumentException e) {
+                    throw new MojoExecutionException("Invalid arguments to management API "+dtmDestination_setDiscoveryPort.toString());
+                }
 
-            Object monitor = createMonitor(command+" "+target, serviceName, failOnError, false);
-            try {
-                dtmCommand_execute.invoke(start, parameters, monitor);
-            } catch (IllegalArgumentException e) {
-                throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_execute.toString());
-            }
+                Object monitor = createMonitor(command+" "+target, serviceName, failOnError, false);
+                try {
+                    dtmCommand_execute.invoke(start, parameters, monitor);
+                } catch (IllegalArgumentException e) {
+                    throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_execute.toString());
+                }
 
-            int rc;
-            try {
-                rc = (int)dtmCommand_waitForCompletion.invoke(start);
-            } catch (IllegalArgumentException e) {
-                throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_waitForCompletion.toString());
-            }
+                int rc;
+                try {
+                    rc = (int)dtmCommand_waitForCompletion.invoke(start);
+                } catch (IllegalArgumentException e) {
+                    throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_waitForCompletion.toString());
+                }
 
-            if (failOnError && rc != 0) {
-                throw new MojoExecutionException("command: "+command+" "+target+" failed: node " + serviceName + " error code " + rc);
+                if (failOnError && rc != 0) {
+                    throw new MojoExecutionException("command: "+command+" "+target+" failed: node " + serviceName + " error code " + rc);
+                }
             }
-
         } catch (InstantiationException e) {
             throw new MojoExecutionException(e.getMessage());
         } catch (IllegalAccessException e) {
@@ -394,46 +426,74 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
             setEnvironment();
 
-            if (userName != null && userName.length() > 0 ) {
-                destination = dtmNodeConstructorUsernamePassword.newInstance("", dtmContext, userName, password);
-            } else {
-                destination = dtmNodeConstructor.newInstance("", dtmContext);
-            }
+            if (command.equals("browse") && target.equals("services")) {
+                Object start = dtmBrowseServicesCommandConstructor.newInstance(dtmContext);
 
-            Object start = dtmCommandConstructor.newInstance(command, target, destination);
-            try {
-                dtmNode_setAdministrationPort.invoke(destination, adminPort);
-            } catch (IllegalArgumentException e) {
-                throw new MojoExecutionException("Invalid arguments to management API "+dtmNode_setAdministrationPort.toString());
-            }
-
-            if (hostname != null) {
                 try {
-                    dtmNode_setHostName.invoke(destination, hostname);
+                    destination = dtmBrowseServicesCommand_getDestination.invoke(start);
                 } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmNode_setHostName.toString());
+                    throw new MojoExecutionException("Invalid arguments to management API "+dtmBrowseServicesCommand_getDestination.toString());
+                }
+                
+                Object monitor = createMonitor(command+" "+target, ""+adminPort, failOnError, false);
+                try {
+                    dtmBrowseServicesCommand_execute.invoke(start, parameters, monitor);
+                } catch (IllegalArgumentException e) {
+                    throw new MojoExecutionException("Invalid arguments to management API "+dtmBrowseServicesCommand_execute.toString());
+                }
+
+                int rc;
+
+                try {
+                    rc = (int)dtmBrowseServicesCommand_waitForCompletion.invoke(start);
+                } catch (IllegalArgumentException e) {
+                    throw new MojoExecutionException("Invalid arguments to management API "+dtmBrowseServicesCommand_waitForCompletion.toString());
+                }
+
+                if (failOnError && rc != 0) {
+                    throw new MojoExecutionException("command: "+command+" "+target+" failed: node " + adminPort + " error code " + rc);
+                }
+            } else {
+                if (userName != null && userName.length() > 0 ) {
+                    destination = dtmNodeConstructorUsernamePassword.newInstance("", dtmContext, userName, password);
+                } else {
+                    destination = dtmNodeConstructor.newInstance("", dtmContext);
+                }
+                
+                Object start = dtmCommandConstructor.newInstance(command, target, destination);
+                try {
+                    dtmNode_setAdministrationPort.invoke(destination, adminPort);
+                } catch (IllegalArgumentException e) {
+                    throw new MojoExecutionException("Invalid arguments to management API "+dtmNode_setAdministrationPort.toString());
+                }
+
+                if (hostname != null) {
+                    try {
+                        dtmNode_setHostName.invoke(destination, hostname);
+                    } catch (IllegalArgumentException e) {
+                        throw new MojoExecutionException("Invalid arguments to management API "+dtmNode_setHostName.toString());
+                    }
+                }
+
+                Object monitor = createMonitor(command+" "+target, ""+adminPort, failOnError, false);
+                try {
+                    dtmCommand_execute.invoke(start, parameters, monitor);
+                } catch (IllegalArgumentException e) {
+                    throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_execute.toString());
+                }
+
+                int rc;
+
+                try {
+                    rc = (int)dtmCommand_waitForCompletion.invoke(start);
+                } catch (IllegalArgumentException e) {
+                    throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_waitForCompletion.toString());
+                }
+
+                if (failOnError && rc != 0) {
+                    throw new MojoExecutionException("command: "+command+" "+target+" failed: node " + adminPort + " error code " + rc);
                 }
             }
-
-            Object monitor = createMonitor(command+" "+target, ""+adminPort, failOnError, false);
-            try {
-                dtmCommand_execute.invoke(start, parameters, monitor);
-            } catch (IllegalArgumentException e) {
-                throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_execute.toString());
-            }
-
-            int rc;
-
-            try {
-                rc = (int)dtmCommand_waitForCompletion.invoke(start);
-            } catch (IllegalArgumentException e) {
-                throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_waitForCompletion.toString());
-            }
-
-            if (failOnError && rc != 0) {
-                throw new MojoExecutionException("command: "+command+" "+target+" failed: node " + adminPort + " error code " + rc);
-            }
-
         } catch (InstantiationException e) {
             throw new MojoExecutionException(e.getMessage());
         } catch (IllegalAccessException e) {

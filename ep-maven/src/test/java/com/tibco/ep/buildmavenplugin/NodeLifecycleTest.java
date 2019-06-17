@@ -100,6 +100,10 @@ public class NodeLifecycleTest extends BetterAbstractMojoTestCase  {
         Assert.assertNotNull(status);
         Assert.assertTrue(status.exists());
         
+        File status3 = new File( "target/projects/lifecycle", "status3.xml" );
+        Assert.assertNotNull(status);
+        Assert.assertTrue(status.exists());
+        
         File stop = new File( "target/projects/lifecycle", "stop.xml" );
         Assert.assertNotNull(status);
         Assert.assertTrue(status.exists());
@@ -138,6 +142,16 @@ public class NodeLifecycleTest extends BetterAbstractMojoTestCase  {
             assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
             assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
             assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog().contains("Started"));
+            
+            logger.info("   Browse services");
+            administrationMojo = (AdministrationMojo) lookupConfiguredMojo(status3, "administer-nodes");
+            Assert.assertNotNull(administrationMojo);
+            administrationMojo.environment = new String[] { "BUILD_ID="+System.getenv("BUILD_ID") };
+            simulatedLog.reset();
+            administrationMojo.setLog(simulatedLog);
+            administrationMojo.execute();
+            assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
+            assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
             
         } finally {
             
