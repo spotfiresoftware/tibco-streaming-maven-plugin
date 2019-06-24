@@ -39,12 +39,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -323,7 +322,8 @@ public class InstallProductMojo extends BaseMojo {
                 md5Local.update(buffer, 0, n);
             }
             byte[] digest = md5Local.digest();
-            md5 = DatatypeConverter.printHexBinary(digest).toUpperCase();
+            BigInteger bi = new BigInteger(1, digest);
+            md5 = String.format("%0" + (digest.length << 1) + "X", bi);
         } catch (NoSuchAlgorithmException e) {
             getLog().warn("Unable to save zip checksum - "+e.getMessage());
         } catch (IOException e) {
@@ -339,6 +339,5 @@ public class InstallProductMojo extends BaseMojo {
         
         return md5;
     }
-    
-    
+
 }
