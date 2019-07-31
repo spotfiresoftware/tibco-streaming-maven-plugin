@@ -30,10 +30,10 @@
 package com.tibco.ep.buildmavenplugin;
 
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.assembly.archive.ArchiveExpansionException;
-import org.apache.maven.plugins.assembly.utils.AssemblyFileUtils;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.codehaus.plexus.archiver.ArchiverException;
+import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
@@ -67,10 +67,16 @@ public class UnpackNarMojo extends BaseMojo {
         for (Artifact artifact : getProjectDependencies()) {
             if (artifact.getType() != null && artifact.getType().equals("nar")) {
                 try {
-                    File dest = new File(project.getBuild().getDirectory()+File.separator+"nar");
-                    dest.mkdirs();
-                    AssemblyFileUtils.unpack( new File(getArtifactPath(artifact)), dest, archiverManager );
-                } catch (ArchiveExpansionException e) {
+                    File destDir = new File(project.getBuild().getDirectory()+File.separator+"nar");
+                    destDir.mkdirs();
+
+                    File source = new File(getArtifactPath(artifact));
+                    UnArchiver unArchiver = archiverManager.getUnArchiver( source );
+                    unArchiver.setSourceFile( source );
+                    unArchiver.setDestDirectory( destDir );
+                    unArchiver.extract();
+
+                } catch (ArchiverException e) {
                     throw new MojoExecutionException("Unable to unpack nar: " + e.getMessage(), e);
                 } catch (NoSuchArchiverException e) {
                     throw new MojoExecutionException("Unable to unpack nar: " + e.getMessage(), e);
