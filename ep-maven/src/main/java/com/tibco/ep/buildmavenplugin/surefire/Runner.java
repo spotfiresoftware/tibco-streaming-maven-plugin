@@ -133,7 +133,10 @@ public class Runner
         // force coverage to a node-specific file
         //
         System.setProperty("net.sourceforge.cobertura.datafile", System.getProperty(REPORTS_DIRECTORY)+File.separator+COBERTURA_DIR+File.separator+System.getProperty(NODE_NAME)+"."+COBERTURA_RESULTS);
-        new File(System.getProperty(REPORTS_DIRECTORY)+File.separator+COBERTURA_DIR).mkdirs();
+        File reportDirectory = new File(System.getProperty(REPORTS_DIRECTORY)+File.separator+COBERTURA_DIR);
+        if (!reportDirectory.exists() && ! reportDirectory.mkdirs()) {
+            throw new TestSetFailedException("Unable to create report directory "+reportDirectory.getAbsolutePath());
+        }
 
         if (args.length == 1) {
             // FIX THIS - this shouldn't happen if called correctly from maven

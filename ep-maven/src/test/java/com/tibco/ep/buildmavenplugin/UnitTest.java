@@ -414,7 +414,6 @@ public class UnitTest extends BetterAbstractMojoTestCase  {
             public synchronized void run() {
                 try {
                     wait();
-                    
                 } catch (final InterruptedException e) {
                     return;
                 }

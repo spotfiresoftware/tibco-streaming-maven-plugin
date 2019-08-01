@@ -62,10 +62,15 @@ public class ConfigurationSource extends AbstractAssemblyMojo {
         this.outputDirectory = new File(project.getBuild().getDirectory());
         this.siteDirectory = new File(project.getModel().getReporting().getOutputDirectory());
         
+        File buildDirectory = new File(project.getBuild().getDirectory());
+        if (!buildDirectory.exists()) {
+            if (!buildDirectory.mkdirs()) {
+                getLog().warn("Unable to create directory "+buildDirectory.getAbsolutePath());
+            }
+        }
         try {
-            new File(project.getBuild().getDirectory()).mkdirs();
-            this.temporaryDirectory = Files.createTempDirectory(new File(project.getBuild().getDirectory()).toPath(), "assemtmp", new FileAttribute[] {}).toFile();
-            this.workingDirectory = Files.createTempDirectory(new File(project.getBuild().getDirectory()).toPath(), "assemwork", new FileAttribute[] {}).toFile();
+            this.temporaryDirectory = Files.createTempDirectory(buildDirectory.toPath(), "assemtmp", new FileAttribute[] {}).toFile();
+            this.workingDirectory = Files.createTempDirectory(buildDirectory.toPath(), "assemwork", new FileAttribute[] {}).toFile();
         } catch (IOException e) {
             // should never happen
             e.printStackTrace();

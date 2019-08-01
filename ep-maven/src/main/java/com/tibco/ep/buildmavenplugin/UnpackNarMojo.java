@@ -68,7 +68,9 @@ public class UnpackNarMojo extends BaseMojo {
             if (artifact.getType() != null && artifact.getType().equals("nar")) {
                 try {
                     File destDir = new File(project.getBuild().getDirectory()+File.separator+"nar");
-                    destDir.mkdirs();
+                    if (!destDir.exists() && !destDir.mkdirs()) {
+                        throw new MojoExecutionException("Unable to create directory "+destDir.getAbsolutePath());
+                    }
 
                     File source = new File(getArtifactPath(artifact));
                     UnArchiver unArchiver = archiverManager.getUnArchiver( source );

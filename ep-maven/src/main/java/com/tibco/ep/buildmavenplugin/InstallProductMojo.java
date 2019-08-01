@@ -35,11 +35,13 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.zip.ZipEntry;
@@ -193,7 +195,7 @@ public class InstallProductMojo extends BaseMojo {
                 if (markersFile.length() > 0) {
                     BufferedReader input = null;
                     try {
-                        input = new BufferedReader(new FileReader(markersFile));
+                        input = new BufferedReader(new InputStreamReader(new FileInputStream(markersFile), StandardCharsets.UTF_8));
                         String oldmd5 = input.readLine();
                         if (oldmd5 == null) {
                             getLog().warn("Unable to verify zip checksum");
@@ -244,13 +246,15 @@ public class InstallProductMojo extends BaseMojo {
 
             // Create markers directory of it doesn't exist
             //
-            if (!markersDir.exists()) {
-                markersDir.mkdirs();
+            if (!markersDir.exists() && !markersDir.mkdirs()) {
+                throw new MojoExecutionException("Unable to create markers directory "+markersDir.getAbsolutePath());
             }
             
             getLog().info("Installing "+artifactAsString+" to "+productHome);
 
-            productHome.mkdirs();
+            if (!productHome.exists() && !productHome.mkdirs()) {
+                throw new MojoExecutionException("Unable to create product directory "+productHome.getAbsolutePath());
+            }
 
             // delete any old files - this avoid permission issues when re-extracting
             //
@@ -262,7 +266,9 @@ public class InstallProductMojo extends BaseMojo {
                     File oldFile = new File(productHome, zipEntry.getName());
                     if (oldFile.exists() && oldFile.isFile()) {
                         getLog().debug("File "+oldFile+" already exists so deleting");
-                        oldFile.delete();
+                        if (!oldFile.delete()) {
+                            getLog().warn("File "+oldFile+" failed to be deleted");
+                        }
                     }
                     zipEntry = zis.getNextEntry();
                 }
@@ -293,7 +299,7 @@ public class InstallProductMojo extends BaseMojo {
             String md5 = this.md5(sourceFile);
             BufferedWriter output = null;
             try {
-                output = new BufferedWriter(new FileWriter(markersFile));
+                output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(markersFile), StandardCharsets.UTF_8));
                 output.write(md5);
             } catch (IOException e) {
                 getLog().warn("Unable to save zip checksum - "+e.getMessage());

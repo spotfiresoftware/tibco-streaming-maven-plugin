@@ -196,8 +196,9 @@ public class PackageApplicationMojo extends BasePackageMojo {
         // this should include resources ( already copied here ) and
         // eventflow files
         //
-        if (!new File(project.getBuild().getOutputDirectory()).exists()) {
-            new File(project.getBuild().getOutputDirectory()).mkdirs();
+        File outputDirectory = new File(project.getBuild().getOutputDirectory());
+        if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
+            throw new MojoExecutionException("Output directory "+outputDirectory.getAbsolutePath()+" couldn't be created");
         }
 
         FileSet fileSet = new FileSet();
@@ -208,7 +209,9 @@ public class PackageApplicationMojo extends BasePackageMojo {
         // write assembly
         //
         writeAssembly(assembly);
-        manifest.delete();
+        if (!manifest.delete()) {
+            getLog().debug("Unable to delete "+manifest.getAbsolutePath());
+        }
     }
 
 }

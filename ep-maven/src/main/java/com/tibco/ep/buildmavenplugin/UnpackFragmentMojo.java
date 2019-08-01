@@ -85,7 +85,9 @@ public class UnpackFragmentMojo extends BaseMojo {
 
                     getLog().info("Unpacking " + source.getAbsolutePath());
 
-                    dest.mkdirs();
+                    if (!dest.exists() && !dest.mkdirs()) {
+                        throw new MojoExecutionException("Unable to create directory "+dest.getAbsolutePath());
+                    }
 
                     UnArchiver unArchiver = archiverManager.getUnArchiver(source);
                     unArchiver.setOverwrite(false);

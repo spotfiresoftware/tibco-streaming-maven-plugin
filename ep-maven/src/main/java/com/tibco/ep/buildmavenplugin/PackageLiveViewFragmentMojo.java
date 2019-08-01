@@ -230,7 +230,9 @@ public class PackageLiveViewFragmentMojo extends BasePackageMojo {
         // write assembly
         //
         writeAssembly(assembly);
-        manifest.delete();
+        if (!manifest.delete()) {
+            getLog().debug("Unable to delete "+manifest.getAbsolutePath());
+        }
 
     }
 

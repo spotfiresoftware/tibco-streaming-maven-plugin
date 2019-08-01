@@ -35,11 +35,12 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -113,7 +114,7 @@ public class EclipseJUnitViewSocketReporter extends AbstractReporter {
         fPort = testResultsPort;
         fTraceCalls = traceCalls;
         fTraceSocketMessages = traceSocketMessages;
-        fTestClasses = testClasses;
+        fTestClasses = Arrays.copyOf(testClasses, testClasses.length);
 
         if (fTraceCalls) {
             System.out.println("new SocketReporter(port = " + fPort + ", traceCalls = " + traceCalls
@@ -135,14 +136,10 @@ public class EclipseJUnitViewSocketReporter extends AbstractReporter {
         for (int i = 1; i < 40; i++) {
             try {
                 fClientSocket = new Socket((String) null, fPort);
-                try {
-                    fWriter = new PrintWriter(
-                            new BufferedWriter(new OutputStreamWriter(fClientSocket.getOutputStream(), "UTF-8")), //$NON-NLS-1$
-                            false);
-                } catch (UnsupportedEncodingException e1) {
-                    fWriter = new PrintWriter(
-                            new BufferedWriter(new OutputStreamWriter(fClientSocket.getOutputStream())), false);
-                }
+                fWriter = new PrintWriter(
+                        new BufferedWriter(new OutputStreamWriter(fClientSocket.getOutputStream(), StandardCharsets.UTF_8)),
+                        false);
+
                 // See SB-43820:
                 // If we support re-running tests in the future, then this Reader will be useful for getting re-run requests from the client.
                 // See "org.eclipse.jdt.internal.junit.runner.RemoteTestRunner" for more details.

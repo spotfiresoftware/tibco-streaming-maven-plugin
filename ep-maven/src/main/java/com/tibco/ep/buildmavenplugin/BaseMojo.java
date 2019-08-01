@@ -36,7 +36,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.annotation.Target;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
@@ -46,7 +45,10 @@ import java.lang.reflect.Proxy;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -336,7 +338,7 @@ abstract class BaseMojo extends AbstractMojo {
 
     // local classloader to be used to load admin jars
     //
-    public class MyClassloader extends URLClassLoader {
+    public static class MyClassloader extends URLClassLoader {
 
         public MyClassloader(URL[] urls, ClassLoader parent) {
             super(urls, parent);
@@ -346,7 +348,7 @@ abstract class BaseMojo extends AbstractMojo {
             super.addURL(url);
         }
     }
-    private final MyClassloader classLoader = new MyClassloader(new URL[0], this.getClass().getClassLoader());
+    private MyClassloader classLoader = null;
 
     /**
      * Initialize administration
@@ -358,6 +360,14 @@ abstract class BaseMojo extends AbstractMojo {
      */
     void initializeAdministration(boolean failOnError) throws MojoExecutionException {
 
+        if (classLoader == null) {
+            AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                public Void run() {
+                    classLoader = new MyClassloader(new URL[0], this.getClass().getClassLoader());
+                    return null; 
+                }
+            });
+        }
         if (dtmContext == null) {
 
             loadAdministrationJars();
@@ -414,6 +424,8 @@ abstract class BaseMojo extends AbstractMojo {
                             dtmInstallNodeCommand_waitForCompletion = m;
                         }
                         break;
+                    default:
+                        break;
                     }
                 }
 
@@ -439,6 +451,8 @@ abstract class BaseMojo extends AbstractMojo {
                     case "cancel": 
                         dtmDeployFragmentCommand_cancel = m;
                         break;
+                    default:
+                        break;
                     }
                 }
 
@@ -451,6 +465,8 @@ abstract class BaseMojo extends AbstractMojo {
                         if (m.getParameterTypes().length == 0) {
                             dtmCommand_waitForCompletion = m;
                         }
+                        break;
+                    default:
                         break;
                     }
                 }
@@ -470,6 +486,8 @@ abstract class BaseMojo extends AbstractMojo {
                     case "getDestination": 
                         dtmBrowseServicesCommand_getDestination = m;
                         break;
+                    default:
+                        break;
                     }
                 }
                 
@@ -480,6 +498,8 @@ abstract class BaseMojo extends AbstractMojo {
                         break;
                     case "setDiscoveryPort": 
                         dtmDestination_setDiscoveryPort = m;
+                        break;
+                    default:
                         break;
                     }
                 }
@@ -908,11 +928,11 @@ abstract class BaseMojo extends AbstractMojo {
             DependencyNodeVisitor visitor = new DependencyNodeVisitor() {
                 int depth = 0;
                 private String indent() {
-                    String t = "";
+                    StringBuffer t = new StringBuffer();
                     for (int i=0; i<depth; i++) {
-                        t = t+"  ";
+                        t.append("  ");
                     }
-                    return t;
+                    return t.toString();
                 }
                 @Override
                 public boolean visit(DependencyNode node) {
@@ -1226,7 +1246,8 @@ abstract class BaseMojo extends AbstractMojo {
 
         try {
 
-            String debugMessage = command;
+            StringBuffer debugMessage = new StringBuffer();
+            debugMessage.append(command);
             String[] cmdarray;
 
             if (args == null || args.length == 0) {
@@ -1235,12 +1256,13 @@ abstract class BaseMojo extends AbstractMojo {
                 cmdarray = new String[args.length+1];
                 for (int i=0; i<args.length; i++) {
                     cmdarray[i+1] = args[i];
-                    debugMessage += " "+args[i];
+                    debugMessage.append(" ");
+                    debugMessage.append(args[i]);
                 }
             }
             cmdarray[0] = command;
 
-            getLog().debug(debugMessage);
+            getLog().debug(debugMessage.toString());
 
             Process p = Runtime.getRuntime().exec(cmdarray);
 
@@ -1333,7 +1355,7 @@ abstract class BaseMojo extends AbstractMojo {
         @Override
         public void run() {
             try {
-                InputStreamReader inpStrd = new InputStreamReader(inpStr);
+                InputStreamReader inpStrd = new InputStreamReader(inpStr, StandardCharsets.UTF_8);
                 BufferedReader buffRd = new BufferedReader(inpStrd);
                 String line = null;
                 while((line = buffRd.readLine()) != null) {

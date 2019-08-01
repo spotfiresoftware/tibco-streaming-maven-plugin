@@ -172,7 +172,9 @@ public class PackageJavaFragmentMojo extends BasePackageMojo {
         // write assembly
         //
         writeAssembly(assembly);
-        manifest.delete();
+        if (!manifest.delete()) {
+            getLog().debug("Unable to delete "+manifest.getAbsolutePath());
+        }
     }
 
 }

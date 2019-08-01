@@ -36,6 +36,7 @@ import org.apache.maven.surefire.testset.SurefireTestSet;
 import org.apache.maven.surefire.testset.TestSetFailedException;
 
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.ResourceBundle;
@@ -50,7 +51,7 @@ public class TestSuite implements SurefireTestSuite {
     /**
      * SureFire resource bundle
      */
-    protected static ResourceBundle bundle = ResourceBundle.getBundle(Surefire.SUREFIRE_BUNDLE_NAME);
+    protected final static ResourceBundle bundle = ResourceBundle.getBundle(Surefire.SUREFIRE_BUNDLE_NAME);
 
     /**
      * Array of test class names (in Java binary format)
@@ -69,7 +70,7 @@ public class TestSuite implements SurefireTestSuite {
      *            array of test class names
      */
     public TestSuite(String[] testClasses) {
-        m_testClasses = testClasses;
+        m_testClasses = Arrays.copyOf(testClasses, testClasses.length);
     }
 
     /**

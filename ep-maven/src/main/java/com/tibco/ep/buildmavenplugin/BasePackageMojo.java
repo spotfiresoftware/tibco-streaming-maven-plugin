@@ -90,16 +90,23 @@ abstract class BasePackageMojo extends BaseMojo {
      * @param assembly assembly to add manifest
      * @param mainclass man java class, null if none
      * @param extras map of any additional manifest entries
+     * @return manifest file
      * @throws MojoExecutionException on error
      */
     File packageManifest(Assembly assembly, String mainclass, Map<String, String> extras) throws MojoExecutionException {
-        try {
-            // make sure the build directory is created
-            //
-            File dir = new File(project.getBuild().getDirectory());
-            if (!dir.exists()) {
-                dir.mkdirs();
+        
+        // make sure the build directory is created
+        //
+        File dir = new File(project.getBuild().getDirectory());
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
+                throw new MojoExecutionException("Unable to create: " + dir.getAbsolutePath());
             }
+        }
+        
+        FileOutputStream os = null;
+        
+        try {
 
             File tempFile = File.createTempFile("MAN", "MF", new File(project.getBuild().getDirectory()));
           
@@ -136,17 +143,25 @@ abstract class BasePackageMojo extends BaseMojo {
                     atts.put(new Attributes.Name(entry.getKey()), entry.getValue());
                 }
             }
-            manifest.write(new FileOutputStream(new File(tempManifestPath)));
+            os = new FileOutputStream(new File(tempManifestPath));
+            manifest.write(os);
             FileItem manifestfile = new FileItem();
             manifestfile.setSource(tempManifestPath);
             manifestfile.setDestName("META-INF/MANIFEST.MF");
             assembly.addFile(manifestfile);
-            
+
             return tempFile;
         } catch (FileNotFoundException e) {
             throw new MojoExecutionException("Failed to create manifest: " + e.getMessage(), e);
         } catch (IOException e) {
             throw new MojoExecutionException("Failed to create manifest: " + e.getMessage(), e);
+        } finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException e) {
+                }
+            }
         }
     }
 

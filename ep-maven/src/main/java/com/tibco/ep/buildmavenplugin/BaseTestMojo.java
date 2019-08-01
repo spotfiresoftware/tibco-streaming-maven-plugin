@@ -42,6 +42,8 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -310,6 +312,8 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
     @Parameter(defaultValue = "false")
     boolean useSystemExit;
     
+    private MyClassloader coverageClassLoader = null;
+    
     /**
      * Run junit based test cases
      * 
@@ -425,19 +429,22 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
 
         // Set classpath for the test run
         //
-        String classPath = constructClassPath();
+        StringBuffer classPath = new StringBuffer();
+        classPath.append(constructClassPath());
         
         // add eventflow directories
         //
         if (eventflowDirectories != null) {
             for (File eventFlowDirectory : eventflowDirectories) {
-                classPath=classPath+File.pathSeparatorChar+eventFlowDirectory.getAbsolutePath();
+                classPath.append(File.pathSeparatorChar);
+                classPath.append(eventFlowDirectory.getAbsolutePath());
             }
         }
         if (liveviewDirectory != null) {
-            classPath=classPath+File.pathSeparatorChar+liveviewDirectory.getAbsolutePath();
+            classPath.append(File.pathSeparatorChar);
+            classPath.append(liveviewDirectory.getAbsolutePath());
         }
-        System.setProperty("java.class.path", classPath);
+        System.setProperty("java.class.path", classPath.toString());
 
         Map<String, String> params = new HashMap<String, String>();
 
@@ -567,7 +574,7 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
             if (osName.startsWith("Windows")) {
                 osName = "Windows";
             }
-            String fullNativePath="";
+            StringBuffer fullNativePath = new StringBuffer();
             for (String suffix : new String[] { "gpp", "msvc" }) {
                 for (String type : new String[] { "jni", "shared" }) {
                     File nativePath = new File(project.getBuild().getDirectory()+File.separator+"nar"+
@@ -575,14 +582,14 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
                             File.separator+System.getProperty("os.arch")+"-"+osName+"-"+suffix+
                             File.separator+type);
                     if (nativePath.isDirectory()) {
-                        if (!fullNativePath.isEmpty()) {
-                            fullNativePath+=File.pathSeparator;
+                        if (fullNativePath.length() > 0) {
+                            fullNativePath.append(File.pathSeparator);
                         }
-                        fullNativePath+=nativePath.getAbsolutePath();
+                        fullNativePath.append(nativePath.getAbsolutePath());
                     }
                 }
             }
-            exeParams.add("-Djava.library.path="+fullNativePath);
+            exeParams.add("-Djava.library.path="+fullNativePath.toString());
             
             getLog().debug("Execution options = "+exeParams.toString());
             try {
@@ -900,7 +907,16 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
         }
 
         if (files.size() > 0) {
-            final MyClassloader coverageClassLoader = new MyClassloader(new URL[0], this.getClass().getClassLoader());
+            
+            if (coverageClassLoader == null) {
+                AccessController.doPrivileged(new PrivilegedAction<Void>() {
+                    public Void run() {
+                        coverageClassLoader = new MyClassloader(new URL[0], this.getClass().getClassLoader());
+                        return null; 
+                    }
+                });
+            }
+            
             try {
 
                 // here we simulate cobertura-merge.sh script

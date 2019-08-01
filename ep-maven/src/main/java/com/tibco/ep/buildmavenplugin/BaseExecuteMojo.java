@@ -32,13 +32,16 @@ package com.tibco.ep.buildmavenplugin;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -222,10 +225,10 @@ abstract class BaseExecuteMojo extends BaseMojo {
         //
         if (saveFile.exists()) {
             
-            FileReader fileReader = null;
+            InputStreamReader fileReader = null;
             BufferedReader bufferedReader = null;
             try {
-                fileReader = new FileReader(saveFile);
+                fileReader = new InputStreamReader(new FileInputStream(saveFile), StandardCharsets.UTF_8);
                 bufferedReader = new BufferedReader(fileReader);
                 int port = Integer.parseInt(bufferedReader.readLine());
                 return port;
@@ -247,6 +250,10 @@ abstract class BaseExecuteMojo extends BaseMojo {
                 }
             }
         }
+        if (!saveFile.getParentFile().exists() && !saveFile.getParentFile().mkdirs()) {
+            getLog().warn("Unable to create save parent directory, will try port 0");
+            return 0;
+        }
 
         for (int count=0; count<10000; count++) {
             int port = rand.nextInt(65536-49152)+49152;
@@ -256,11 +263,10 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
                 // save it to a file if possible
                 //
-                FileWriter fileWriter = null;
+                OutputStreamWriter fileWriter = null;
                 BufferedWriter bufferedWriter = null;
                 try {
-                    saveFile.getParentFile().mkdirs();
-                    fileWriter = new FileWriter(saveFile);
+                    fileWriter = new OutputStreamWriter(new FileOutputStream(saveFile), StandardCharsets.UTF_8);
                     bufferedWriter = new BufferedWriter(fileWriter);
                     bufferedWriter.write(Integer.toString(port)+"\n");
                 } catch (IOException e) {
@@ -536,14 +542,14 @@ abstract class BaseExecuteMojo extends BaseMojo {
         }
 
         if (discoveryHosts != null && discoveryHosts.length > 0) {
-            String hosts="";
+            StringBuffer hosts = new StringBuffer();
             for (String discoveryHost : discoveryHosts) {
                 if (hosts.length() > 0) {
-                    hosts += ",";
+                    hosts.append(",");
                 }
-                hosts += discoveryHost;
+                hosts.append(discoveryHost);
             }
-            params.put("discoveryhosts", hosts);
+            params.put("discoveryhosts", hosts.toString());
         }
         params.put("discoveryport", Integer.toString(actualDiscoveryPort));
 
