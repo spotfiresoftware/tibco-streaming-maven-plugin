@@ -336,7 +336,7 @@ public class PackageTest extends BetterAbstractMojoTestCase  {
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "com.tibco.ep.testmavenplugin-eventflow-"+pomVersion+"-ep-eventflow-fragment.zip"));
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "com.tibco.ep.testmavenplugin-liveview-"+pomVersion+"-ep-liveview-fragment.zip"));
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "com.tibco.ep.testmavenplugin-tcs-"+pomVersion+"-ep-tcs-fragment.zip"));
-        assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "org.slf4j-slf4j-api-1.7.25.jar"));
+        assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "org.slf4j-slf4j-api-1.7.26.jar"));
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "app.conf"));
         
         // simulate install
