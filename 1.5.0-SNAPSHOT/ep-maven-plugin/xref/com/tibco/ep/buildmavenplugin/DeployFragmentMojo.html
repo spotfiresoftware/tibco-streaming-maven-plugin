@@ -61,7 +61,7 @@
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment"> * &lt;img src="uml/deploy-fragment2.svg" alt="pom"&gt;</em>
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  @Mojo(name = <span class="jxr_string">"deploy-fragment"</span>, defaultPhase = TEST)
-<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/DeployFragmentMojo.html">DeployFragmentMojo</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/BaseTestMojo.html">BaseTestMojo</a> {
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="DeployFragmentMojo" href="../../../../com/tibco/ep/buildmavenplugin/DeployFragmentMojo.html#DeployFragmentMojo">DeployFragmentMojo</a> <strong class="jxr_keyword">extends</strong> <a name="BaseTestMojo" href="../../../../com/tibco/ep/buildmavenplugin/BaseTestMojo.html#BaseTestMojo">BaseTestMojo</a> {
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>      
 <a class="jxr_linenumber" name="L58" href="#L58">58</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>  <em class="jxr_javadoccomment">     * &lt;p&gt;Eventflow source directories&lt;/p&gt;</em>
@@ -121,7 +121,7 @@
 <a class="jxr_linenumber" name="L113" href="#L113">113</a>     <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L114" href="#L114">114</a> <em class="jxr_javadoccomment">     * Fragment type</em>
 <a class="jxr_linenumber" name="L115" href="#L115">115</a> <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L116" href="#L116">116</a>     <strong class="jxr_keyword">public</strong> enum <a href="../../../../com/tibco/ep/buildmavenplugin/DeployFragmentMojo.html">FRAGMENT</a> {
+<a class="jxr_linenumber" name="L116" href="#L116">116</a>     <strong class="jxr_keyword">public</strong> enum FRAGMENT {
 <a class="jxr_linenumber" name="L117" href="#L117">117</a>         <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L118" href="#L118">118</a> <em class="jxr_javadoccomment">         * Java</em>
 <a class="jxr_linenumber" name="L119" href="#L119">119</a> <em class="jxr_javadoccomment">         */</em>
@@ -145,7 +145,7 @@
 <a class="jxr_linenumber" name="L137" href="#L137">137</a> <em class="jxr_javadoccomment">     * &lt;p&gt;One of JAVA, STREAMBASE or LIVEVIEW&lt;/p&gt;</em>
 <a class="jxr_linenumber" name="L138" href="#L138">138</a> <em class="jxr_javadoccomment">     */</em>
 <a class="jxr_linenumber" name="L139" href="#L139">139</a>     @Parameter(defaultValue = <span class="jxr_string">"JAVA"</span>)
-<a class="jxr_linenumber" name="L140" href="#L140">140</a>     <a href="../../../../com/tibco/ep/buildmavenplugin/DeployFragmentMojo.html">FRAGMENT</a> fragmentType;
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>     FRAGMENT fragmentType;
 <a class="jxr_linenumber" name="L141" href="#L141">141</a> 
 <a class="jxr_linenumber" name="L142" href="#L142">142</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> execute() <strong class="jxr_keyword">throws</strong> MojoExecutionException {
 <a class="jxr_linenumber" name="L143" href="#L143">143</a>         getLog().debug(<span class="jxr_string">"Deploy"</span>);

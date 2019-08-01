@@ -85,7 +85,7 @@
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment"> * &lt;p&gt;The generated filename is &amp;lt;artifactId&amp;gt;-&amp;lt;version&amp;gt;-ep-eventflow-fragment.zip&lt;/p&gt;</em>
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment"> */</em>
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>  @Mojo(name = <span class="jxr_string">"package-eventflow-fragment"</span>, defaultPhase = PACKAGE)
-<a class="jxr_linenumber" name="L80" href="#L80">80</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/PackageEventFlowFragmentMojo.html">PackageEventFlowFragmentMojo</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/BasePackageMojo.html">BasePackageMojo</a> {
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="PackageEventFlowFragmentMojo" href="../../../../com/tibco/ep/buildmavenplugin/PackageEventFlowFragmentMojo.html#PackageEventFlowFragmentMojo">PackageEventFlowFragmentMojo</a> <strong class="jxr_keyword">extends</strong> <a name="BasePackageMojo" href="../../../../com/tibco/ep/buildmavenplugin/BasePackageMojo.html#BasePackageMojo">BasePackageMojo</a> {
 <a class="jxr_linenumber" name="L81" href="#L81">81</a>  
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>  <em class="jxr_javadoccomment">     * Archive manager</em>
@@ -219,11 +219,13 @@
 <a class="jxr_linenumber" name="L211" href="#L211">211</a>         <em class="jxr_comment">// write assembly</em>
 <a class="jxr_linenumber" name="L212" href="#L212">212</a>         <em class="jxr_comment">//</em>
 <a class="jxr_linenumber" name="L213" href="#L213">213</a>         writeAssembly(assembly);
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>         manifest.delete();
-<a class="jxr_linenumber" name="L215" href="#L215">215</a> 
-<a class="jxr_linenumber" name="L216" href="#L216">216</a>     }
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>         <strong class="jxr_keyword">if</strong> (!manifest.delete()) {
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>             getLog().debug(<span class="jxr_string">"Unable to delete "</span>+manifest.getAbsolutePath());
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>         }
 <a class="jxr_linenumber" name="L217" href="#L217">217</a> 
-<a class="jxr_linenumber" name="L218" href="#L218">218</a> }
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>     }
+<a class="jxr_linenumber" name="L219" href="#L219">219</a> 
+<a class="jxr_linenumber" name="L220" href="#L220">220</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2018&#x2013;2019 <a href="http://www.tibco.com">TIBCO Software Inc.</a>. All rights reserved.</div>

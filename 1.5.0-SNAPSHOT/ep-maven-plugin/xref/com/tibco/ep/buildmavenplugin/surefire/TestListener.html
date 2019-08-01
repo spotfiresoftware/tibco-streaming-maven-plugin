@@ -51,7 +51,7 @@
 <a class="jxr_linenumber" name="L43" href="#L43">43</a>  <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L44" href="#L44">44</a>  <em class="jxr_javadoccomment"> * JUnit run listener that republishes JUnit events to the report manager.</em>
 <a class="jxr_linenumber" name="L45" href="#L45">45</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../com/tibco/ep/buildmavenplugin/surefire/TestListener.html">TestListener</a> <strong class="jxr_keyword">extends</strong> RunListener {
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="TestListener" href="../../../../../com/tibco/ep/buildmavenplugin/surefire/TestListener.html#TestListener">TestListener</a> <strong class="jxr_keyword">extends</strong> RunListener {
 <a class="jxr_linenumber" name="L47" href="#L47">47</a>      <em class="jxr_javadoccomment">/**</em>
 <a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment">     * Constructor.</em>
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment">     *</em>
@@ -59,7 +59,7 @@
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment">     *                      executed</em>
 <a class="jxr_linenumber" name="L52" href="#L52">52</a>  <em class="jxr_javadoccomment">     * @param reportManager the report manager to log testing events to</em>
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>  <em class="jxr_javadoccomment">     */</em>
-<a class="jxr_linenumber" name="L54" href="#L54">54</a>      <a href="../../../../../com/tibco/ep/buildmavenplugin/surefire/TestListener.html">TestListener</a>(<a href="../../../../../com/tibco/ep/buildmavenplugin/surefire/TestSet.html">TestSet</a> testSet, ReporterManager reportManager) {
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>      <a name="TestListener" href="../../../../../com/tibco/ep/buildmavenplugin/surefire/TestListener.html#TestListener">TestListener</a>(<a name="TestSet" href="../../../../../com/tibco/ep/buildmavenplugin/surefire/TestSet.html#TestSet">TestSet</a> testSet, ReporterManager reportManager) {
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>          m_testSet = testSet;
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>          m_reportMgr = reportManager;
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>          m_testFailed = false;
@@ -168,7 +168,7 @@
 <a class="jxr_linenumber" name="L160" href="#L160">160</a> 
 <a class="jxr_linenumber" name="L161" href="#L161">161</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> ResourceBundle bundle
 <a class="jxr_linenumber" name="L162" href="#L162">162</a>             = ResourceBundle.getBundle(Surefire.SUREFIRE_BUNDLE_NAME);
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a href="../../../../../com/tibco/ep/buildmavenplugin/surefire/TestSet.html">TestSet</a> m_testSet;
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> <a name="TestSet" href="../../../../../com/tibco/ep/buildmavenplugin/surefire/TestSet.html#TestSet">TestSet</a> m_testSet;
 <a class="jxr_linenumber" name="L164" href="#L164">164</a>     <strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">final</strong> ReporterManager m_reportMgr;
 <a class="jxr_linenumber" name="L165" href="#L165">165</a> 
 <a class="jxr_linenumber" name="L166" href="#L166">166</a>     <em class="jxr_javadoccomment">/**</em>

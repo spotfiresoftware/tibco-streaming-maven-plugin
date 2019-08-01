@@ -63,7 +63,7 @@
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment"> * Unit tests</em>
 <a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/UnitTest.html">UnitTest</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/BetterAbstractMojoTestCase.html">BetterAbstractMojoTestCase</a>  {
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="UnitTest" href="../../../../com/tibco/ep/buildmavenplugin/UnitTest.html#UnitTest">UnitTest</a> <strong class="jxr_keyword">extends</strong> <a name="BetterAbstractMojoTestCase" href="../../../../com/tibco/ep/buildmavenplugin/BetterAbstractMojoTestCase.html#BetterAbstractMojoTestCase">BetterAbstractMojoTestCase</a>  {
 <a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">private</strong> Logger logger = LoggerFactory.getLogger(UnitTest.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L60" href="#L60">60</a>  
 <a class="jxr_linenumber" name="L61" href="#L61">61</a>      <em class="jxr_javadoccomment">/**</em>
@@ -86,7 +86,7 @@
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>      @Test
 <a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testUnitTest() <strong class="jxr_keyword">throws</strong> Exception  {    
 <a class="jxr_linenumber" name="L80" href="#L80">80</a>          logger.info(<span class="jxr_string">"Install Product"</span>);
-<a class="jxr_linenumber" name="L81" href="#L81">81</a>          <a href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html">SimulatedLog</a> simulatedLog = <strong class="jxr_keyword">new</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html">SimulatedLog</a>(false);
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>          <a name="SimulatedLog" href="../../../../com/tibco/ep/buildmavenplugi<a name="SimulatedLog" href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html#SimulatedLog">SimulatedLog</a>og.html#SimulatedLog">SimulatedLog</a> simulatedLog = <strong class="jxr_keyword">new</strong> <a name="SimulatedLog" href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html#SimulatedLog">SimulatedLog</a>(false);
 <a class="jxr_linenumber" name="L82" href="#L82">82</a>  
 <a class="jxr_linenumber" name="L83" href="#L83">83</a>          File pom = <strong class="jxr_keyword">new</strong> File( <span class="jxr_string">"target/projects"</span>, <span class="jxr_string">"pom.xml"</span> );
 <a class="jxr_linenumber" name="L84" href="#L84">84</a>          Assert.assertNotNull( pom );
@@ -190,7 +190,7 @@
 <a class="jxr_linenumber" name="L182" href="#L182">182</a>         assertEquals(reinstallmd5, goodmd5);
 <a class="jxr_linenumber" name="L183" href="#L183">183</a>         
 <a class="jxr_linenumber" name="L184" href="#L184">184</a>         logger.info(<span class="jxr_string">"java unit test"</span>);
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>         simulatedLog = <strong class="jxr_keyword">new</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html">SimulatedLog</a>(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>         simulatedLog = <strong class="jxr_keyword">new</strong> <a name="SimulatedLog" href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html#SimulatedLog">SimulatedLog</a>(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L186" href="#L186">186</a> 
 <a class="jxr_linenumber" name="L187" href="#L187">187</a>         File testPom = <strong class="jxr_keyword">new</strong> File( <span class="jxr_string">"target/projects/java"</span>, <span class="jxr_string">"test.xml"</span> );
 <a class="jxr_linenumber" name="L188" href="#L188">188</a>         Assert.assertNotNull(testPom);
@@ -281,7 +281,7 @@
 <a class="jxr_linenumber" name="L273" href="#L273">273</a>         }
 <a class="jxr_linenumber" name="L274" href="#L274">274</a> 
 <a class="jxr_linenumber" name="L275" href="#L275">275</a>         logger.info(<span class="jxr_string">"EventFlow unit test"</span>);
-<a class="jxr_linenumber" name="L276" href="#L276">276</a>         simulatedLog = <strong class="jxr_keyword">new</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html">SimulatedLog</a>(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>         simulatedLog = <strong class="jxr_keyword">new</strong> <a name="SimulatedLog" href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html#SimulatedLog">SimulatedLog</a>(<strong class="jxr_keyword">true</strong>);
 <a class="jxr_linenumber" name="L277" href="#L277">277</a> 
 <a class="jxr_linenumber" name="L278" href="#L278">278</a>         testPom = <strong class="jxr_keyword">new</strong> File( <span class="jxr_string">"target/projects/eventflow"</span>, <span class="jxr_string">"pom.xml"</span> );
 <a class="jxr_linenumber" name="L279" href="#L279">279</a>         Assert.assertNotNull(testPom);
@@ -326,7 +326,7 @@
 <a class="jxr_linenumber" name="L318" href="#L318">318</a>         }
 <a class="jxr_linenumber" name="L319" href="#L319">319</a> 
 <a class="jxr_linenumber" name="L320" href="#L320">320</a>         logger.info(<span class="jxr_string">"LiveView unit test"</span>);
-<a class="jxr_linenumber" name="L321" href="#L321">321</a>         simulatedLog = <strong class="jxr_keyword">new</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html">SimulatedLog</a>(false);
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>         simulatedLog = <strong class="jxr_keyword">new</strong> <a name="SimulatedLog" href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html#SimulatedLog">SimulatedLog</a>(false);
 <a class="jxr_linenumber" name="L322" href="#L322">322</a> 
 <a class="jxr_linenumber" name="L323" href="#L323">323</a>         testPom = <strong class="jxr_keyword">new</strong> File( <span class="jxr_string">"target/projects/liveview"</span>, <span class="jxr_string">"pom.xml"</span> );
 <a class="jxr_linenumber" name="L324" href="#L324">324</a>         Assert.assertNotNull(testPom);
@@ -371,7 +371,7 @@
 <a class="jxr_linenumber" name="L363" href="#L363">363</a>         }
 <a class="jxr_linenumber" name="L364" href="#L364">364</a> 
 <a class="jxr_linenumber" name="L365" href="#L365">365</a>         logger.info(<span class="jxr_string">"application test"</span>);
-<a class="jxr_linenumber" name="L366" href="#L366">366</a>         simulatedLog = <strong class="jxr_keyword">new</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html">SimulatedLog</a>(false);
+<a class="jxr_linenumber" name="L366" href="#L366">366</a>         simulatedLog = <strong class="jxr_keyword">new</strong> <a name="SimulatedLog" href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html#SimulatedLog">SimulatedLog</a>(false);
 <a class="jxr_linenumber" name="L367" href="#L367">367</a> 
 <a class="jxr_linenumber" name="L368" href="#L368">368</a>         testPom = <strong class="jxr_keyword">new</strong> File( <span class="jxr_string">"target/projects/application"</span>, <span class="jxr_string">"pom.xml"</span> );
 <a class="jxr_linenumber" name="L369" href="#L369">369</a>         Assert.assertNotNull(testPom);
@@ -422,14 +422,13 @@
 <a class="jxr_linenumber" name="L414" href="#L414">414</a>             <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">synchronized</strong> <strong class="jxr_keyword">void</strong> run() {
 <a class="jxr_linenumber" name="L415" href="#L415">415</a>                 <strong class="jxr_keyword">try</strong> {
 <a class="jxr_linenumber" name="L416" href="#L416">416</a>                     wait();
-<a class="jxr_linenumber" name="L417" href="#L417">417</a>                     
-<a class="jxr_linenumber" name="L418" href="#L418">418</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> InterruptedException e) {
-<a class="jxr_linenumber" name="L419" href="#L419">419</a>                     <strong class="jxr_keyword">return</strong>;
-<a class="jxr_linenumber" name="L420" href="#L420">420</a>                 }
-<a class="jxr_linenumber" name="L421" href="#L421">421</a>             }
-<a class="jxr_linenumber" name="L422" href="#L422">422</a>         }.start();
-<a class="jxr_linenumber" name="L423" href="#L423">423</a>     }
-<a class="jxr_linenumber" name="L424" href="#L424">424</a> }
+<a class="jxr_linenumber" name="L417" href="#L417">417</a>                 } <strong class="jxr_keyword">catch</strong> (<strong class="jxr_keyword">final</strong> InterruptedException e) {
+<a class="jxr_linenumber" name="L418" href="#L418">418</a>                     <strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="L419" href="#L419">419</a>                 }
+<a class="jxr_linenumber" name="L420" href="#L420">420</a>             }
+<a class="jxr_linenumber" name="L421" href="#L421">421</a>         }.start();
+<a class="jxr_linenumber" name="L422" href="#L422">422</a>     }
+<a class="jxr_linenumber" name="L423" href="#L423">423</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2018&#x2013;2019 <a href="http://www.tibco.com">TIBCO Software Inc.</a>. All rights reserved.</div>

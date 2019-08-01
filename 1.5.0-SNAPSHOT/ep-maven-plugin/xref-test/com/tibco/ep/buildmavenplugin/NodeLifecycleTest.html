@@ -57,7 +57,7 @@
 <a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment"> * Node lifecycle - start and stop</em>
 <a class="jxr_linenumber" name="L50" href="#L50">50</a>  <em class="jxr_javadoccomment"> *</em>
 <a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment"> */</em>
-<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/NodeLifecycleTest.html">NodeLifecycleTest</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/BetterAbstractMojoTestCase.html">BetterAbstractMojoTestCase</a>  {
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a name="NodeLifecycleTest" href="../../../../com/tibco/ep/buildmavenplugin/NodeLifecycleTest.html#NodeLifecycleTest">NodeLifecycleTest</a> <strong class="jxr_keyword">extends</strong> <a name="BetterAbstractMojoTestCase" href="../../../../com/tibco/ep/buildmavenplugin/BetterAbstractMojoTestCase.html#BetterAbstractMojoTestCase">BetterAbstractMojoTestCase</a>  {
 <a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">private</strong> Logger logger = LoggerFactory.getLogger(NodeLifecycleTest.<strong class="jxr_keyword">class</strong>);
 <a class="jxr_linenumber" name="L54" href="#L54">54</a>  
 <a class="jxr_linenumber" name="L55" href="#L55">55</a>      <em class="jxr_javadoccomment">/**</em>
@@ -80,7 +80,7 @@
 <a class="jxr_linenumber" name="L72" href="#L72">72</a>      @Test
 <a class="jxr_linenumber" name="L73" href="#L73">73</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> testNodeLifecycle() <strong class="jxr_keyword">throws</strong> Exception  {    
 <a class="jxr_linenumber" name="L74" href="#L74">74</a>          logger.info(<span class="jxr_string">"Install Product"</span>);
-<a class="jxr_linenumber" name="L75" href="#L75">75</a>          <a href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html">SimulatedLog</a> simulatedLog = <strong class="jxr_keyword">new</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html">SimulatedLog</a>(false);
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>          <a name="SimulatedLog" href="../../../../com/tibco/ep/buildmavenplugi<a name="SimulatedLog" href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html#SimulatedLog">SimulatedLog</a>og.html#SimulatedLog">SimulatedLog</a> simulatedLog = <strong class="jxr_keyword">new</strong> <a name="SimulatedLog" href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html#SimulatedLog">SimulatedLog</a>(false);
 <a class="jxr_linenumber" name="L76" href="#L76">76</a>  
 <a class="jxr_linenumber" name="L77" href="#L77">77</a>          File pom = <strong class="jxr_keyword">new</strong> File( <span class="jxr_string">"target/projects"</span>, <span class="jxr_string">"pom.xml"</span> );
 <a class="jxr_linenumber" name="L78" href="#L78">78</a>          Assert.assertNotNull( pom );
@@ -94,7 +94,7 @@
 <a class="jxr_linenumber" name="L86" href="#L86">86</a>          assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
 <a class="jxr_linenumber" name="L87" href="#L87">87</a>  
 <a class="jxr_linenumber" name="L88" href="#L88">88</a>          logger.info(<span class="jxr_string">"Test lifecycle"</span>);
-<a class="jxr_linenumber" name="L89" href="#L89">89</a>          simulatedLog = <strong class="jxr_keyword">new</strong> <a href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html">SimulatedLog</a>(false);
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          simulatedLog = <strong class="jxr_keyword">new</strong> <a name="SimulatedLog" href="../../../../com/tibco/ep/buildmavenplugin/SimulatedLog.html#SimulatedLog">SimulatedLog</a>(false);
 <a class="jxr_linenumber" name="L90" href="#L90">90</a>  
 <a class="jxr_linenumber" name="L91" href="#L91">91</a>          pom = <strong class="jxr_keyword">new</strong> File( <span class="jxr_string">"target/projects/lifecycle"</span>, <span class="jxr_string">"pom.xml"</span> );
 <a class="jxr_linenumber" name="L92" href="#L92">92</a>          Assert.assertNotNull(pom);
