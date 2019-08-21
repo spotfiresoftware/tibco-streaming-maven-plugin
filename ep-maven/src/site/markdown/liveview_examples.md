@@ -199,12 +199,12 @@ thus :
 ...
 ```
 
-The parent pom will copy this dependency to its final location:
+The parent pom will copy this dependency to the build directory ready to be added to the fragment archive :
 
 ``` shell
 ...
 [INFO] --- maven-dependency-plugin:2.8:copy-dependencies (copy lvweb) @ hellolvweb ---
-[INFO] Copying lvweb-1.2.0.war to /Users/plord/workspace/dtmexamples/liveview-fragments/hellolvweb/src/main/liveview/lv-user-webapps/lvweb.war
+[INFO] Copying lvweb-1.2.0.war to /Users/plord/workspace/dtmexamples/liveview-fragments/hellolvweb/target/classes/lv-user-webapps/lvweb.war
 ...
 ```
 
