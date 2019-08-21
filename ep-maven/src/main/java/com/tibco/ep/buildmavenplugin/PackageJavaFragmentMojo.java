@@ -61,6 +61,8 @@ import java.util.Map;
  *              <li>Package-Vendor: project organization name (if set)</li>
  *              <li>Main-Class: mainClass parameter (if set)</li>
  *      </ul>
+ * <li>pom.xml copied to /META-INF/maven/groupId/artifactId/pom.xml</li>
+ * <li>pom.properties created in /META-INF/maven/groupId/artifactId/pom.properties</li>
  * <li>The project's built java classes files are copied into /classes</li>
  * <li>The project's resource files are copied into /</li>
  * <li>Java runtime dependencies are copied into /dependencies/java/</li>

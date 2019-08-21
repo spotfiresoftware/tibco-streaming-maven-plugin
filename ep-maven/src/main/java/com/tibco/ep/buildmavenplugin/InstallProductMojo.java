@@ -149,9 +149,6 @@ public class InstallProductMojo extends BaseMojo {
     @Parameter(property = "skipTests", defaultValue = "false")
     boolean skipTests;
     
-    @Parameter(property = "skipTests", defaultValue = "false")
-    boolean skipTestsx;
-    
     public void execute() throws MojoExecutionException {
         getLog().debug("Install product");
 

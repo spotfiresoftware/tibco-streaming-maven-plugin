@@ -56,6 +56,13 @@ public class ConfigurationSource extends AbstractAssemblyMojo {
     private final String finalName;
     private final MavenSession session;
 
+    /**
+     * Constructor
+     * 
+     * @param project project
+     * @param localRepository local repository
+     * @param session session
+     */
     ConfigurationSource(MavenProject project, ArtifactRepository localRepository, MavenSession session) {
         this.project = project;
         this.localRepository = localRepository;

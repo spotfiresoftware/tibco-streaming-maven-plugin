@@ -61,6 +61,8 @@ import org.apache.maven.plugins.assembly.model.FileSet;
  *              <li>Package-Vendor: project organization name (if set)</li>
  *              <li>TIBCO-EP-Application-Format-Version: 1</li>
  *      </ul>
+ * <li>pom.xml copied to /META-INF/maven/groupId/artifactId/pom.xml</li>
+ * <li>pom.properties created in /META-INF/maven/groupId/artifactId/pom.properties</li>
  * <li>Discovered application definition file is copied into /META-INF/application.conf</li>
  * <li>The project's resourcedirectory/artifactId/ files are copied to /app-config/fragmentname/<li>
  * <li>The project's resourcedirectory/groupId-artifact/ files are copied to /app-config/fragmentname/<li>

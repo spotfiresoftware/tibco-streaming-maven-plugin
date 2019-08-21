@@ -36,6 +36,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Comparator;
@@ -85,7 +86,7 @@ abstract class BasePackageMojo extends BaseMojo {
     String[] artifactExcludes;
     
     /**
-     * Create a manifest file and add to assembly
+     * Create a manifest, pom.xml and pom.properties files and add to assembly
      * 
      * @param assembly assembly to add manifest
      * @param mainclass man java class, null if none
@@ -105,6 +106,7 @@ abstract class BasePackageMojo extends BaseMojo {
         }
         
         FileOutputStream os = null;
+        FileOutputStream pos = null;
         
         try {
 
@@ -150,6 +152,30 @@ abstract class BasePackageMojo extends BaseMojo {
             manifestfile.setDestName("META-INF/MANIFEST.MF");
             assembly.addFile(manifestfile);
 
+            // Add in pom.xml ( in the same way as maven archiver )
+            //
+            FileItem pom = new FileItem();
+            pom.setSource(project.getFile().getAbsolutePath());
+            pom.setDestName("META-INF/maven/" + project.getGroupId() + "/" + project.getArtifactId() + "/pom.xml");
+            assembly.addFile(pom);
+
+            // Add in pom.properties ( in the same was as maven archiver )
+            //
+            File tempPropertiesFile = File.createTempFile("pom", "properties", new File(project.getBuild().getDirectory()));
+            tempPropertiesFile.deleteOnExit();
+            String tempPropertiesPath = tempPropertiesFile.getAbsolutePath();
+            pos = new FileOutputStream(new File(tempPropertiesPath));
+            OutputStreamWriter osw = new OutputStreamWriter(pos);
+            osw.write("# Created by TIBCO Streaming Maven Plugin\n");
+            osw.write("version="+project.getVersion()+"\n");
+            osw.write("groupId="+project.getGroupId()+"\n");
+            osw.write("artifactId="+project.getArtifactId()+"\n");
+            osw.close();
+            FileItem properties = new FileItem();
+            properties.setSource(tempPropertiesPath);
+            properties.setDestName("META-INF/maven/" + project.getGroupId() + "/" + project.getArtifactId() + "/pom.properties");
+            assembly.addFile(properties);
+            
             return tempFile;
         } catch (FileNotFoundException e) {
             throw new MojoExecutionException("Failed to create manifest: " + e.getMessage(), e);
@@ -159,6 +185,12 @@ abstract class BasePackageMojo extends BaseMojo {
             if (os != null) {
                 try {
                     os.close();
+                } catch (IOException e) {
+                }
+            }
+            if (pos != null) {
+                try {
+                    pos.close();
                 } catch (IOException e) {
                 }
             }
@@ -186,6 +218,7 @@ abstract class BasePackageMojo extends BaseMojo {
      */
     void writeAssembly(Assembly assembly) throws MojoExecutionException {
         File assemblyFile;
+
         ConfigurationSource configSource = new ConfigurationSource(project, localRepository, session);
         try {
             assemblyFile = assemblyArchiver.createArchive(assembly, project.getArtifactId()+"-"+project.getVersion()+"-"+project.getPackaging(), "zip", configSource, false, "merge");

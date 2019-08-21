@@ -336,10 +336,17 @@ abstract class BaseMojo extends AbstractMojo {
     ///
     private static ArrayList<Process> backgroundProcesses = new ArrayList<Process>();
 
-    // local classloader to be used to load admin jars
-    //
+    /**
+     * local classloader to be used to load admin jars
+     *
+     */
     public static class MyClassloader extends URLClassLoader {
 
+        /**
+         * Constructor
+         * @param urls urls
+         * @param parent parent
+         */
         public MyClassloader(URL[] urls, ClassLoader parent) {
             super(urls, parent);
         }

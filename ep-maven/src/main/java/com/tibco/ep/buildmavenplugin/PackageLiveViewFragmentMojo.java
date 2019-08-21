@@ -60,6 +60,8 @@ import java.util.Map;
  *              <li>Package-Version: project version and buildNumber</li>
  *              <li>Package-Vendor: project organization name (if set)</li>
  *      </ul>
+ * <li>pom.xml copied to /META-INF/maven/groupId/artifactId/pom.xml</li>
+ * <li>pom.properties created in /META-INF/maven/groupId/artifactId/pom.properties</li>
  * <li>The project's files are copied into /</li>
  * <li>The project's java classes and jar dependencies are copied into /java-resources</li>
  * <li>The project's resources files are copied into /</li>

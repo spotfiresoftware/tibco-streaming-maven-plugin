@@ -140,6 +140,8 @@ public class PackageTest extends BetterAbstractMojoTestCase  {
         assertTrue(zipContains("target/projects/java/target/java-"+pomVersion+"-ep-java-fragment.zip", "upgrade-plan.txt"));
         assertTrue(zipContains("target/projects/java/target/java-"+pomVersion+"-ep-java-fragment.zip", "engine.conf"));
         assertTrue(zipContains("target/projects/java/target/java-"+pomVersion+"-ep-java-fragment.zip", "META-INF/MANIFEST.MF"));
+        assertTrue(zipContains("target/projects/java/target/java-"+pomVersion+"-ep-java-fragment.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/java/pom.xml"));
+        assertTrue(zipContains("target/projects/java/target/java-"+pomVersion+"-ep-java-fragment.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/java/pom.properties"));
 
         // simulate install
         //
@@ -186,6 +188,8 @@ public class PackageTest extends BetterAbstractMojoTestCase  {
         assertTrue(zipContains("target/projects/eventflow/target/eventflow-"+pomVersion+"-ep-eventflow-fragment.zip", "engine.conf"));
         assertTrue(zipContains("target/projects/eventflow/target/eventflow-"+pomVersion+"-ep-eventflow-fragment.zip", "my.sbapp"));
         assertTrue(zipContains("target/projects/eventflow/target/eventflow-"+pomVersion+"-ep-eventflow-fragment.zip", "mod/my.sbapp"));
+        assertTrue(zipContains("target/projects/eventflow/target/eventflow-"+pomVersion+"-ep-eventflow-fragment.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/eventflow/pom.xml"));
+        assertTrue(zipContains("target/projects/eventflow/target/eventflow-"+pomVersion+"-ep-eventflow-fragment.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/eventflow/pom.properties"));
 
         // simulate install
         //
@@ -254,7 +258,9 @@ public class PackageTest extends BetterAbstractMojoTestCase  {
        assertTrue(zipContains("target/projects/tcs/target/tcs-"+pomVersion+"-ep-tcs-fragment.zip", "flow.conf"));
        assertTrue(zipContains("target/projects/tcs/target/tcs-"+pomVersion+"-ep-tcs-fragment.zip", "logback.xml"));
        assertTrue(zipContains("target/projects/tcs/target/tcs-"+pomVersion+"-ep-tcs-fragment.zip", "com/tibco/ep/testmavenplugin/Test.schema"));
-        
+       assertTrue(zipContains("target/projects/tcs/target/tcs-"+pomVersion+"-ep-tcs-fragment.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/tcs/pom.xml"));
+       assertTrue(zipContains("target/projects/tcs/target/tcs-"+pomVersion+"-ep-tcs-fragment.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/tcs/pom.properties"));
+
        // simulate install
        //
        File tcsDestDir = new File(this.regressionRepository, "com/tibco/ep/testmavenplugin/tcs/"+pomVersion+"");
@@ -301,7 +307,9 @@ public class PackageTest extends BetterAbstractMojoTestCase  {
         assertTrue(zipContains("target/projects/liveview/target/liveview-"+pomVersion+"-ep-liveview-fragment.zip", "l.sbapp"));
         assertTrue(zipContains("target/projects/liveview/target/liveview-"+pomVersion+"-ep-liveview-fragment.zip", "e.lvconf"));
         assertTrue(zipContains("target/projects/liveview/target/liveview-"+pomVersion+"-ep-liveview-fragment.zip", "e.sbapp"));
-        
+        assertTrue(zipContains("target/projects/liveview/target/liveview-"+pomVersion+"-ep-liveview-fragment.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/liveview/pom.xml"));
+        assertTrue(zipContains("target/projects/liveview/target/liveview-"+pomVersion+"-ep-liveview-fragment.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/liveview/pom.properties"));
+
         // simulate install
         //
         File liveviewDestDir = new File(this.regressionRepository, "com/tibco/ep/testmavenplugin/liveview/"+pomVersion+"");
@@ -338,7 +346,9 @@ public class PackageTest extends BetterAbstractMojoTestCase  {
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "com.tibco.ep.testmavenplugin-tcs-"+pomVersion+"-ep-tcs-fragment.zip"));
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "org.slf4j-slf4j-api-1.7.26.jar"));
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "app.conf"));
-        
+        assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/application/pom.xml"));
+        assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/application/pom.properties"));
+
         // simulate install
         //
         File applicationDestDir = new File(this.regressionRepository, "com/tibco/ep/testmavenplugin/application/"+pomVersion);
@@ -366,6 +376,12 @@ public class PackageTest extends BetterAbstractMojoTestCase  {
         Assert.assertTrue(failed);
     }
 
+    /**
+     * Check if the zip  contains a file
+     * @param zip zip archive
+     * @param filename filename
+     * @return true if it does contain it
+     */
     boolean zipContains(String zip, String filename) {
         boolean found=false;
 
@@ -390,6 +406,12 @@ public class PackageTest extends BetterAbstractMojoTestCase  {
         return found;
     }
     
+    /**
+     * Check if the file contains test
+     * @param filename gile
+     * @param text text to look for
+     * @return true if it does contain it
+     */
     boolean fileContains(String filename, String text) {
         boolean found = false;
         try {
