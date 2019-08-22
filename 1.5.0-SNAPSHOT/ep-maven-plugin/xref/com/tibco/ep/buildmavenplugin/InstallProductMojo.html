@@ -157,204 +157,201 @@
 <a class="jxr_linenumber" name="L149" href="#L149">149</a>     @Parameter(property = <span class="jxr_string">"skipTests"</span>, defaultValue = <span class="jxr_string">"false"</span>)
 <a class="jxr_linenumber" name="L150" href="#L150">150</a>     <strong class="jxr_keyword">boolean</strong> skipTests;
 <a class="jxr_linenumber" name="L151" href="#L151">151</a>     
-<a class="jxr_linenumber" name="L152" href="#L152">152</a>     @Parameter(property = <span class="jxr_string">"skipTests"</span>, defaultValue = <span class="jxr_string">"false"</span>)
-<a class="jxr_linenumber" name="L153" href="#L153">153</a>     <strong class="jxr_keyword">boolean</strong> skipTestsx;
-<a class="jxr_linenumber" name="L154" href="#L154">154</a>     
-<a class="jxr_linenumber" name="L155" href="#L155">155</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> execute() <strong class="jxr_keyword">throws</strong> MojoExecutionException {
-<a class="jxr_linenumber" name="L156" href="#L156">156</a>         getLog().debug(<span class="jxr_string">"Install product"</span>);
-<a class="jxr_linenumber" name="L157" href="#L157">157</a> 
-<a class="jxr_linenumber" name="L158" href="#L158">158</a>         prechecks();
-<a class="jxr_linenumber" name="L159" href="#L159">159</a> 
-<a class="jxr_linenumber" name="L160" href="#L160">160</a>         <strong class="jxr_keyword">for</strong> (Artifact artifact : getProjectDependencies(<span class="jxr_string">"zip"</span>)) {
-<a class="jxr_linenumber" name="L161" href="#L161">161</a>             
-<a class="jxr_linenumber" name="L162" href="#L162">162</a>             <strong class="jxr_keyword">final</strong> String artifactAsString = artifact.toString();
-<a class="jxr_linenumber" name="L163" href="#L163">163</a>             
-<a class="jxr_linenumber" name="L164" href="#L164">164</a>             <em class="jxr_comment">// skip provided</em>
-<a class="jxr_linenumber" name="L165" href="#L165">165</a>             <strong class="jxr_keyword">if</strong> (artifact.getScope().equals(Artifact.SCOPE_PROVIDED)) {
-<a class="jxr_linenumber" name="L166" href="#L166">166</a>                 getLog().debug(<span class="jxr_string">"Ignoring provided artifact "</span> + artifactAsString);
-<a class="jxr_linenumber" name="L167" href="#L167">167</a>                 <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L168" href="#L168">168</a>             }
-<a class="jxr_linenumber" name="L169" href="#L169">169</a>             
-<a class="jxr_linenumber" name="L170" href="#L170">170</a>             <em class="jxr_comment">// Platform and main attachments only.</em>
-<a class="jxr_linenumber" name="L171" href="#L171">171</a>             <strong class="jxr_keyword">if</strong> (!isPlatformArtifact(artifact)) {
-<a class="jxr_linenumber" name="L172" href="#L172">172</a>                 getLog().debug(<span class="jxr_string">"Ignoring non-platform artifact "</span> + artifactAsString);
-<a class="jxr_linenumber" name="L173" href="#L173">173</a>                 <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L174" href="#L174">174</a>             }
-<a class="jxr_linenumber" name="L175" href="#L175">175</a>             
-<a class="jxr_linenumber" name="L176" href="#L176">176</a>             <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">null</strong> != artifact.getClassifier()) {
-<a class="jxr_linenumber" name="L177" href="#L177">177</a>                 getLog().debug(<span class="jxr_string">"Ignore classified artifact "</span> + artifactAsString);
-<a class="jxr_linenumber" name="L178" href="#L178">178</a>                 <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L179" href="#L179">179</a>             }
-<a class="jxr_linenumber" name="L180" href="#L180">180</a> 
-<a class="jxr_linenumber" name="L181" href="#L181">181</a>             getLog().debug(artifactAsString+<span class="jxr_string">" local path = "</span>+getArtifactPath(artifact));
-<a class="jxr_linenumber" name="L182" href="#L182">182</a> 
-<a class="jxr_linenumber" name="L183" href="#L183">183</a>             File sourceFile = <strong class="jxr_keyword">new</strong> File(getArtifactPath(artifact));
-<a class="jxr_linenumber" name="L184" href="#L184">184</a>             
-<a class="jxr_linenumber" name="L185" href="#L185">185</a>             <strong class="jxr_keyword">boolean</strong> forceReplace = false;
-<a class="jxr_linenumber" name="L186" href="#L186">186</a> 
-<a class="jxr_linenumber" name="L187" href="#L187">187</a>             File markersFile = <strong class="jxr_keyword">new</strong> File(productHome, markersDirectory+File.separator+getArtifactName(artifact)+<span class="jxr_string">".marker"</span>);
-<a class="jxr_linenumber" name="L188" href="#L188">188</a> 
-<a class="jxr_linenumber" name="L189" href="#L189">189</a>             <strong class="jxr_keyword">if</strong> (markersFile.exists()) {
-<a class="jxr_linenumber" name="L190" href="#L190">190</a>                 <em class="jxr_comment">// if we have an md5 of the installation and its not the same as the zip we are installing, </em>
-<a class="jxr_linenumber" name="L191" href="#L191">191</a>                 <em class="jxr_comment">// install anyway</em>
-<a class="jxr_linenumber" name="L192" href="#L192">192</a>                 <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L193" href="#L193">193</a>                 <em class="jxr_comment">// this can happen with SNAPSHOT builds</em>
-<a class="jxr_linenumber" name="L194" href="#L194">194</a>                 <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L195" href="#L195">195</a>                 <strong class="jxr_keyword">if</strong> (markersFile.length() &gt; 0) {
-<a class="jxr_linenumber" name="L196" href="#L196">196</a>                     BufferedReader input = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L197" href="#L197">197</a>                     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L198" href="#L198">198</a>                         input = <strong class="jxr_keyword">new</strong> BufferedReader(<strong class="jxr_keyword">new</strong> InputStreamReader(<strong class="jxr_keyword">new</strong> FileInputStream(markersFile), StandardCharsets.UTF_8));
-<a class="jxr_linenumber" name="L199" href="#L199">199</a>                         String oldmd5 = input.readLine();
-<a class="jxr_linenumber" name="L200" href="#L200">200</a>                         <strong class="jxr_keyword">if</strong> (oldmd5 == <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L201" href="#L201">201</a>                             getLog().warn(<span class="jxr_string">"Unable to verify zip checksum"</span>);
-<a class="jxr_linenumber" name="L202" href="#L202">202</a>                         } <strong class="jxr_keyword">else</strong> {
-<a class="jxr_linenumber" name="L203" href="#L203">203</a>                             String md5 = <strong class="jxr_keyword">this</strong>.md5(sourceFile);
-<a class="jxr_linenumber" name="L204" href="#L204">204</a>                             <strong class="jxr_keyword">if</strong> (!oldmd5.equals(md5)) {
-<a class="jxr_linenumber" name="L205" href="#L205">205</a>                                 getLog().warn(<span class="jxr_string">"Previous installation at "</span>+productHome+<span class="jxr_string">" is old - overwriting"</span>);
-<a class="jxr_linenumber" name="L206" href="#L206">206</a>                                 forceReplace = <strong class="jxr_keyword">true</strong>;
-<a class="jxr_linenumber" name="L207" href="#L207">207</a>                             }
-<a class="jxr_linenumber" name="L208" href="#L208">208</a>                         }
-<a class="jxr_linenumber" name="L209" href="#L209">209</a>                     } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L210" href="#L210">210</a>                         getLog().warn(<span class="jxr_string">"Unable to verify zip checksum - "</span>+e.getMessage());
-<a class="jxr_linenumber" name="L211" href="#L211">211</a>                     } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="L212" href="#L212">212</a>                         <strong class="jxr_keyword">if</strong> (input != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L213" href="#L213">213</a>                             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L214" href="#L214">214</a>                                 input.close();
-<a class="jxr_linenumber" name="L215" href="#L215">215</a>                             } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L216" href="#L216">216</a>                             }
-<a class="jxr_linenumber" name="L217" href="#L217">217</a>                         }
-<a class="jxr_linenumber" name="L218" href="#L218">218</a>                     }
-<a class="jxr_linenumber" name="L219" href="#L219">219</a>                 }
-<a class="jxr_linenumber" name="L220" href="#L220">220</a>                 
-<a class="jxr_linenumber" name="L221" href="#L221">221</a>                 <strong class="jxr_keyword">if</strong> (!forceReplace) {
-<a class="jxr_linenumber" name="L222" href="#L222">222</a>                     getLog().info(artifactAsString+<span class="jxr_string">" already installed by maven to "</span>+productHome);
-<a class="jxr_linenumber" name="L223" href="#L223">223</a>                     <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L224" href="#L224">224</a>                 }
-<a class="jxr_linenumber" name="L225" href="#L225">225</a>             }
-<a class="jxr_linenumber" name="L226" href="#L226">226</a>             
-<a class="jxr_linenumber" name="L227" href="#L227">227</a>             <strong class="jxr_keyword">if</strong> (!forceReplace &amp;&amp; isSBProduct(artifact) &amp;&amp; <strong class="jxr_keyword">new</strong> File(productHome, sbProductValidationFile).exists()) {
-<a class="jxr_linenumber" name="L228" href="#L228">228</a>                 getLog().info(artifactAsString+<span class="jxr_string">" already installed manually to "</span>+productHome);
-<a class="jxr_linenumber" name="L229" href="#L229">229</a>                 <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L230" href="#L230">230</a>             }
-<a class="jxr_linenumber" name="L231" href="#L231">231</a>             <strong class="jxr_keyword">if</strong> (!forceReplace &amp;&amp; isDTMProduct(artifact) &amp;&amp; <strong class="jxr_keyword">new</strong> File(productHome, dtmProductValidationFile).exists()) {
-<a class="jxr_linenumber" name="L232" href="#L232">232</a>                 getLog().info(artifactAsString+<span class="jxr_string">" already installed manually to "</span>+productHome);
-<a class="jxr_linenumber" name="L233" href="#L233">233</a>                 <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L234" href="#L234">234</a>             }
-<a class="jxr_linenumber" name="L235" href="#L235">235</a>             <strong class="jxr_keyword">if</strong> (!forceReplace &amp;&amp; isDTMSupport(artifact) &amp;&amp; <strong class="jxr_keyword">new</strong> File(productHome, dtmSupportValidationFile).exists()) {
-<a class="jxr_linenumber" name="L236" href="#L236">236</a>                 getLog().info(artifactAsString+<span class="jxr_string">" already installed manually to "</span>+productHome);
-<a class="jxr_linenumber" name="L237" href="#L237">237</a>                 <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L238" href="#L238">238</a>             }
-<a class="jxr_linenumber" name="L239" href="#L239">239</a> 
-<a class="jxr_linenumber" name="L240" href="#L240">240</a>             <strong class="jxr_keyword">if</strong> (!sourceFile.exists()) {
-<a class="jxr_linenumber" name="L241" href="#L241">241</a>                 getLog().debug(getArtifactPath(artifact)+<span class="jxr_string">" not downloaded yet ... skipping unpack"</span>);
-<a class="jxr_linenumber" name="L242" href="#L242">242</a>                 <strong class="jxr_keyword">continue</strong>;
-<a class="jxr_linenumber" name="L243" href="#L243">243</a>             }
-<a class="jxr_linenumber" name="L244" href="#L244">244</a> 
-<a class="jxr_linenumber" name="L245" href="#L245">245</a>             File markersDir = <strong class="jxr_keyword">new</strong> File(productHome, markersDirectory);
-<a class="jxr_linenumber" name="L246" href="#L246">246</a> 
-<a class="jxr_linenumber" name="L247" href="#L247">247</a>             <em class="jxr_comment">// Create markers directory of it doesn't exist</em>
-<a class="jxr_linenumber" name="L248" href="#L248">248</a>             <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L249" href="#L249">249</a>             <strong class="jxr_keyword">if</strong> (!markersDir.exists() &amp;&amp; !markersDir.mkdirs()) {
-<a class="jxr_linenumber" name="L250" href="#L250">250</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> MojoExecutionException(<span class="jxr_string">"Unable to create markers directory "</span>+markersDir.getAbsolutePath());
-<a class="jxr_linenumber" name="L251" href="#L251">251</a>             }
-<a class="jxr_linenumber" name="L252" href="#L252">252</a>             
-<a class="jxr_linenumber" name="L253" href="#L253">253</a>             getLog().info(<span class="jxr_string">"Installing "</span>+artifactAsString+<span class="jxr_string">" to "</span>+productHome);
-<a class="jxr_linenumber" name="L254" href="#L254">254</a> 
-<a class="jxr_linenumber" name="L255" href="#L255">255</a>             <strong class="jxr_keyword">if</strong> (!productHome.exists() &amp;&amp; !productHome.mkdirs()) {
-<a class="jxr_linenumber" name="L256" href="#L256">256</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> MojoExecutionException(<span class="jxr_string">"Unable to create product directory "</span>+productHome.getAbsolutePath());
-<a class="jxr_linenumber" name="L257" href="#L257">257</a>             }
-<a class="jxr_linenumber" name="L258" href="#L258">258</a> 
-<a class="jxr_linenumber" name="L259" href="#L259">259</a>             <em class="jxr_comment">// delete any old files - this avoid permission issues when re-extracting</em>
-<a class="jxr_linenumber" name="L260" href="#L260">260</a>             <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L261" href="#L261">261</a>             ZipInputStream zis = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L262" href="#L262">262</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L263" href="#L263">263</a>                 zis = <strong class="jxr_keyword">new</strong> ZipInputStream(<strong class="jxr_keyword">new</strong> FileInputStream(sourceFile));
-<a class="jxr_linenumber" name="L264" href="#L264">264</a>                 ZipEntry zipEntry = zis.getNextEntry();
-<a class="jxr_linenumber" name="L265" href="#L265">265</a>                 <strong class="jxr_keyword">while</strong>(zipEntry != <strong class="jxr_keyword">null</strong>){
-<a class="jxr_linenumber" name="L266" href="#L266">266</a>                     File oldFile = <strong class="jxr_keyword">new</strong> File(productHome, zipEntry.getName());
-<a class="jxr_linenumber" name="L267" href="#L267">267</a>                     <strong class="jxr_keyword">if</strong> (oldFile.exists() &amp;&amp; oldFile.isFile()) {
-<a class="jxr_linenumber" name="L268" href="#L268">268</a>                         getLog().debug(<span class="jxr_string">"File "</span>+oldFile+<span class="jxr_string">" already exists so deleting"</span>);
-<a class="jxr_linenumber" name="L269" href="#L269">269</a>                         <strong class="jxr_keyword">if</strong> (!oldFile.delete()) {
-<a class="jxr_linenumber" name="L270" href="#L270">270</a>                             getLog().warn(<span class="jxr_string">"File "</span>+oldFile+<span class="jxr_string">" failed to be deleted"</span>);
-<a class="jxr_linenumber" name="L271" href="#L271">271</a>                         }
-<a class="jxr_linenumber" name="L272" href="#L272">272</a>                     }
-<a class="jxr_linenumber" name="L273" href="#L273">273</a>                     zipEntry = zis.getNextEntry();
-<a class="jxr_linenumber" name="L274" href="#L274">274</a>                 }
-<a class="jxr_linenumber" name="L275" href="#L275">275</a>                 zis.closeEntry();
-<a class="jxr_linenumber" name="L276" href="#L276">276</a>             } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L277" href="#L277">277</a>             } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="L278" href="#L278">278</a>                 <strong class="jxr_keyword">if</strong> (zis != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L279" href="#L279">279</a>                     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L280" href="#L280">280</a>                         zis.close();
-<a class="jxr_linenumber" name="L281" href="#L281">281</a>                     } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L282" href="#L282">282</a>                     }
-<a class="jxr_linenumber" name="L283" href="#L283">283</a>                 }
-<a class="jxr_linenumber" name="L284" href="#L284">284</a>             }
-<a class="jxr_linenumber" name="L285" href="#L285">285</a>             
-<a class="jxr_linenumber" name="L286" href="#L286">286</a>             <em class="jxr_comment">// and extract</em>
-<a class="jxr_linenumber" name="L287" href="#L287">287</a>             <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L288" href="#L288">288</a>             ZipUnArchiver ua = <strong class="jxr_keyword">new</strong> ZipUnArchiver();
-<a class="jxr_linenumber" name="L289" href="#L289">289</a>             ua.setSourceFile(sourceFile);
-<a class="jxr_linenumber" name="L290" href="#L290">290</a>             ua.setDestDirectory(productHome);
-<a class="jxr_linenumber" name="L291" href="#L291">291</a>             ua.enableLogging(<strong class="jxr_keyword">new</strong> ConsoleLogger(Logger.LEVEL_INFO, <span class="jxr_string">"install-product"</span>));
-<a class="jxr_linenumber" name="L292" href="#L292">292</a>             <strong class="jxr_keyword">if</strong> (forceReplace) {
-<a class="jxr_linenumber" name="L293" href="#L293">293</a>                 ua.setOverwrite(<strong class="jxr_keyword">true</strong>);
-<a class="jxr_linenumber" name="L294" href="#L294">294</a>             }
-<a class="jxr_linenumber" name="L295" href="#L295">295</a>             ua.extract();
-<a class="jxr_linenumber" name="L296" href="#L296">296</a>             
-<a class="jxr_linenumber" name="L297" href="#L297">297</a>             <em class="jxr_comment">// we installed this, so create a md5 of original zip</em>
-<a class="jxr_linenumber" name="L298" href="#L298">298</a>             <em class="jxr_comment">//</em>
-<a class="jxr_linenumber" name="L299" href="#L299">299</a>             String md5 = <strong class="jxr_keyword">this</strong>.md5(sourceFile);
-<a class="jxr_linenumber" name="L300" href="#L300">300</a>             BufferedWriter output = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L301" href="#L301">301</a>             <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L302" href="#L302">302</a>                 output = <strong class="jxr_keyword">new</strong> BufferedWriter(<strong class="jxr_keyword">new</strong> OutputStreamWriter(<strong class="jxr_keyword">new</strong> FileOutputStream(markersFile), StandardCharsets.UTF_8));
-<a class="jxr_linenumber" name="L303" href="#L303">303</a>                 output.write(md5);
-<a class="jxr_linenumber" name="L304" href="#L304">304</a>             } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L305" href="#L305">305</a>                 getLog().warn(<span class="jxr_string">"Unable to save zip checksum - "</span>+e.getMessage());
-<a class="jxr_linenumber" name="L306" href="#L306">306</a>             } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="L307" href="#L307">307</a>                 <strong class="jxr_keyword">if</strong> (output != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L308" href="#L308">308</a>                     <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L309" href="#L309">309</a>                         output.close();
-<a class="jxr_linenumber" name="L310" href="#L310">310</a>                     } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L311" href="#L311">311</a>                     }
-<a class="jxr_linenumber" name="L312" href="#L312">312</a>                 }
-<a class="jxr_linenumber" name="L313" href="#L313">313</a>             }
-<a class="jxr_linenumber" name="L314" href="#L314">314</a> 
-<a class="jxr_linenumber" name="L315" href="#L315">315</a>         }
-<a class="jxr_linenumber" name="L316" href="#L316">316</a>     }
-<a class="jxr_linenumber" name="L317" href="#L317">317</a>     
-<a class="jxr_linenumber" name="L318" href="#L318">318</a>     <strong class="jxr_keyword">private</strong> String md5(<strong class="jxr_keyword">final</strong> File sourceFile) {
-<a class="jxr_linenumber" name="L319" href="#L319">319</a>         
-<a class="jxr_linenumber" name="L320" href="#L320">320</a>         String md5 = <span class="jxr_string">""</span>;
-<a class="jxr_linenumber" name="L321" href="#L321">321</a>         InputStream input = <strong class="jxr_keyword">null</strong>;
-<a class="jxr_linenumber" name="L322" href="#L322">322</a>         <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L323" href="#L323">323</a>             MessageDigest md5Local = MessageDigest.getInstance(<span class="jxr_string">"MD5"</span>);
-<a class="jxr_linenumber" name="L324" href="#L324">324</a>             input = <strong class="jxr_keyword">new</strong> FileInputStream(sourceFile.toString());
-<a class="jxr_linenumber" name="L325" href="#L325">325</a>             byte[] buffer = <strong class="jxr_keyword">new</strong> byte[4096];
-<a class="jxr_linenumber" name="L326" href="#L326">326</a>             <strong class="jxr_keyword">int</strong> n;
-<a class="jxr_linenumber" name="L327" href="#L327">327</a>             <strong class="jxr_keyword">while</strong> ((n = input.read(buffer)) != -1) {
-<a class="jxr_linenumber" name="L328" href="#L328">328</a>                 md5Local.update(buffer, 0, n);
-<a class="jxr_linenumber" name="L329" href="#L329">329</a>             }
-<a class="jxr_linenumber" name="L330" href="#L330">330</a>             byte[] digest = md5Local.digest();
-<a class="jxr_linenumber" name="L331" href="#L331">331</a>             BigInteger bi = <strong class="jxr_keyword">new</strong> BigInteger(1, digest);
-<a class="jxr_linenumber" name="L332" href="#L332">332</a>             md5 = String.format(<span class="jxr_string">"%0"</span> + (digest.length &lt;&lt; 1) + <span class="jxr_string">"X"</span>, bi);
-<a class="jxr_linenumber" name="L333" href="#L333">333</a>         } <strong class="jxr_keyword">catch</strong> (NoSuchAlgorithmException e) {
-<a class="jxr_linenumber" name="L334" href="#L334">334</a>             getLog().warn(<span class="jxr_string">"Unable to save zip checksum - "</span>+e.getMessage());
-<a class="jxr_linenumber" name="L335" href="#L335">335</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L336" href="#L336">336</a>             getLog().warn(<span class="jxr_string">"Unable to save zip checksum - "</span>+e.getMessage());
-<a class="jxr_linenumber" name="L337" href="#L337">337</a>         } <strong class="jxr_keyword">finally</strong> {
-<a class="jxr_linenumber" name="L338" href="#L338">338</a>             <strong class="jxr_keyword">if</strong> (input != <strong class="jxr_keyword">null</strong>) {
-<a class="jxr_linenumber" name="L339" href="#L339">339</a>                 <strong class="jxr_keyword">try</strong> {
-<a class="jxr_linenumber" name="L340" href="#L340">340</a>                     input.close();
-<a class="jxr_linenumber" name="L341" href="#L341">341</a>                 } <strong class="jxr_keyword">catch</strong> (IOException e) {
-<a class="jxr_linenumber" name="L342" href="#L342">342</a>                 }
-<a class="jxr_linenumber" name="L343" href="#L343">343</a>             }
-<a class="jxr_linenumber" name="L344" href="#L344">344</a>         }
-<a class="jxr_linenumber" name="L345" href="#L345">345</a>         
-<a class="jxr_linenumber" name="L346" href="#L346">346</a>         <strong class="jxr_keyword">return</strong> md5;
-<a class="jxr_linenumber" name="L347" href="#L347">347</a>     }
-<a class="jxr_linenumber" name="L348" href="#L348">348</a> 
-<a class="jxr_linenumber" name="L349" href="#L349">349</a> }
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> execute() <strong class="jxr_keyword">throws</strong> MojoExecutionException {
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>         getLog().debug(<span class="jxr_string">"Install product"</span>);
+<a class="jxr_linenumber" name="L154" href="#L154">154</a> 
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>         prechecks();
+<a class="jxr_linenumber" name="L156" href="#L156">156</a> 
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">for</strong> (Artifact artifact : getProjectDependencies(<span class="jxr_string">"zip"</span>)) {
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>             
+<a class="jxr_linenumber" name="L159" href="#L159">159</a>             <strong class="jxr_keyword">final</strong> String artifactAsString = artifact.toString();
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>             
+<a class="jxr_linenumber" name="L161" href="#L161">161</a>             <em class="jxr_comment">// skip provided</em>
+<a class="jxr_linenumber" name="L162" href="#L162">162</a>             <strong class="jxr_keyword">if</strong> (artifact.getScope().equals(Artifact.SCOPE_PROVIDED)) {
+<a class="jxr_linenumber" name="L163" href="#L163">163</a>                 getLog().debug(<span class="jxr_string">"Ignoring provided artifact "</span> + artifactAsString);
+<a class="jxr_linenumber" name="L164" href="#L164">164</a>                 <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L165" href="#L165">165</a>             }
+<a class="jxr_linenumber" name="L166" href="#L166">166</a>             
+<a class="jxr_linenumber" name="L167" href="#L167">167</a>             <em class="jxr_comment">// Platform and main attachments only.</em>
+<a class="jxr_linenumber" name="L168" href="#L168">168</a>             <strong class="jxr_keyword">if</strong> (!isPlatformArtifact(artifact)) {
+<a class="jxr_linenumber" name="L169" href="#L169">169</a>                 getLog().debug(<span class="jxr_string">"Ignoring non-platform artifact "</span> + artifactAsString);
+<a class="jxr_linenumber" name="L170" href="#L170">170</a>                 <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L171" href="#L171">171</a>             }
+<a class="jxr_linenumber" name="L172" href="#L172">172</a>             
+<a class="jxr_linenumber" name="L173" href="#L173">173</a>             <strong class="jxr_keyword">if</strong> (<strong class="jxr_keyword">null</strong> != artifact.getClassifier()) {
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>                 getLog().debug(<span class="jxr_string">"Ignore classified artifact "</span> + artifactAsString);
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>                 <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>             }
+<a class="jxr_linenumber" name="L177" href="#L177">177</a> 
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>             getLog().debug(artifactAsString+<span class="jxr_string">" local path = "</span>+getArtifactPath(artifact));
+<a class="jxr_linenumber" name="L179" href="#L179">179</a> 
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>             File sourceFile = <strong class="jxr_keyword">new</strong> File(getArtifactPath(artifact));
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>             
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>             <strong class="jxr_keyword">boolean</strong> forceReplace = false;
+<a class="jxr_linenumber" name="L183" href="#L183">183</a> 
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>             File markersFile = <strong class="jxr_keyword">new</strong> File(productHome, markersDirectory+File.separator+getArtifactName(artifact)+<span class="jxr_string">".marker"</span>);
+<a class="jxr_linenumber" name="L185" href="#L185">185</a> 
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>             <strong class="jxr_keyword">if</strong> (markersFile.exists()) {
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>                 <em class="jxr_comment">// if we have an md5 of the installation and its not the same as the zip we are installing, </em>
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>                 <em class="jxr_comment">// install anyway</em>
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>                 <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>                 <em class="jxr_comment">// this can happen with SNAPSHOT builds</em>
+<a class="jxr_linenumber" name="L191" href="#L191">191</a>                 <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L192" href="#L192">192</a>                 <strong class="jxr_keyword">if</strong> (markersFile.length() &gt; 0) {
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>                     BufferedReader input = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>                     <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>                         input = <strong class="jxr_keyword">new</strong> BufferedReader(<strong class="jxr_keyword">new</strong> InputStreamReader(<strong class="jxr_keyword">new</strong> FileInputStream(markersFile), StandardCharsets.UTF_8));
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>                         String oldmd5 = input.readLine();
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>                         <strong class="jxr_keyword">if</strong> (oldmd5 == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L198" href="#L198">198</a>                             getLog().warn(<span class="jxr_string">"Unable to verify zip checksum"</span>);
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>                         } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>                             String md5 = <strong class="jxr_keyword">this</strong>.md5(sourceFile);
+<a class="jxr_linenumber" name="L201" href="#L201">201</a>                             <strong class="jxr_keyword">if</strong> (!oldmd5.equals(md5)) {
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>                                 getLog().warn(<span class="jxr_string">"Previous installation at "</span>+productHome+<span class="jxr_string">" is old - overwriting"</span>);
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>                                 forceReplace = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>                             }
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>                         }
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>                     } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>                         getLog().warn(<span class="jxr_string">"Unable to verify zip checksum - "</span>+e.getMessage());
+<a class="jxr_linenumber" name="L208" href="#L208">208</a>                     } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>                         <strong class="jxr_keyword">if</strong> (input != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L210" href="#L210">210</a>                             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L211" href="#L211">211</a>                                 input.close();
+<a class="jxr_linenumber" name="L212" href="#L212">212</a>                             } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L213" href="#L213">213</a>                             }
+<a class="jxr_linenumber" name="L214" href="#L214">214</a>                         }
+<a class="jxr_linenumber" name="L215" href="#L215">215</a>                     }
+<a class="jxr_linenumber" name="L216" href="#L216">216</a>                 }
+<a class="jxr_linenumber" name="L217" href="#L217">217</a>                 
+<a class="jxr_linenumber" name="L218" href="#L218">218</a>                 <strong class="jxr_keyword">if</strong> (!forceReplace) {
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>                     getLog().info(artifactAsString+<span class="jxr_string">" already installed by maven to "</span>+productHome);
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>                     <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>                 }
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>             }
+<a class="jxr_linenumber" name="L223" href="#L223">223</a>             
+<a class="jxr_linenumber" name="L224" href="#L224">224</a>             <strong class="jxr_keyword">if</strong> (!forceReplace &amp;&amp; isSBProduct(artifact) &amp;&amp; <strong class="jxr_keyword">new</strong> File(productHome, sbProductValidationFile).exists()) {
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>                 getLog().info(artifactAsString+<span class="jxr_string">" already installed manually to "</span>+productHome);
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>                 <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L227" href="#L227">227</a>             }
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>             <strong class="jxr_keyword">if</strong> (!forceReplace &amp;&amp; isDTMProduct(artifact) &amp;&amp; <strong class="jxr_keyword">new</strong> File(productHome, dtmProductValidationFile).exists()) {
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>                 getLog().info(artifactAsString+<span class="jxr_string">" already installed manually to "</span>+productHome);
+<a class="jxr_linenumber" name="L230" href="#L230">230</a>                 <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L231" href="#L231">231</a>             }
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>             <strong class="jxr_keyword">if</strong> (!forceReplace &amp;&amp; isDTMSupport(artifact) &amp;&amp; <strong class="jxr_keyword">new</strong> File(productHome, dtmSupportValidationFile).exists()) {
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>                 getLog().info(artifactAsString+<span class="jxr_string">" already installed manually to "</span>+productHome);
+<a class="jxr_linenumber" name="L234" href="#L234">234</a>                 <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>             }
+<a class="jxr_linenumber" name="L236" href="#L236">236</a> 
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>             <strong class="jxr_keyword">if</strong> (!sourceFile.exists()) {
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>                 getLog().debug(getArtifactPath(artifact)+<span class="jxr_string">" not downloaded yet ... skipping unpack"</span>);
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>                 <strong class="jxr_keyword">continue</strong>;
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>             }
+<a class="jxr_linenumber" name="L241" href="#L241">241</a> 
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>             File markersDir = <strong class="jxr_keyword">new</strong> File(productHome, markersDirectory);
+<a class="jxr_linenumber" name="L243" href="#L243">243</a> 
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>             <em class="jxr_comment">// Create markers directory of it doesn't exist</em>
+<a class="jxr_linenumber" name="L245" href="#L245">245</a>             <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L246" href="#L246">246</a>             <strong class="jxr_keyword">if</strong> (!markersDir.exists() &amp;&amp; !markersDir.mkdirs()) {
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> MojoExecutionException(<span class="jxr_string">"Unable to create markers directory "</span>+markersDir.getAbsolutePath());
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>             }
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>             
+<a class="jxr_linenumber" name="L250" href="#L250">250</a>             getLog().info(<span class="jxr_string">"Installing "</span>+artifactAsString+<span class="jxr_string">" to "</span>+productHome);
+<a class="jxr_linenumber" name="L251" href="#L251">251</a> 
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>             <strong class="jxr_keyword">if</strong> (!productHome.exists() &amp;&amp; !productHome.mkdirs()) {
+<a class="jxr_linenumber" name="L253" href="#L253">253</a>                 <strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> MojoExecutionException(<span class="jxr_string">"Unable to create product directory "</span>+productHome.getAbsolutePath());
+<a class="jxr_linenumber" name="L254" href="#L254">254</a>             }
+<a class="jxr_linenumber" name="L255" href="#L255">255</a> 
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>             <em class="jxr_comment">// delete any old files - this avoid permission issues when re-extracting</em>
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>             <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>             ZipInputStream zis = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>                 zis = <strong class="jxr_keyword">new</strong> ZipInputStream(<strong class="jxr_keyword">new</strong> FileInputStream(sourceFile));
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>                 ZipEntry zipEntry = zis.getNextEntry();
+<a class="jxr_linenumber" name="L262" href="#L262">262</a>                 <strong class="jxr_keyword">while</strong>(zipEntry != <strong class="jxr_keyword">null</strong>){
+<a class="jxr_linenumber" name="L263" href="#L263">263</a>                     File oldFile = <strong class="jxr_keyword">new</strong> File(productHome, zipEntry.getName());
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>                     <strong class="jxr_keyword">if</strong> (oldFile.exists() &amp;&amp; oldFile.isFile()) {
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>                         getLog().debug(<span class="jxr_string">"File "</span>+oldFile+<span class="jxr_string">" already exists so deleting"</span>);
+<a class="jxr_linenumber" name="L266" href="#L266">266</a>                         <strong class="jxr_keyword">if</strong> (!oldFile.delete()) {
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>                             getLog().warn(<span class="jxr_string">"File "</span>+oldFile+<span class="jxr_string">" failed to be deleted"</span>);
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>                         }
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>                     }
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>                     zipEntry = zis.getNextEntry();
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>                 }
+<a class="jxr_linenumber" name="L272" href="#L272">272</a>                 zis.closeEntry();
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>             } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>             } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>                 <strong class="jxr_keyword">if</strong> (zis != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>                     <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L277" href="#L277">277</a>                         zis.close();
+<a class="jxr_linenumber" name="L278" href="#L278">278</a>                     } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L279" href="#L279">279</a>                     }
+<a class="jxr_linenumber" name="L280" href="#L280">280</a>                 }
+<a class="jxr_linenumber" name="L281" href="#L281">281</a>             }
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>             
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>             <em class="jxr_comment">// and extract</em>
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>             <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>             ZipUnArchiver ua = <strong class="jxr_keyword">new</strong> ZipUnArchiver();
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>             ua.setSourceFile(sourceFile);
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>             ua.setDestDirectory(productHome);
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>             ua.enableLogging(<strong class="jxr_keyword">new</strong> ConsoleLogger(Logger.LEVEL_INFO, <span class="jxr_string">"install-product"</span>));
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>             <strong class="jxr_keyword">if</strong> (forceReplace) {
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>                 ua.setOverwrite(<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L291" href="#L291">291</a>             }
+<a class="jxr_linenumber" name="L292" href="#L292">292</a>             ua.extract();
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>             
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>             <em class="jxr_comment">// we installed this, so create a md5 of original zip</em>
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>             <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>             String md5 = <strong class="jxr_keyword">this</strong>.md5(sourceFile);
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>             BufferedWriter output = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>             <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>                 output = <strong class="jxr_keyword">new</strong> BufferedWriter(<strong class="jxr_keyword">new</strong> OutputStreamWriter(<strong class="jxr_keyword">new</strong> FileOutputStream(markersFile), StandardCharsets.UTF_8));
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>                 output.write(md5);
+<a class="jxr_linenumber" name="L301" href="#L301">301</a>             } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>                 getLog().warn(<span class="jxr_string">"Unable to save zip checksum - "</span>+e.getMessage());
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>             } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>                 <strong class="jxr_keyword">if</strong> (output != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>                     <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L306" href="#L306">306</a>                         output.close();
+<a class="jxr_linenumber" name="L307" href="#L307">307</a>                     } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>                     }
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>                 }
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>             }
+<a class="jxr_linenumber" name="L311" href="#L311">311</a> 
+<a class="jxr_linenumber" name="L312" href="#L312">312</a>         }
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>     }
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>     
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>     <strong class="jxr_keyword">private</strong> String md5(<strong class="jxr_keyword">final</strong> File sourceFile) {
+<a class="jxr_linenumber" name="L316" href="#L316">316</a>         
+<a class="jxr_linenumber" name="L317" href="#L317">317</a>         String md5 = <span class="jxr_string">""</span>;
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>         InputStream input = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L319" href="#L319">319</a>         <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>             MessageDigest md5Local = MessageDigest.getInstance(<span class="jxr_string">"MD5"</span>);
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>             input = <strong class="jxr_keyword">new</strong> FileInputStream(sourceFile.toString());
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>             byte[] buffer = <strong class="jxr_keyword">new</strong> byte[4096];
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>             <strong class="jxr_keyword">int</strong> n;
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>             <strong class="jxr_keyword">while</strong> ((n = input.read(buffer)) != -1) {
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>                 md5Local.update(buffer, 0, n);
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>             }
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>             byte[] digest = md5Local.digest();
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>             BigInteger bi = <strong class="jxr_keyword">new</strong> BigInteger(1, digest);
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>             md5 = String.format(<span class="jxr_string">"%0"</span> + (digest.length &lt;&lt; 1) + <span class="jxr_string">"X"</span>, bi);
+<a class="jxr_linenumber" name="L330" href="#L330">330</a>         } <strong class="jxr_keyword">catch</strong> (NoSuchAlgorithmException e) {
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>             getLog().warn(<span class="jxr_string">"Unable to save zip checksum - "</span>+e.getMessage());
+<a class="jxr_linenumber" name="L332" href="#L332">332</a>         } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>             getLog().warn(<span class="jxr_string">"Unable to save zip checksum - "</span>+e.getMessage());
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>         } <strong class="jxr_keyword">finally</strong> {
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>             <strong class="jxr_keyword">if</strong> (input != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>                 <strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>                     input.close();
+<a class="jxr_linenumber" name="L338" href="#L338">338</a>                 } <strong class="jxr_keyword">catch</strong> (IOException e) {
+<a class="jxr_linenumber" name="L339" href="#L339">339</a>                 }
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>             }
+<a class="jxr_linenumber" name="L341" href="#L341">341</a>         }
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>         
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>         <strong class="jxr_keyword">return</strong> md5;
+<a class="jxr_linenumber" name="L344" href="#L344">344</a>     }
+<a class="jxr_linenumber" name="L345" href="#L345">345</a> 
+<a class="jxr_linenumber" name="L346" href="#L346">346</a> }
 </pre>
 <hr/>
 <div id="footer">Copyright &#169; 2018&#x2013;2019 <a href="http://www.tibco.com">TIBCO Software Inc.</a>. All rights reserved.</div>
