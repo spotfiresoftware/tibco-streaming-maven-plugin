@@ -72,6 +72,9 @@
         <sb.version>${project.version}</sb.version>
 
         <archetype.test.ignoreEOLStyle>true</archetype.test.ignoreEOLStyle>
+
+        <!-- by default skip gpg signing.  Enabled in jenkins only -->
+        <gpg.skip>true</gpg.skip>
     </properties>
 
     <!-- use mvn site -Puml to re-generate svg from source ( then commit ) -->
@@ -633,6 +636,27 @@
                      <path>${project.version}/${project.artifactId}</path>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>                      
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
 
         <pluginManagement>
@@ -777,6 +801,12 @@
                     <version>3.1.12.1</version>
                 </plugin>
 
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>1.6</version>
+                </plugin>
+
             </plugins>
 
         </pluginManagement>
@@ -856,5 +886,16 @@
 
         </plugins>
     </reporting>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
 </project>
