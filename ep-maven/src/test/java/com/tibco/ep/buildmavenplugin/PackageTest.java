@@ -341,7 +341,8 @@ public class PackageTest extends BetterAbstractMojoTestCase  {
         // there is no output to check for this target
         assertTrue(new File("target/projects/application/target/application-"+pomVersion+"-ep-application.zip").exists());
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "com.tibco.ep.testmavenplugin-java-"+pomVersion+"-ep-java-fragment.zip"));
-        assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "com.tibco.ep.testmavenplugin-eventflow-"+pomVersion+"-ep-eventflow-fragment.zip"));
+        // tcs dep already includes the fragment so we shouldn't see it again
+        assertFalse(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "com.tibco.ep.testmavenplugin-eventflow-"+pomVersion+"-ep-eventflow-fragment.zip"));
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "com.tibco.ep.testmavenplugin-liveview-"+pomVersion+"-ep-liveview-fragment.zip"));
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "com.tibco.ep.testmavenplugin-tcs-"+pomVersion+"-ep-tcs-fragment.zip"));
         assertTrue(zipContains("target/projects/application/target/application-"+pomVersion+"-ep-application.zip", "org.slf4j-slf4j-api-1.7.26.jar"));

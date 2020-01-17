@@ -31,6 +31,7 @@ package com.tibco.ep.buildmavenplugin;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -50,12 +51,16 @@ import java.nio.file.Path;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.jar.JarInputStream;
 import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -927,6 +932,8 @@ abstract class BaseMojo extends AbstractMojo {
         
         Set<Artifact> deps = new LinkedHashSet<Artifact>();
         
+        Map<String, String> fragmentDeps = new HashMap<>();
+        
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest( session.getProjectBuildingRequest() );
         buildingRequest.setProject( project );
         try {
@@ -962,6 +969,25 @@ abstract class BaseMojo extends AbstractMojo {
                         //
                         if (type != null && (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type.equals(LIVEVIEW_TYPE))) {
                             getLog().debug(indent+node.getArtifact()+" [adding]");
+
+                            // Read manifest so we can later see if we have duplicates
+                            //
+                            JarInputStream jarStream;
+                            try {
+                                jarStream = new JarInputStream(new FileInputStream(getArtifactPath(artifact)));
+                                Manifest mf = jarStream.getManifest();
+                                String fragemntList = mf.getMainAttributes().getValue("TIBCO-EP-Fragment-List");
+                                if (fragemntList != null && !fragemntList.isEmpty()) {
+                                    for (String fragmentDep : fragemntList.split(" ")) {
+                                        fragmentDeps.put(fragmentDep, node.getArtifact().toString());
+                                    }
+                                }
+                            } catch (FileNotFoundException e) {
+                                // no manifest, ignore
+                            } catch (IOException e) {
+                             // no manifest, ignore
+                            }
+                            
                             return false;
                         } else {
                             getLog().debug(indent+node.getArtifact()+" [adding]");
@@ -998,6 +1024,16 @@ abstract class BaseMojo extends AbstractMojo {
             throw new MojoExecutionException(e.getMessage());
         }
         
+        // sort out any duplicates
+        //
+        for (Iterator<Artifact> iterator =  deps.iterator(); iterator.hasNext();) {
+            Artifact artifact = iterator.next();
+            String destName = artifact.getGroupId()+"-"+artifact.getArtifactId()+"-"+artifact.getBaseVersion()+"-"+artifact.getType()+".zip";
+            if (fragmentDeps.containsKey(destName)) {
+                getLog().debug("Skipping "+artifact+" since it is already included by "+fragmentDeps.get(destName));
+                iterator.remove();
+            }
+        }
         return deps;
     }
 
