@@ -76,7 +76,7 @@ import org.apache.maven.plugins.assembly.model.FileSet;
  * 
  * <p>The generated filename is &lt;artifactId&gt;-&lt;version&gt;-ep-application.zip</p>
  */
-@Mojo(name = "package-application", defaultPhase = PACKAGE)
+@Mojo(name = "package-application", defaultPhase = PACKAGE, threadSafe = true)
 public class PackageApplicationMojo extends BasePackageMojo {
 
     // maven user parameters

@@ -40,7 +40,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.io.RandomAccessFile;
 import java.math.BigInteger;
+import java.nio.channels.FileChannel;
+import java.nio.channels.FileLock;
+import java.nio.channels.FileLockInterruptionException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -77,7 +81,7 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
  * is saved - this allows installation of a newer version of the zip at a
  * later time.  This can happen with SNAPSHOTS.</p>
  */
-@Mojo(name = "install-product", defaultPhase = VALIDATE)
+@Mojo(name = "install-product", defaultPhase = VALIDATE, threadSafe = true)
 public class InstallProductMojo extends BaseMojo {
 
     /**
@@ -183,134 +187,162 @@ public class InstallProductMojo extends BaseMojo {
 
             File markersFile = new File(productHome, markersDirectory+File.separator+getArtifactName(artifact)+".marker");
 
-            if (markersFile.exists()) {
-                // if we have an md5 of the installation and its not the same as the zip we are installing, 
-                // install anyway
+            if (isInstalled(markersFile, sourceFile, artifact)) {
+                continue;
+            }
+
+            Locker locker = new Locker(productHome);
+            try {
+                
+
+                File markersDir = new File(productHome, markersDirectory);
+
+                // Create markers directory of it doesn't exist
                 //
-                // this can happen with SNAPSHOT builds
-                //
-                if (markersFile.length() > 0) {
-                    BufferedReader input = null;
-                    try {
-                        input = new BufferedReader(new InputStreamReader(new FileInputStream(markersFile), StandardCharsets.UTF_8));
-                        String oldmd5 = input.readLine();
-                        if (oldmd5 == null) {
-                            getLog().warn("Unable to verify zip checksum");
-                        } else {
-                            String md5 = this.md5(sourceFile);
-                            if (!oldmd5.equals(md5)) {
-                                getLog().warn("Previous installation at "+productHome+" is old - overwriting");
-                                forceReplace = true;
-                            }
-                        }
-                    } catch (IOException e) {
-                        getLog().warn("Unable to verify zip checksum - "+e.getMessage());
-                    } finally {
-                        if (input != null) {
-                            try {
-                                input.close();
-                            } catch (IOException e) {
-                            }
-                        }
-                    }
+                if (!markersDir.exists() && !markersDir.mkdirs()) {
+                    throw new MojoExecutionException("Unable to create markers directory "+markersDir.getAbsolutePath());
                 }
                 
-                if (!forceReplace) {
-                    getLog().info(artifactAsString+" already installed by maven to "+productHome);
+                // we might have held the lock for a long time, so check again before doing the big work
+                if (isInstalled(markersFile, sourceFile, artifact)) {
+                    locker.release();
                     continue;
                 }
-            }
-            
-            if (!forceReplace && isSBProduct(artifact) && new File(productHome, sbProductValidationFile).exists()) {
-                getLog().info(artifactAsString+" already installed manually to "+productHome);
-                continue;
-            }
-            if (!forceReplace && isDTMProduct(artifact) && new File(productHome, dtmProductValidationFile).exists()) {
-                getLog().info(artifactAsString+" already installed manually to "+productHome);
-                continue;
-            }
-            if (!forceReplace && isDTMSupport(artifact) && new File(productHome, dtmSupportValidationFile).exists()) {
-                getLog().info(artifactAsString+" already installed manually to "+productHome);
-                continue;
-            }
+                
+                getLog().info("Installing "+artifactAsString+" to "+productHome);
 
-            if (!sourceFile.exists()) {
-                getLog().debug(getArtifactPath(artifact)+" not downloaded yet ... skipping unpack");
-                continue;
-            }
+                if (!productHome.exists() && !productHome.mkdirs()) {
+                    locker.release();
+                    throw new MojoExecutionException("Unable to create product directory "+productHome.getAbsolutePath());
+                }
 
-            File markersDir = new File(productHome, markersDirectory);
-
-            // Create markers directory of it doesn't exist
-            //
-            if (!markersDir.exists() && !markersDir.mkdirs()) {
-                throw new MojoExecutionException("Unable to create markers directory "+markersDir.getAbsolutePath());
-            }
-            
-            getLog().info("Installing "+artifactAsString+" to "+productHome);
-
-            if (!productHome.exists() && !productHome.mkdirs()) {
-                throw new MojoExecutionException("Unable to create product directory "+productHome.getAbsolutePath());
-            }
-
-            // delete any old files - this avoid permission issues when re-extracting
-            //
-            ZipInputStream zis = null;
-            try {
-                zis = new ZipInputStream(new FileInputStream(sourceFile));
-                ZipEntry zipEntry = zis.getNextEntry();
-                while(zipEntry != null){
-                    File oldFile = new File(productHome, zipEntry.getName());
-                    if (oldFile.exists() && oldFile.isFile()) {
-                        getLog().debug("File "+oldFile+" already exists so deleting");
-                        if (!oldFile.delete()) {
-                            getLog().warn("File "+oldFile+" failed to be deleted");
+                // delete any old files - this avoid permission issues when re-extracting
+                //
+                ZipInputStream zis = null;
+                try {
+                    zis = new ZipInputStream(new FileInputStream(sourceFile));
+                    ZipEntry zipEntry = zis.getNextEntry();
+                    while(zipEntry != null){
+                        File oldFile = new File(productHome, zipEntry.getName());
+                        if (oldFile.exists() && oldFile.isFile()) {
+                            getLog().debug("File "+oldFile+" already exists so deleting");
+                            if (!oldFile.delete()) {
+                                getLog().warn("File "+oldFile+" failed to be deleted");
+                            }
+                        }
+                        zipEntry = zis.getNextEntry();
+                    }
+                    zis.closeEntry();
+                } catch (IOException e) {
+                } finally {
+                    if (zis != null) {
+                        try {
+                            zis.close();
+                        } catch (IOException e) {
                         }
                     }
-                    zipEntry = zis.getNextEntry();
                 }
-                zis.closeEntry();
-            } catch (IOException e) {
-            } finally {
-                if (zis != null) {
-                    try {
-                        zis.close();
-                    } catch (IOException e) {
+
+                // and extract
+                //
+                ZipUnArchiver ua = new ZipUnArchiver();
+                ua.setSourceFile(sourceFile);
+                ua.setDestDirectory(productHome);
+                ua.enableLogging(new ConsoleLogger(Logger.LEVEL_INFO, "install-product"));
+                if (forceReplace) {
+                    ua.setOverwrite(true);
+                }
+                ua.extract();
+
+                // we installed this, so create a md5 of original zip
+                //
+                String md5 = this.md5(sourceFile);
+                BufferedWriter output = null;
+                try {
+                    output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(markersFile), StandardCharsets.UTF_8));
+                    output.write(md5);
+                } catch (IOException e) {
+                    getLog().warn("Unable to save zip checksum - "+e.getMessage());
+                } finally {
+                    if (output != null) {
+                        try {
+                            output.close();
+                        } catch (IOException e) {
+                        }
                     }
                 }
-            }
-            
-            // and extract
-            //
-            ZipUnArchiver ua = new ZipUnArchiver();
-            ua.setSourceFile(sourceFile);
-            ua.setDestDirectory(productHome);
-            ua.enableLogging(new ConsoleLogger(Logger.LEVEL_INFO, "install-product"));
-            if (forceReplace) {
-                ua.setOverwrite(true);
-            }
-            ua.extract();
-            
-            // we installed this, so create a md5 of original zip
-            //
-            String md5 = this.md5(sourceFile);
-            BufferedWriter output = null;
-            try {
-                output = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(markersFile), StandardCharsets.UTF_8));
-                output.write(md5);
-            } catch (IOException e) {
-                getLog().warn("Unable to save zip checksum - "+e.getMessage());
+
             } finally {
-                if (output != null) {
-                    try {
-                        output.close();
-                    } catch (IOException e) {
-                    }
-                }
+                locker.release();
             }
 
         }
     }
+    
+    // return true if already installed, false otherwise
+    //
+    private boolean isInstalled(File markersFile, File sourceFile, Artifact artifact) {
+        boolean forceReplace = false;
+        
+        if (markersFile.exists()) {
+            // if we have an md5 of the installation and its not the same as the zip we are installing, 
+            // install anyway
+            //
+            // this can happen with SNAPSHOT builds
+            //
+            if (markersFile.length() > 0) {
+                BufferedReader input = null;
+                try {
+                    input = new BufferedReader(new InputStreamReader(new FileInputStream(markersFile), StandardCharsets.UTF_8));
+                    String oldmd5 = input.readLine();
+                    if (oldmd5 == null) {
+                        getLog().warn("Unable to verify zip checksum");
+                    } else {
+                        String md5 = this.md5(sourceFile);
+                        if (!oldmd5.equals(md5)) {
+                            getLog().warn("Previous installation at "+productHome+" is old - overwriting");
+                            forceReplace = true;
+                        }
+                    }
+                } catch (IOException e) {
+                    getLog().warn("Unable to verify zip checksum - "+e.getMessage());
+                } finally {
+                    if (input != null) {
+                        try {
+                            input.close();
+                        } catch (IOException e) {
+                        }
+                    }
+                }
+            }
+
+            if (!forceReplace) {
+                getLog().info(artifact.toString()+" already installed by maven to "+productHome);
+                return true;
+            }
+        }
+
+        if (!forceReplace && isSBProduct(artifact) && new File(productHome, sbProductValidationFile).exists()) {
+            getLog().info(artifact.toString()+" already installed manually to "+productHome);
+            return true;
+        }
+        if (!forceReplace && isDTMProduct(artifact) && new File(productHome, dtmProductValidationFile).exists()) {
+            getLog().info(artifact.toString()+" already installed manually to "+productHome);
+            return true;
+        }
+        if (!forceReplace && isDTMSupport(artifact) && new File(productHome, dtmSupportValidationFile).exists()) {
+            getLog().info(artifact.toString()+" already installed manually to "+productHome);
+            return true;
+        }
+
+        if (!sourceFile.exists()) {
+            getLog().debug(getArtifactPath(artifact)+" not downloaded yet ... skipping unpack");
+            return true;
+        }
+        
+        return false;
+    }
+    
     
     private String md5(final File sourceFile) {
         

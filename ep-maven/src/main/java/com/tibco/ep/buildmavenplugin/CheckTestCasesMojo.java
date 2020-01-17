@@ -43,7 +43,7 @@ import java.util.Properties;
  * <p>If no test cases are found, <b>testCasesFound</b> property is set to true so that nodes are
  * not started or stopped.</p>
  */
-@Mojo(name = "check-testcases", defaultPhase = TEST)
+@Mojo(name = "check-testcases", defaultPhase = TEST, threadSafe = true)
 public class CheckTestCasesMojo extends BaseTestMojo {
 
     /**

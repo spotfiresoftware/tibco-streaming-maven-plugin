@@ -41,7 +41,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * <img src="uml/administer-nodes.svg" alt="pom">
  * 
  */
-@Mojo(name = "administer-nodes")
+@Mojo(name = "administer-nodes", threadSafe = true)
 public class AdministrationMojo extends BaseExecuteMojo {
 
     /**

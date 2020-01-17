@@ -52,7 +52,7 @@ import java.util.Map.Entry;
  * 
  * <img src="uml/deploy-fragment2.svg" alt="pom">
  */
-@Mojo(name = "deploy-fragment", defaultPhase = TEST)
+@Mojo(name = "deploy-fragment", defaultPhase = TEST, threadSafe = true)
 public class DeployFragmentMojo extends BaseTestMojo {
     
     /**

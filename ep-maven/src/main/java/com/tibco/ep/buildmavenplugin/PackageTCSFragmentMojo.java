@@ -55,7 +55,7 @@ import java.util.Map;
  * <p>The generated filename is &lt;artifactId&gt;-&lt;version&gt;-ep-tcs-fragment.zip</p>
  * 
  */
-@Mojo(name = "package-tcs-fragment", defaultPhase = PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME)
+@Mojo(name = "package-tcs-fragment", defaultPhase = PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true)
 public class PackageTCSFragmentMojo extends BasePackageMojo {
 
     /**

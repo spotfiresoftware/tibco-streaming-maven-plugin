@@ -49,7 +49,7 @@ import java.nio.file.attribute.BasicFileAttributes;
  * 
  * <p>Compilation includes copying the source files to the output directory</p>
  */
-@Mojo(name = "compile-liveview-fragment", defaultPhase = LifecyclePhase.COMPILE)
+@Mojo(name = "compile-liveview-fragment", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true)
 public class CompileLiveView extends BaseMojo {
     
     /**

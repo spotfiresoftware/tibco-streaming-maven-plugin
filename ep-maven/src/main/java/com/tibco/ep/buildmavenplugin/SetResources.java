@@ -42,7 +42,7 @@ import java.io.File;
  * <p>Set resources</p>
  *
  */
-@Mojo(name = "set-resources", defaultPhase = PACKAGE)
+@Mojo(name = "set-resources", defaultPhase = PACKAGE, threadSafe = true)
 public class SetResources extends BasePackageMojo {
 
     // maven user parameters

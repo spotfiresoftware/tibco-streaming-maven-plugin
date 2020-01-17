@@ -33,6 +33,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.apache.maven.surefire.Surefire;
 import org.apache.maven.surefire.report.BriefConsoleReporter;
 import org.apache.maven.surefire.report.BriefFileReporter;
@@ -134,8 +135,9 @@ public class Runner
         //
         System.setProperty("net.sourceforge.cobertura.datafile", System.getProperty(REPORTS_DIRECTORY)+File.separator+COBERTURA_DIR+File.separator+System.getProperty(NODE_NAME)+"."+COBERTURA_RESULTS);
         File reportDirectory = new File(System.getProperty(REPORTS_DIRECTORY)+File.separator+COBERTURA_DIR);
-        if (!reportDirectory.exists() && ! reportDirectory.mkdirs()) {
-            throw new TestSetFailedException("Unable to create report directory "+reportDirectory.getAbsolutePath());
+        if (!reportDirectory.exists()) {
+            // we could run this in locker but it seems safe to just ignore mkdirs if already created
+            reportDirectory.mkdirs();
         }
 
         if (args.length == 1) {

@@ -305,6 +305,7 @@ abstract class BaseMojo extends AbstractMojo {
     /** DtmBrowseServicesCommand constructor */ protected Constructor<?> dtmBrowseServicesCommandConstructor = null;
     /** DtmDestination constructor */ protected Constructor<?> dtmDestinationConstructor = null;
     /** DtmDestination username/password constructor */ protected Constructor<?> dtmDestinationConstructorUsernamePassword = null;
+    /** DtmDestination constructor */ protected Constructor<?> dtmDestinationConstructorEmpty = null;
     /** DtmDeployFragment constructor */ protected Constructor<?> dtmDeployFragmentCommandConstructor = null;
     /** DtmFreeFormCommand constructor */ protected Constructor<?> dtmFreeFormCommandConstructor = null;
 
@@ -404,6 +405,7 @@ abstract class BaseMojo extends AbstractMojo {
                 dtmInstallNodeConstructor = dtmInstallNodeCommandClass.getConstructor(dtmNodeClass);
                 dtmDestinationConstructor = dtmDestinationClass.getConstructor(String.class, dtmContextClass);
                 dtmDestinationConstructorUsernamePassword = dtmDestinationClass.getConstructor(String.class, dtmContextClass, String.class, String.class);
+                dtmDestinationConstructorEmpty = dtmDestinationClass.getConstructor(dtmContextClass);
                 dtmCommandConstructor = dtmCommandClass.getConstructor(String.class, String.class, dtmDestinationClass);
                 dtmBrowseServicesCommandConstructor = dtmBrowseServicesCommandClass.getConstructor(dtmContextClass);
                 dtmDeployFragmentCommandConstructor = dtmDeployFragmentCommandClass.getConstructor(fragmentTypeClass, String.class, dtmDestinationClass);

@@ -9,13 +9,18 @@ All notable changes to this project will be documented in this file.
 
   fragment dependencies are skipped if already included via other dependencies
 
+### Changed
+
 - [SB-48274](https://jira.tibco.com/browse/SB-48274) EP-MAVEN: unpack-fragment goal is a bit chatty.
 
   Unpacking info lines have been reduced to debug
 
-### Changed
-
 ### Fixed
+
+- [SB-48215](https://jira.tibco.com/browse/SB-48215) EP-MAVEN: Unable to create report directory
+- [SB-41668](https://jira.tibco.com/browse/SB-41668) EP-MAVEN: Warning when using ep-maven-plugin with mvn -T option
+
+  Improvements to thread safe
 
 ## [1.5.0] - Sep 19 2019
 

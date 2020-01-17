@@ -49,7 +49,7 @@ import java.nio.file.attribute.BasicFileAttributes;
  * 
  * <p>Compilation includes copying the source files to the output directory</p>
  */
-@Mojo(name = "compile-eventflow-fragment", defaultPhase = LifecyclePhase.COMPILE)
+@Mojo(name = "compile-eventflow-fragment", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true)
 public class CompileEventFlow extends BaseMojo {
 
     /**

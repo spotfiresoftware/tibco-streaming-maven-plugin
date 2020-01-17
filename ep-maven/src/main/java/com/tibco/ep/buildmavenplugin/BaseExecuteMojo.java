@@ -662,6 +662,56 @@ abstract class BaseExecuteMojo extends BaseMojo {
         }
     }
 
+    /**
+     * Remove node
+     *
+     * @param installPath Installation path
+     * @param failOnError if true, fail on error
+     *
+     * @throws MojoExecutionException node install failed
+     */
+    void removeNode(final String installPath, final boolean failOnError) throws MojoExecutionException {
+
+        Map<String, String> parameters = new HashMap<String, String>();
+
+        parameters.put("installpath", installPath);
+
+        try {
+            Object destination;
+
+            setEnvironment();
+
+            destination = dtmDestinationConstructorEmpty.newInstance(dtmContext);
+            Object start = dtmCommandConstructor.newInstance("remove", "node", destination);
+
+            Object monitor = createMonitor("remove node", installPath, failOnError, false);
+            try {
+                dtmCommand_execute.invoke(start, parameters, monitor);
+            } catch (IllegalArgumentException e) {
+                throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_execute.toString());
+            }
+
+            int rc;
+            try {
+                rc = (int)dtmCommand_waitForCompletion.invoke(start);
+            } catch (IllegalArgumentException e) {
+                throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_waitForCompletion.toString());
+            }
+
+            if (failOnError && rc != 0) {
+                throw new MojoExecutionException("remove node installpath=" + installPath + " failed: error code " + rc);
+            }
+
+        } catch (InstantiationException e) {
+            throw new MojoExecutionException(e.getMessage());
+        } catch (IllegalAccessException e) {
+            throw new MojoExecutionException(e.getMessage());
+        } catch (InvocationTargetException e) {
+            throw new MojoExecutionException(e.getCause().getMessage());
+        } catch (SecurityException e) {
+            throw new MojoExecutionException(e.getMessage());
+        }
+    }
 
     /**
      * Stop node(s)

@@ -77,7 +77,7 @@ import java.util.Map;
  * <p>The generated filename is &lt;artifactId&gt;-&lt;version&gt;-ep-liveview-fragment.zip</p>
  * 
  */
-@Mojo(name = "package-liveview-fragment", defaultPhase = PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME)
+@Mojo(name = "package-liveview-fragment", defaultPhase = PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true)
 public class PackageLiveViewFragmentMojo extends BasePackageMojo {
 
     /**

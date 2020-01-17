@@ -45,7 +45,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * cause the build to fail.  When executed in a phase other than clean, a stop 
  * failure will fail the build.</p>
  */
-@Mojo(name = "stop-nodes")
+@Mojo(name = "stop-nodes", threadSafe = true)
 public class StopNodesMojo extends BaseExecuteMojo {
 
     /**
@@ -130,6 +130,14 @@ public class StopNodesMojo extends BaseExecuteMojo {
     @Parameter
     String[] nodes = new String[] {"A"};
 
+    /**
+     * Installation path - overrides servicename, nodes are ignored
+     *
+     * @since 1.6.0
+     */
+    @Parameter
+    String installPath;
+    
     public void execute() throws MojoExecutionException {
         getLog().debug("Stop nodes");
 
@@ -184,17 +192,22 @@ public class StopNodesMojo extends BaseExecuteMojo {
             }
         }
 
-        if (skipRemove || skipStop) {
+        if (skipRemove) {
             getLog().info("Remove nodes is skipped");
             return;
         }
 
         // remove nodes
         //
-        for (int i=0; i<nodes.length; i++) {
-            String nodeName = nodes[i]+"."+clusterName;
-            if (new File(nodeDirectory, nodeName).exists()) {
-                removeNodes(nodeName, userName, password, failOnError);
+        if (installPath != null) {
+            removeNode(installPath, failOnError);
+        }
+        else {
+            for (int i=0; i<nodes.length; i++) {
+                String nodeName = nodes[i]+"."+clusterName;
+                if (new File(nodeDirectory, nodeName).exists()) {
+                    removeNodes(nodeName, userName, password, failOnError);
+                }
             }
         }
 

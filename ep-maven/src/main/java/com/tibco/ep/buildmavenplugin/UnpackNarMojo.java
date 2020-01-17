@@ -50,7 +50,7 @@ import org.apache.maven.artifact.Artifact;
  * on the java library path when running unit tests and native libraries are
  * included in the fragment.</p>
  */
-@Mojo(name = "unpack-nar", defaultPhase = COMPILE)
+@Mojo(name = "unpack-nar", defaultPhase = COMPILE, threadSafe = true)
 public class UnpackNarMojo extends BaseMojo {
     
     /**

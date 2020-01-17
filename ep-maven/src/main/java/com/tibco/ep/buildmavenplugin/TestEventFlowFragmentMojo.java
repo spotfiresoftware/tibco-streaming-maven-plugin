@@ -67,7 +67,7 @@ import java.util.Properties;
  * <li><b>com.tibco.ep.dtm.fragment.identifier</b> - fragment identifier</li>
  * </ul>
  */
-@Mojo(name = "test-eventflow-fragment", defaultPhase = TEST)
+@Mojo(name = "test-eventflow-fragment", defaultPhase = TEST, threadSafe = true)
 public class TestEventFlowFragmentMojo extends BaseTestMojo {
     
     /**

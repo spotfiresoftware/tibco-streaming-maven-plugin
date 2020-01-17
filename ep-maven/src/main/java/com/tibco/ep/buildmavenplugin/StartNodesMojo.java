@@ -55,7 +55,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * <p>Example use in pom.xml:</p>
  * <img src="uml/start-nodes.svg" alt="pom">
  */
-@Mojo(name = "start-nodes")
+@Mojo(name = "start-nodes", threadSafe = true)
 public class StartNodesMojo extends BaseExecuteMojo {
 
     /**

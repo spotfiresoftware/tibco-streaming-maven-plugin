@@ -77,7 +77,7 @@ import java.util.Map;
  * 
  * <p>The generated filename is &lt;artifactId&gt;-&lt;version&gt;-ep-java-fragment.zip</p>
  */
-@Mojo(name = "package-java-fragment", defaultPhase = PACKAGE)
+@Mojo(name = "package-java-fragment", defaultPhase = PACKAGE, threadSafe = true)
 public class PackageJavaFragmentMojo extends BasePackageMojo {
 
     // maven user parameters

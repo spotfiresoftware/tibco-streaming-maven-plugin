@@ -58,7 +58,7 @@ import org.apache.maven.artifact.Artifact;
  * Files are not overwritten.
  * </p>
  */
-@Mojo(name = "unpack-fragment", defaultPhase = COMPILE)
+@Mojo(name = "unpack-fragment", defaultPhase = COMPILE, threadSafe = true)
 public class UnpackFragmentMojo extends BaseMojo {
 
     /**

@@ -78,7 +78,7 @@ import java.util.Map;
  * 
  * <p>The generated filename is &lt;artifactId&gt;-&lt;version&gt;-ep-eventflow-fragment.zip</p>
  */
-@Mojo(name = "package-eventflow-fragment", defaultPhase = PACKAGE)
+@Mojo(name = "package-eventflow-fragment", defaultPhase = PACKAGE, threadSafe = true)
 public class PackageEventFlowFragmentMojo extends BasePackageMojo {
 
     /**
