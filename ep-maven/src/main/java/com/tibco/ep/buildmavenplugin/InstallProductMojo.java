@@ -185,6 +185,7 @@ public class InstallProductMojo extends BaseMojo {
             
             boolean forceReplace = false;
 
+            productHome.mkdirs();
             File markersFile = new File(productHome, markersDirectory+File.separator+getArtifactName(artifact)+".marker");
 
             if (isInstalled(markersFile, sourceFile, artifact)) {
