@@ -201,12 +201,15 @@ public class StopNodesMojo extends BaseExecuteMojo {
         //
         if (installPath != null) {
             removeNode(installPath, failOnError);
-        }
-        else {
+        } else {
             for (int i=0; i<nodes.length; i++) {
                 String nodeName = nodes[i]+"."+clusterName;
                 if (new File(nodeDirectory, nodeName).exists()) {
-                    removeNodes(nodeName, userName, password, failOnError);
+                    try {
+                        removeNodes(nodeName, userName, password, failOnError);
+                    } catch (MojoExecutionException e) {
+                        removeNode(new File(nodeDirectory, nodeName).getAbsolutePath(), failOnError);
+                    }
                 }
             }
         }
