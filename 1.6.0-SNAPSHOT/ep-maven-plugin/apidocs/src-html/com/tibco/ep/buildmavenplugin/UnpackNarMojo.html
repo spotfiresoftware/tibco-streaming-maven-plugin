@@ -58,7 +58,7 @@
 <span class="sourceLineNo">050</span> * on the java library path when running unit tests and native libraries are<a name="line.50"></a>
 <span class="sourceLineNo">051</span> * included in the fragment.&lt;/p&gt;<a name="line.51"></a>
 <span class="sourceLineNo">052</span> */<a name="line.52"></a>
-<span class="sourceLineNo">053</span>@Mojo(name = "unpack-nar", defaultPhase = COMPILE)<a name="line.53"></a>
+<span class="sourceLineNo">053</span>@Mojo(name = "unpack-nar", defaultPhase = COMPILE, threadSafe = true)<a name="line.53"></a>
 <span class="sourceLineNo">054</span>public class UnpackNarMojo extends BaseMojo {<a name="line.54"></a>
 <span class="sourceLineNo">055</span>    <a name="line.55"></a>
 <span class="sourceLineNo">056</span>    /**<a name="line.56"></a>
