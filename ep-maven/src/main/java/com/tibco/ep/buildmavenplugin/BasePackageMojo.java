@@ -139,7 +139,11 @@ abstract class BasePackageMojo extends BaseMojo {
             atts.put(new Attributes.Name("TIBCO-EP-Fragment-Type"), project.getPackaging());
             atts.put(new Attributes.Name("TIBCO-EP-Fragment-Identifier"), project.getGroupId()+"."+project.getArtifactId());
 
-
+            String productVersion = getProductVersion();
+            if (productVersion != null && productVersion.length() > 0) {
+                atts.put(new Attributes.Name("Product-Version"), productVersion);
+            }
+            
             if (extras != null) {
                 for (Map.Entry<String, String> entry : extras.entrySet()) {
                     atts.put(new Attributes.Name(entry.getKey()), entry.getValue());
@@ -170,6 +174,9 @@ abstract class BasePackageMojo extends BaseMojo {
             osw.write("version="+project.getVersion()+"\n");
             osw.write("groupId="+project.getGroupId()+"\n");
             osw.write("artifactId="+project.getArtifactId()+"\n");
+            if (productVersion != null && productVersion.length() > 0) {
+                osw.write("productVersion="+productVersion+"\n");
+            }
             osw.close();
             FileItem properties = new FileItem();
             properties.setSource(tempPropertiesPath);

@@ -1350,7 +1350,7 @@ abstract class BaseMojo extends AbstractMojo {
      * 
      * @return product version
      */
-    private String getProductVersion() {
+    String getProductVersion() {
         
         // FIX THIS - DJS: We should assert these are all the same
 

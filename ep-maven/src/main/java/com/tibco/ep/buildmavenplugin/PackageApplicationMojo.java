@@ -60,6 +60,7 @@ import org.apache.maven.plugins.assembly.model.FileSet;
  *              <li>Package-Version: project version and buildNumber</li>
  *              <li>Package-Vendor: project organization name (if set)</li>
  *              <li>TIBCO-EP-Application-Format-Version: 1</li>
+ *              <li>Product-Version: product version</li>
  *      </ul>
  * <li>pom.xml copied to /META-INF/maven/groupId/artifactId/pom.xml</li>
  * <li>pom.properties created in /META-INF/maven/groupId/artifactId/pom.properties</li>

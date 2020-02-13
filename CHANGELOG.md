@@ -9,6 +9,10 @@ All notable changes to this project will be documented in this file.
 
   fragment dependencies are skipped if already included via other dependencies
 
+- [SB-48476](https://jira.tibco.com/browse/SB-48476) EP-MAVEN: stamp product version into archive and fragment archive manifests
+
+  added product version to manfest and pom.properties files
+
 ### Changed
 
 - [SB-48274](https://jira.tibco.com/browse/SB-48274) EP-MAVEN: unpack-fragment goal is a bit chatty.
