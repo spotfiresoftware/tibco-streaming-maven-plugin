@@ -792,7 +792,15 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
                 buf.append(o.toString());
             }
         }
-
+        
+        // add in eventflow (if found) - needed by any dependant fragments)
+        //
+        File testEventflowDirectory = new File(project.getBuild().getDirectory(), "eventflow");
+        if (testEventflowDirectory.exists()) {
+            buf.append(File.pathSeparatorChar);
+            buf.append(testEventflowDirectory.getAbsolutePath());
+        }
+        
         // include a classpath element for this plugin (we need the Runner):
         //
         assert (project.getPluginArtifactMap() != null);

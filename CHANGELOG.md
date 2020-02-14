@@ -26,6 +26,10 @@ All notable changes to this project will be documented in this file.
 
   Improvements to thread safe
 
+- [SBGPP-83](https://jira.tibco.com/browse/SBGPP-83) TEST: StreamBaseException: Error loading resource
+
+  Added missing target/eventflow to the test classpath
+
 ## [1.5.0] - Sep 19 2019
 
 Initial github release
