@@ -37,7 +37,7 @@ import java.util.Map;
  *              <li>Package-Title: project groupId and name</li>
  *              <li>Package-Version: project version and buildNumber</li>
  *              <li>Package-Vendor: project organization name (if set)</li>
- *              <li>Product-Version: product version</li>
+ *              <li>TIBCO-EP-Build-Product-Version: product version</li>
  *      </ul>
  * <li>pom.xml copied to /META-INF/maven/groupId/artifactId/pom.xml</li>
  * <li>pom.properties created in /META-INF/maven/groupId/artifactId/pom.properties</li>

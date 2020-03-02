@@ -141,7 +141,7 @@ abstract class BasePackageMojo extends BaseMojo {
 
             String productVersion = getProductVersion();
             if (productVersion != null && productVersion.length() > 0) {
-                atts.put(new Attributes.Name("Product-Version"), productVersion);
+                atts.put(new Attributes.Name("TIBCO-EP-Build-Product-Version"), productVersion);
             }
             
             if (extras != null) {
