@@ -30,6 +30,10 @@ All notable changes to this project will be documented in this file.
 
   Added missing target/eventflow to the test classpath
 
+- [SB-48556](https://jira.tibco.com/browse/SB-48556) EP-MAVEN: confusing messages running against read-only product installation
+
+  Improve error message if product directory is not found
+
 ## [1.5.0] - Sep 19 2019
 
 Initial github release

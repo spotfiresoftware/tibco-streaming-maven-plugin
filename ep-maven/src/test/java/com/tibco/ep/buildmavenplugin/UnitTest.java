@@ -39,6 +39,7 @@ import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
@@ -93,7 +94,7 @@ public class UnitTest extends BetterAbstractMojoTestCase  {
 
         // install to a different directory
         //
-        File productHome = new File(new File(".").getAbsolutePath(), "producthome");
+        File productHome = new File(Paths.get("").toAbsolutePath().toFile(), "producthome");
         File markerFile;
         if (System.getProperty("os.name").toLowerCase().indexOf("mac") >=0) {
             markerFile = new File(new File(productHome, "dependency-maven-plugin-markers"), "com.tibco.ep.dtm-platform_osxx86_64-zip-1.6.0-SNAPSHOT.marker");

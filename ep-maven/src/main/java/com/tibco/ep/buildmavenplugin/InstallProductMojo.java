@@ -186,6 +186,12 @@ public class InstallProductMojo extends BaseMojo {
             boolean forceReplace = false;
 
             productHome.mkdirs();
+            if (!productHome.exists()) {
+                throw new MojoExecutionException("The product directory "+productHome+" does not exists or cannot be created");
+            }
+            if (! productHome.canWrite()) {
+                throw new MojoExecutionException("The product directory "+productHome+" cannot be written to for markers directory");
+            }
             File markersFile = new File(productHome, markersDirectory+File.separator+getArtifactName(artifact)+".marker");
 
             if (isInstalled(markersFile, sourceFile, artifact)) {
