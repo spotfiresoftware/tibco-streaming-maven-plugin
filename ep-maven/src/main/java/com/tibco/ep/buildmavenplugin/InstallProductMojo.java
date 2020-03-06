@@ -40,11 +40,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.RandomAccessFile;
 import java.math.BigInteger;
-import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
-import java.nio.channels.FileLockInterruptionException;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -185,6 +181,14 @@ public class InstallProductMojo extends BaseMojo {
             
             boolean forceReplace = false;
 
+            File markersFile = new File(productHome, markersDirectory+File.separator+getArtifactName(artifact)+".marker");
+
+            if (isInstalled(markersFile, sourceFile, artifact)) {
+                continue;
+            }
+            
+            // now we need check for directories existing, write access and create markers directory
+            
             productHome.mkdirs();
             if (!productHome.exists()) {
                 throw new MojoExecutionException("The product directory "+productHome+" does not exists or cannot be created");
@@ -192,11 +196,7 @@ public class InstallProductMojo extends BaseMojo {
             if (! productHome.canWrite()) {
                 throw new MojoExecutionException("The product directory "+productHome+" cannot be written to for markers directory");
             }
-            File markersFile = new File(productHome, markersDirectory+File.separator+getArtifactName(artifact)+".marker");
-
-            if (isInstalled(markersFile, sourceFile, artifact)) {
-                continue;
-            }
+            
 
             Locker locker = new Locker(productHome);
             try {
