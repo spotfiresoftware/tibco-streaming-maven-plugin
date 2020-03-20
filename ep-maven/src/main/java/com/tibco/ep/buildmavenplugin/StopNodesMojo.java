@@ -192,7 +192,7 @@ public class StopNodesMojo extends BaseExecuteMojo {
             }
         }
 
-        if (skipRemove) {
+        if (skipRemove || skipStop) {
             getLog().info("Remove nodes is skipped");
             return;
         }
