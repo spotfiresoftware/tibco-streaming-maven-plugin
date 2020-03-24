@@ -639,6 +639,13 @@ Node deployment supports both java options and node options.
     Node options may also be set on the maven command line using
     **-DnodeOptions**.
 
+Note that reading the client configuration file is disabled by default ( ie ignoreoptionsfile is set to true ) -
+this is to give stability to test runs.  However, the **nodeOptions** may be used to override this default :
+
+```
+$ mvn -DnodeOptions=ignoreoptionsfile=false ...
+```
+
 <a name="debugging"></a>
 
 ## Debugging
