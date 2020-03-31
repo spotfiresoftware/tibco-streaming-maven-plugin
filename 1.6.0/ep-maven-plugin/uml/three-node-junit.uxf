@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.1.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>30</x>
+      <y>250</y>
+      <w>60</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>layer=3
+bg=#D1E231
+maven
+plugin</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>90</x>
+      <y>250</y>
+      <w>60</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>layer=3
+bg=#D1E231
+admin
+API</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>270</x>
+      <y>90</y>
+      <w>140</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>layer=3
+bg=#77DD77
+*junit JVM*
+--
+junit
+application code
+test cases
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>140</x>
+      <y>260</y>
+      <w>110</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>90.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>10</x>
+      <y>210</y>
+      <w>160</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>bg=#FDFD96
+layer=1
+*Maven*
+fontsize=18
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>260</x>
+      <y>60</y>
+      <w>160</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>layer=2
+bg=#FFD1DC
+*A.helloworld node*
+--
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>260</x>
+      <y>200</y>
+      <w>160</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>layer=2
+bg=#FFD1DC
+*B.helloworld node*
+--
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>260</x>
+      <y>340</y>
+      <w>160</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>layer=2
+bg=#FFD1DC
+*C.helloworld node*
+--
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>230</x>
+      <y>20</y>
+      <w>220</w>
+      <h>470</h>
+    </coordinates>
+    <panel_attributes>bg=#FDFD96
+layer=1
+*helloworld cluster*
+fontsize=18
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>270</x>
+      <y>230</y>
+      <w>140</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>layer=3
+bg=#77DD77
+*junit JVM*
+--
+junit
+application code
+test cases
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>270</x>
+      <y>370</y>
+      <w>140</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>layer=3
+bg=#77DD77
+*junit JVM*
+--
+junit
+application code
+test cases
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
