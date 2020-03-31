@@ -49,7 +49,7 @@ import org.apache.maven.plugins.annotations.Parameter;
  * Nodes are installed one at a time but started in parallel.
  * </p>
  * <p>
- * If a node directory already exists, stop and remove nodes is called first.
+ * If a node directory already exists, stop and remove nodes is called first.
  * If the directory still exists, it is deleted.
  * </p>
  * <p>Example use in pom.xml:</p>
