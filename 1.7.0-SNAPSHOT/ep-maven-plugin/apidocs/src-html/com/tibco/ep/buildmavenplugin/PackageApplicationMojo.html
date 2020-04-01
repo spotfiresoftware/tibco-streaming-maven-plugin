@@ -1,0 +1,292 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+<title>Source code</title>
+<link rel="stylesheet" type="text/css" href="../../../../../stylesheet.css" title="Style">
+</head>
+<body>
+<div class="sourceContainer">
+<pre><span class="sourceLineNo">001</span>/*******************************************************************************<a name="line.1"></a>
+<span class="sourceLineNo">002</span> * Copyright (C) 2018 - 2019, TIBCO Software Inc.<a name="line.2"></a>
+<span class="sourceLineNo">003</span> * <a name="line.3"></a>
+<span class="sourceLineNo">004</span> * Redistribution and use in source and binary forms, with or without<a name="line.4"></a>
+<span class="sourceLineNo">005</span> * modification, are permitted provided that the following conditions are met:<a name="line.5"></a>
+<span class="sourceLineNo">006</span> * <a name="line.6"></a>
+<span class="sourceLineNo">007</span> * 1. Redistributions of source code must retain the above copyright notice,<a name="line.7"></a>
+<span class="sourceLineNo">008</span> *    this list of conditions and the following disclaimer.<a name="line.8"></a>
+<span class="sourceLineNo">009</span> * <a name="line.9"></a>
+<span class="sourceLineNo">010</span> * 2. Redistributions in binary form must reproduce the above copyright notice,<a name="line.10"></a>
+<span class="sourceLineNo">011</span> *    this list of conditions and the following disclaimer in the documentation<a name="line.11"></a>
+<span class="sourceLineNo">012</span> *    and/or other materials provided with the distribution.<a name="line.12"></a>
+<span class="sourceLineNo">013</span> * <a name="line.13"></a>
+<span class="sourceLineNo">014</span> * 3. Neither the name of the copyright holder nor the names of its contributors<a name="line.14"></a>
+<span class="sourceLineNo">015</span> *    may be used to endorse or promote products derived from this software<a name="line.15"></a>
+<span class="sourceLineNo">016</span> *    without specific prior written permission.<a name="line.16"></a>
+<span class="sourceLineNo">017</span> * <a name="line.17"></a>
+<span class="sourceLineNo">018</span> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"<a name="line.18"></a>
+<span class="sourceLineNo">019</span> * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE<a name="line.19"></a>
+<span class="sourceLineNo">020</span> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE<a name="line.20"></a>
+<span class="sourceLineNo">021</span> * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE<a name="line.21"></a>
+<span class="sourceLineNo">022</span> * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR<a name="line.22"></a>
+<span class="sourceLineNo">023</span> * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF<a name="line.23"></a>
+<span class="sourceLineNo">024</span> * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS<a name="line.24"></a>
+<span class="sourceLineNo">025</span> * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN<a name="line.25"></a>
+<span class="sourceLineNo">026</span> * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)<a name="line.26"></a>
+<span class="sourceLineNo">027</span> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE<a name="line.27"></a>
+<span class="sourceLineNo">028</span> * POSSIBILITY OF SUCH DAMAGE.<a name="line.28"></a>
+<span class="sourceLineNo">029</span> ******************************************************************************/<a name="line.29"></a>
+<span class="sourceLineNo">030</span>package com.tibco.ep.buildmavenplugin;<a name="line.30"></a>
+<span class="sourceLineNo">031</span><a name="line.31"></a>
+<span class="sourceLineNo">032</span>import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;<a name="line.32"></a>
+<span class="sourceLineNo">033</span><a name="line.33"></a>
+<span class="sourceLineNo">034</span>import java.io.File;<a name="line.34"></a>
+<span class="sourceLineNo">035</span>import java.util.ArrayList;<a name="line.35"></a>
+<span class="sourceLineNo">036</span>import java.util.HashMap;<a name="line.36"></a>
+<span class="sourceLineNo">037</span>import java.util.List;<a name="line.37"></a>
+<span class="sourceLineNo">038</span>import java.util.Map;<a name="line.38"></a>
+<span class="sourceLineNo">039</span>import java.util.Set;<a name="line.39"></a>
+<span class="sourceLineNo">040</span><a name="line.40"></a>
+<span class="sourceLineNo">041</span>import org.apache.maven.artifact.Artifact;<a name="line.41"></a>
+<span class="sourceLineNo">042</span>import org.apache.maven.plugin.MojoExecutionException;<a name="line.42"></a>
+<span class="sourceLineNo">043</span>import org.apache.maven.plugins.annotations.Mojo;<a name="line.43"></a>
+<span class="sourceLineNo">044</span>import org.apache.maven.plugins.annotations.Parameter;<a name="line.44"></a>
+<span class="sourceLineNo">045</span>import org.apache.maven.plugins.assembly.model.Assembly;<a name="line.45"></a>
+<span class="sourceLineNo">046</span>import org.apache.maven.plugins.assembly.model.FileItem;<a name="line.46"></a>
+<span class="sourceLineNo">047</span>import org.apache.maven.plugins.assembly.model.FileSet;<a name="line.47"></a>
+<span class="sourceLineNo">048</span><a name="line.48"></a>
+<span class="sourceLineNo">049</span>/**<a name="line.49"></a>
+<span class="sourceLineNo">050</span> * &lt;p&gt;Build an application zip archive.&lt;/p&gt;<a name="line.50"></a>
+<span class="sourceLineNo">051</span> *<a name="line.51"></a>
+<span class="sourceLineNo">052</span> * &lt;p&gt;The packaging rules are as follows :-&lt;/p&gt;<a name="line.52"></a>
+<span class="sourceLineNo">053</span> * &lt;ol&gt;<a name="line.53"></a>
+<span class="sourceLineNo">054</span> * &lt;li&gt;A mainifest file is created at /META-INF/MANIFEST.MF containing :-<a name="line.54"></a>
+<span class="sourceLineNo">055</span> *      &lt;ul&gt;<a name="line.55"></a>
+<span class="sourceLineNo">056</span> *              &lt;li&gt;Archiver-Version: Plexus Archiver&lt;/li&gt;<a name="line.56"></a>
+<span class="sourceLineNo">057</span> *              &lt;li&gt;Built-By: build user&lt;/li&gt;<a name="line.57"></a>
+<span class="sourceLineNo">058</span> *              &lt;li&gt;Build-Jdk: jdk version&lt;/li&gt;<a name="line.58"></a>
+<span class="sourceLineNo">059</span> *              &lt;li&gt;Package-Title: project groupId and name&lt;/li&gt;<a name="line.59"></a>
+<span class="sourceLineNo">060</span> *              &lt;li&gt;Package-Version: project version and buildNumber&lt;/li&gt;<a name="line.60"></a>
+<span class="sourceLineNo">061</span> *              &lt;li&gt;Package-Vendor: project organization name (if set)&lt;/li&gt;<a name="line.61"></a>
+<span class="sourceLineNo">062</span> *              &lt;li&gt;TIBCO-EP-Application-Format-Version: 1&lt;/li&gt;<a name="line.62"></a>
+<span class="sourceLineNo">063</span> *              &lt;li&gt;TIBCO-EP-Build-Product-Version: product version&lt;/li&gt;<a name="line.63"></a>
+<span class="sourceLineNo">064</span> *      &lt;/ul&gt;<a name="line.64"></a>
+<span class="sourceLineNo">065</span> * &lt;li&gt;pom.xml copied to /META-INF/maven/groupId/artifactId/pom.xml&lt;/li&gt;<a name="line.65"></a>
+<span class="sourceLineNo">066</span> * &lt;li&gt;pom.properties created in /META-INF/maven/groupId/artifactId/pom.properties&lt;/li&gt;<a name="line.66"></a>
+<span class="sourceLineNo">067</span> * &lt;li&gt;Discovered application definition file is copied into /META-INF/application.conf&lt;/li&gt;<a name="line.67"></a>
+<span class="sourceLineNo">068</span> * &lt;li&gt;The project's resourcedirectory/artifactId/ files are copied to /app-config/fragmentname/&lt;li&gt;<a name="line.68"></a>
+<span class="sourceLineNo">069</span> * &lt;li&gt;The project's resourcedirectory/groupId-artifact/ files are copied to /app-config/fragmentname/&lt;li&gt;<a name="line.69"></a>
+<span class="sourceLineNo">070</span> * &lt;li&gt;The project's resourcedirectory/groupId-artifact-version/ files are copied to /app-config/fragmentname/&lt;li&gt;<a name="line.70"></a>
+<span class="sourceLineNo">071</span> * &lt;li&gt;Remaining resource files are copied into /&lt;/li&gt;<a name="line.71"></a>
+<span class="sourceLineNo">072</span> * &lt;li&gt;Dependent fragments are copied into /&lt;/li&gt;<a name="line.72"></a>
+<span class="sourceLineNo">073</span> * &lt;/ol&gt;<a name="line.73"></a>
+<span class="sourceLineNo">074</span> * <a name="line.74"></a>
+<span class="sourceLineNo">075</span> * &lt;p&gt;The plexus archiver is used to create the archive via the maven assembly<a name="line.75"></a>
+<span class="sourceLineNo">076</span> * plugin.&lt;/p&gt;<a name="line.76"></a>
+<span class="sourceLineNo">077</span> * <a name="line.77"></a>
+<span class="sourceLineNo">078</span> * &lt;p&gt;The generated filename is &amp;lt;artifactId&amp;gt;-&amp;lt;version&amp;gt;-ep-application.zip&lt;/p&gt;<a name="line.78"></a>
+<span class="sourceLineNo">079</span> */<a name="line.79"></a>
+<span class="sourceLineNo">080</span>@Mojo(name = "package-application", defaultPhase = PACKAGE, threadSafe = true)<a name="line.80"></a>
+<span class="sourceLineNo">081</span>public class PackageApplicationMojo extends BasePackageMojo {<a name="line.81"></a>
+<span class="sourceLineNo">082</span><a name="line.82"></a>
+<span class="sourceLineNo">083</span>    // maven user parameters<a name="line.83"></a>
+<span class="sourceLineNo">084</span>    //<a name="line.84"></a>
+<span class="sourceLineNo">085</span><a name="line.85"></a>
+<span class="sourceLineNo">086</span>    /**<a name="line.86"></a>
+<span class="sourceLineNo">087</span>     * &lt;p&gt;Additional resources directory for HOCON configurations&lt;/p&gt;<a name="line.87"></a>
+<span class="sourceLineNo">088</span>     * <a name="line.88"></a>
+<span class="sourceLineNo">089</span>     * &lt;p&gt;This is added to the list of resource directories&lt;/p&gt;<a name="line.89"></a>
+<span class="sourceLineNo">090</span>     * <a name="line.90"></a>
+<span class="sourceLineNo">091</span>     * &lt;p&gt;Example use in pom.xml:&lt;/p&gt;<a name="line.91"></a>
+<span class="sourceLineNo">092</span>     * &lt;img src="uml/package-configurationDirectory.svg" alt="pom"&gt;<a name="line.92"></a>
+<span class="sourceLineNo">093</span>     * <a name="line.93"></a>
+<span class="sourceLineNo">094</span>     * @since 1.0.0<a name="line.94"></a>
+<span class="sourceLineNo">095</span>     */<a name="line.95"></a>
+<span class="sourceLineNo">096</span>    @Parameter( defaultValue = "${project.basedir}/src/main/configurations", required = true )<a name="line.96"></a>
+<span class="sourceLineNo">097</span>    File configurationDirectory;<a name="line.97"></a>
+<span class="sourceLineNo">098</span><a name="line.98"></a>
+<span class="sourceLineNo">099</span>    /**<a name="line.99"></a>
+<span class="sourceLineNo">100</span>     * &lt;p&gt;Additional resources directory for test HOCON configurations&lt;/p&gt;<a name="line.100"></a>
+<span class="sourceLineNo">101</span>     * <a name="line.101"></a>
+<span class="sourceLineNo">102</span>     * &lt;p&gt;This is added to the list of test resource directories&lt;/p&gt;<a name="line.102"></a>
+<span class="sourceLineNo">103</span>     * <a name="line.103"></a>
+<span class="sourceLineNo">104</span>     * &lt;p&gt;Example use in pom.xml:&lt;/p&gt;<a name="line.104"></a>
+<span class="sourceLineNo">105</span>     * &lt;img src="uml/package-testConfigurationDirectory.svg" alt="pom"&gt;<a name="line.105"></a>
+<span class="sourceLineNo">106</span>     * <a name="line.106"></a>
+<span class="sourceLineNo">107</span>     * @since 1.0.0<a name="line.107"></a>
+<span class="sourceLineNo">108</span>     */<a name="line.108"></a>
+<span class="sourceLineNo">109</span>    @Parameter( defaultValue = "${project.basedir}/src/test/configurations", required = true )<a name="line.109"></a>
+<span class="sourceLineNo">110</span>    File testConfigurationDirectory;<a name="line.110"></a>
+<span class="sourceLineNo">111</span><a name="line.111"></a>
+<span class="sourceLineNo">112</span>    public void execute() throws MojoExecutionException {<a name="line.112"></a>
+<span class="sourceLineNo">113</span>        getLog().debug( "Creating application zip" );<a name="line.113"></a>
+<span class="sourceLineNo">114</span><a name="line.114"></a>
+<span class="sourceLineNo">115</span>        prechecks();<a name="line.115"></a>
+<span class="sourceLineNo">116</span><a name="line.116"></a>
+<span class="sourceLineNo">117</span>        // updated format which is really jar<a name="line.117"></a>
+<span class="sourceLineNo">118</span>        //<a name="line.118"></a>
+<span class="sourceLineNo">119</span><a name="line.119"></a>
+<span class="sourceLineNo">120</span>        Assembly assembly = createAssembly();<a name="line.120"></a>
+<span class="sourceLineNo">121</span><a name="line.121"></a>
+<span class="sourceLineNo">122</span>        Set&lt;Artifact&gt; artifacts = getCompileProjectDependencies();<a name="line.122"></a>
+<span class="sourceLineNo">123</span><a name="line.123"></a>
+<span class="sourceLineNo">124</span>        // check we have at least on fragment<a name="line.124"></a>
+<span class="sourceLineNo">125</span>        //<a name="line.125"></a>
+<span class="sourceLineNo">126</span>        long fragmentCount = 0;<a name="line.126"></a>
+<span class="sourceLineNo">127</span>        for (Artifact a : artifacts) {<a name="line.127"></a>
+<span class="sourceLineNo">128</span>            String type = a.getType();<a name="line.128"></a>
+<span class="sourceLineNo">129</span>            if (type != null &amp;&amp; (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type.equals(LIVEVIEW_TYPE))) {<a name="line.129"></a>
+<span class="sourceLineNo">130</span>                fragmentCount++;<a name="line.130"></a>
+<span class="sourceLineNo">131</span>            }<a name="line.131"></a>
+<span class="sourceLineNo">132</span>        }<a name="line.132"></a>
+<span class="sourceLineNo">133</span>        if (fragmentCount == 0) {<a name="line.133"></a>
+<span class="sourceLineNo">134</span>            throw new MojoExecutionException("Application archive must contain at least one fragment");<a name="line.134"></a>
+<span class="sourceLineNo">135</span>        }<a name="line.135"></a>
+<span class="sourceLineNo">136</span>        <a name="line.136"></a>
+<span class="sourceLineNo">137</span>        // add runtime dependencies<a name="line.137"></a>
+<span class="sourceLineNo">138</span>        //<a name="line.138"></a>
+<span class="sourceLineNo">139</span>        // we add them one-by-one instead of using a dependencyset so we can<a name="line.139"></a>
+<span class="sourceLineNo">140</span>        // set the classpath in the manifest file<a name="line.140"></a>
+<span class="sourceLineNo">141</span>        //<a name="line.141"></a>
+<span class="sourceLineNo">142</span>        String classPath = "";<a name="line.142"></a>
+<span class="sourceLineNo">143</span>        String nativeClassPath = "";<a name="line.143"></a>
+<span class="sourceLineNo">144</span>        String fragmentList = "";<a name="line.144"></a>
+<span class="sourceLineNo">145</span><a name="line.145"></a>
+<span class="sourceLineNo">146</span>        List&lt;FileItem&gt; deps = new ArrayList&lt;FileItem&gt;();<a name="line.146"></a>
+<span class="sourceLineNo">147</span><a name="line.147"></a>
+<span class="sourceLineNo">148</span>        for (Artifact dependency : artifacts) {<a name="line.148"></a>
+<span class="sourceLineNo">149</span>            String type = dependency.getType();<a name="line.149"></a>
+<span class="sourceLineNo">150</span><a name="line.150"></a>
+<span class="sourceLineNo">151</span>            String destName = dependency.getGroupId()+"-"+dependency.getArtifactId()+"-"+dependency.getBaseVersion()+"."+dependency.getType();<a name="line.151"></a>
+<span class="sourceLineNo">152</span>            if (type != null &amp;&amp; (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type.equals(LIVEVIEW_TYPE))) {<a name="line.152"></a>
+<span class="sourceLineNo">153</span>                destName = dependency.getGroupId()+"-"+dependency.getArtifactId()+"-"+dependency.getBaseVersion()+"-"+dependency.getType()+".zip";<a name="line.153"></a>
+<span class="sourceLineNo">154</span>            }<a name="line.154"></a>
+<span class="sourceLineNo">155</span>            <a name="line.155"></a>
+<span class="sourceLineNo">156</span>            String artifactPath = getArtifactPath(dependency);<a name="line.156"></a>
+<span class="sourceLineNo">157</span>            if (! new File(artifactPath).exists()) {<a name="line.157"></a>
+<span class="sourceLineNo">158</span>                // normally maven dependency checks catch this, but m2e seems to bypass it<a name="line.158"></a>
+<span class="sourceLineNo">159</span>                //<a name="line.159"></a>
+<span class="sourceLineNo">160</span>                throw new MojoExecutionException("Artifact "+destName+" wasn't found at "+artifactPath);<a name="line.160"></a>
+<span class="sourceLineNo">161</span>            }<a name="line.161"></a>
+<span class="sourceLineNo">162</span><a name="line.162"></a>
+<span class="sourceLineNo">163</span>            FileItem dependencyFile = new FileItem();<a name="line.163"></a>
+<span class="sourceLineNo">164</span>            dependencyFile.setOutputDirectory("");<a name="line.164"></a>
+<span class="sourceLineNo">165</span>            dependencyFile.setSource(getArtifactPath(dependency));<a name="line.165"></a>
+<span class="sourceLineNo">166</span>            dependencyFile.setDestName(destName);<a name="line.166"></a>
+<span class="sourceLineNo">167</span>            deps.add(dependencyFile);<a name="line.167"></a>
+<span class="sourceLineNo">168</span><a name="line.168"></a>
+<span class="sourceLineNo">169</span>            if (dependency.getType().equals("nar")) {<a name="line.169"></a>
+<span class="sourceLineNo">170</span>                nativeClassPath += destName+" ";<a name="line.170"></a>
+<span class="sourceLineNo">171</span>            } else if (type != null &amp;&amp; (type.equals(JAVA_TYPE) || type.equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type.equals(LIVEVIEW_TYPE))) {<a name="line.171"></a>
+<span class="sourceLineNo">172</span>                fragmentList += destName+" ";<a name="line.172"></a>
+<span class="sourceLineNo">173</span>            } else {<a name="line.173"></a>
+<span class="sourceLineNo">174</span>                classPath += destName+" ";<a name="line.174"></a>
+<span class="sourceLineNo">175</span>            }<a name="line.175"></a>
+<span class="sourceLineNo">176</span>        }<a name="line.176"></a>
+<span class="sourceLineNo">177</span><a name="line.177"></a>
+<span class="sourceLineNo">178</span>        // build a manifest file and add as first file to the zip<a name="line.178"></a>
+<span class="sourceLineNo">179</span>        //<a name="line.179"></a>
+<span class="sourceLineNo">180</span>        Map&lt;String, String&gt; extras = new HashMap&lt;String, String&gt;();<a name="line.180"></a>
+<span class="sourceLineNo">181</span>        extras.put("TIBCO-EP-Fragment-Format-Version", "2");<a name="line.181"></a>
+<span class="sourceLineNo">182</span>        if (!classPath.isEmpty()) {<a name="line.182"></a>
+<span class="sourceLineNo">183</span>            extras.put("Class-Path", classPath);<a name="line.183"></a>
+<span class="sourceLineNo">184</span>        }<a name="line.184"></a>
+<span class="sourceLineNo">185</span>        if (!nativeClassPath.isEmpty()) {<a name="line.185"></a>
+<span class="sourceLineNo">186</span>            extras.put("TIBCO-EP-Native-Class-Path", nativeClassPath);<a name="line.186"></a>
+<span class="sourceLineNo">187</span>        }<a name="line.187"></a>
+<span class="sourceLineNo">188</span>        if (!fragmentList.isEmpty()) {<a name="line.188"></a>
+<span class="sourceLineNo">189</span>            extras.put("TIBCO-EP-Fragment-List", fragmentList);<a name="line.189"></a>
+<span class="sourceLineNo">190</span>        }<a name="line.190"></a>
+<span class="sourceLineNo">191</span>        File manifest = packageManifest(assembly, null, extras);<a name="line.191"></a>
+<span class="sourceLineNo">192</span><a name="line.192"></a>
+<span class="sourceLineNo">193</span>        for (FileItem dependencyFile : deps) {<a name="line.193"></a>
+<span class="sourceLineNo">194</span>            assembly.addFile(dependencyFile);<a name="line.194"></a>
+<span class="sourceLineNo">195</span>        }<a name="line.195"></a>
+<span class="sourceLineNo">196</span><a name="line.196"></a>
+<span class="sourceLineNo">197</span>        // add output directory<a name="line.197"></a>
+<span class="sourceLineNo">198</span>        //<a name="line.198"></a>
+<span class="sourceLineNo">199</span>        // this should include resources ( already copied here ) and<a name="line.199"></a>
+<span class="sourceLineNo">200</span>        // eventflow files<a name="line.200"></a>
+<span class="sourceLineNo">201</span>        //<a name="line.201"></a>
+<span class="sourceLineNo">202</span>        File outputDirectory = new File(project.getBuild().getOutputDirectory());<a name="line.202"></a>
+<span class="sourceLineNo">203</span>        if (!outputDirectory.exists() &amp;&amp; !outputDirectory.mkdirs()) {<a name="line.203"></a>
+<span class="sourceLineNo">204</span>            throw new MojoExecutionException("Output directory "+outputDirectory.getAbsolutePath()+" couldn't be created");<a name="line.204"></a>
+<span class="sourceLineNo">205</span>        }<a name="line.205"></a>
+<span class="sourceLineNo">206</span><a name="line.206"></a>
+<span class="sourceLineNo">207</span>        FileSet fileSet = new FileSet();<a name="line.207"></a>
+<span class="sourceLineNo">208</span>        fileSet.setDirectory(project.getBuild().getOutputDirectory());<a name="line.208"></a>
+<span class="sourceLineNo">209</span>        fileSet.setOutputDirectory("");<a name="line.209"></a>
+<span class="sourceLineNo">210</span>        assembly.addFileSet(fileSet);<a name="line.210"></a>
+<span class="sourceLineNo">211</span><a name="line.211"></a>
+<span class="sourceLineNo">212</span>        // write assembly<a name="line.212"></a>
+<span class="sourceLineNo">213</span>        //<a name="line.213"></a>
+<span class="sourceLineNo">214</span>        writeAssembly(assembly);<a name="line.214"></a>
+<span class="sourceLineNo">215</span>        if (!manifest.delete()) {<a name="line.215"></a>
+<span class="sourceLineNo">216</span>            getLog().debug("Unable to delete "+manifest.getAbsolutePath());<a name="line.216"></a>
+<span class="sourceLineNo">217</span>        }<a name="line.217"></a>
+<span class="sourceLineNo">218</span>    }<a name="line.218"></a>
+<span class="sourceLineNo">219</span><a name="line.219"></a>
+<span class="sourceLineNo">220</span>}<a name="line.220"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</pre>
+</div>
+</body>
+</html>
