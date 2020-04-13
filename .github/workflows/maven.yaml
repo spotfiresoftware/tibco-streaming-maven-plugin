@@ -15,9 +15,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: TIBCOSoftware/ghactions-checkout
+    - uses: TIBCOSoftware/ghactions-checkout@v2
     - name: Set up JDK 1.8
-      uses: TIBCOSoftware/ghactions-setup-java
+      uses: TIBCOSoftware/ghactions-setup-java@v1
       with:
         java-version: 1.8
     - name: Build with Maven
