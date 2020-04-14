@@ -16,11 +16,13 @@ jobs:
 
     steps:
     - uses: TIBCOSoftware/ghactions-checkout@v2
-    - name: Set up JDK 1.8
+    - name: Set up JDK
       uses: TIBCOSoftware/ghactions-setup-java@v1
       with:
-        java-version: 1.8
+        java-version: 11
+        java-package: jdk
+        architecture: x64
     - name: Maven version
       run: mvn --version
     - name: Build with Maven
-      run: mvn install
+      run: mvn -B -e install
