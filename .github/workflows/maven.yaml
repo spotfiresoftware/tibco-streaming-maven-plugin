@@ -24,9 +24,9 @@ jobs:
         architecture: x64
     - name: Maven version
       run: mvn --version
+    - name: Set env
+      run: echo "::set-env name=TIBCO_EP_HOME::${GITHUB_WORKSPACE}"
     - name: Get env
       run: env
     - name: Build with Maven
       run: mvn -B -e install
-      env:  
-        TIBCO_EP_HOME: ${GITHUB_WORKSPACE}
