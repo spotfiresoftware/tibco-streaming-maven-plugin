@@ -15,14 +15,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - env:  
+        TIBCO_EP_HOME: ${GITHUB_WORKSPACE}
     - uses: TIBCOSoftware/ghactions-checkout@v2
     - name: Set up JDK
       uses: TIBCOSoftware/ghactions-setup-java@v1
       with:
-        java-version: 11
+        java-version: 8
         java-package: jdk
         architecture: x64
     - name: Maven version
       run: mvn --version
+    - name: Get env
+      run: env
     - name: Build with Maven
       run: mvn -B -e install
