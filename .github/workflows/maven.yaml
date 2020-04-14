@@ -29,4 +29,4 @@ jobs:
     - name: Get env
       run: env
     - name: Build with Maven
-      run: mvn -B -e install
+      run: mvn -B -e -Dmaven.repo.local=${TIBCO_EP_HOME}/.repository install
