@@ -434,12 +434,6 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
             if (command.equals("browse") && target.equals("services")) {
                 Object start = dtmBrowseServicesCommandConstructor.newInstance(dtmContext);
-
-                try {
-                    destination = dtmBrowseServicesCommand_getDestination.invoke(start);
-                } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmBrowseServicesCommand_getDestination.toString());
-                }
                 
                 Object monitor = createMonitor(command+" "+target, ""+adminPort, failOnError, false);
                 try {

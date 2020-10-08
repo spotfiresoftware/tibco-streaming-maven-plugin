@@ -340,7 +340,7 @@ abstract class BaseMojo extends AbstractMojo {
 
     // Background processes
     ///
-    private static ArrayList<Process> backgroundProcesses = new ArrayList<Process>();
+    private static List<Process> backgroundProcesses = new ArrayList<Process>();
 
     /**
      * local classloader to be used to load admin jars
@@ -598,6 +598,8 @@ abstract class BaseMojo extends AbstractMojo {
      *             On error
      */
     Object createMonitor(final String command, final String target, boolean failOnError, boolean recordOutput) throws MojoExecutionException {
+
+
         Object monitor = null;
 
         try {

@@ -1,0 +1,78 @@
+/*
+ * Copyright (C) 2020, TIBCO Software Inc.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice,
+ *    this list of conditions and the following disclaimer.
+ *
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * 3. Neither the name of the copyright holder nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
+package com.tibco.ep.sb.services.management;
+
+import java.util.Map;
+
+/**
+ * The context class
+ */
+public interface IContext extends IAdminServiceAware {
+
+    /**
+     * Enables tracing
+     * @return This
+     */
+    IContext withTracingEnabled();
+
+    /**
+     * @param environment The environment
+     * @return This
+     */
+    IContext withEnvironment(Map<String, String> environment);
+
+    /**
+     * Clear the environment
+     */
+    void clearEnvironment();
+
+    /**
+     * @return A new destination builder
+     */
+    default AbstractDestinationBuilder newDestination() {
+        return getAdminService().newDestinationBuilder(this);
+    }
+
+    /**
+     * @param nodeName The node name
+     * @return A new node builder
+     */
+    default AbstractNodeBuilder newNode(String nodeName) {
+        return getAdminService().newNodeBuilder(this, nodeName);
+    }
+
+    /**
+     * @return A new browse services command builder
+     */
+    default AbstractBrowseServicesCommandBuilder newBrowseServicesCommand() {
+        return getAdminService().newBrowseServicesCommandBuilder(this);
+    }
+}

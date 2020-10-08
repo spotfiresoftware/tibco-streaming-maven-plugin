@@ -52,6 +52,7 @@
     </properties>
 
     <modules>
+        <module>ep-maven-interface</module>
         <module>stub_platform</module>
         <module>ep-maven</module>
     </modules>

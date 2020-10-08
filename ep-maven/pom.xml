@@ -259,6 +259,12 @@
     <dependencyManagement>
         <dependencies>
 
+            <dependency>
+                <groupId>com.tibco.ep</groupId>
+                <artifactId>ep-maven-interface</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- set of common dependencies to converge -->
             <dependency>
                 <groupId>org.apache.maven.shared</groupId>
@@ -469,10 +475,21 @@
                 <version>1.1.1</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>3.14.0</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.tibco.ep</groupId>
+            <artifactId>ep-maven-interface</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.apache.maven</groupId>
@@ -557,6 +574,12 @@
         <dependency>
             <groupId>javax.activation</groupId>
             <artifactId>activation</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
             <scope>test</scope>
         </dependency>
 
