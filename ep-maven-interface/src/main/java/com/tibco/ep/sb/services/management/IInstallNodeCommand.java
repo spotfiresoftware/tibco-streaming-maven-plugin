@@ -31,7 +31,7 @@
 package com.tibco.ep.sb.services.management;
 
 /**
- * The install node command class
+ * The install node command interface
  */
 public interface IInstallNodeCommand extends ICommand {
 }

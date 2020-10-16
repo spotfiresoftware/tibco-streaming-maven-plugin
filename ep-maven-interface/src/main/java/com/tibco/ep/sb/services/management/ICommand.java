@@ -33,7 +33,7 @@ package com.tibco.ep.sb.services.management;
 import java.util.Map;
 
 /**
- * The command class
+ * The command interface
  */
 public interface ICommand {
 
@@ -44,14 +44,15 @@ public interface ICommand {
 
     /**
      * Execute the command and wait for completion.
-     * @param parameters  The command parameters.
-     * @param notifier The notifier
+     *
+     * @param parameters The command parameters.
+     * @param notifier   The notifier
      * @return The result code
      */
     int executeAndWaitForCompletion(Map<String, String> parameters, INotifier notifier);
 
     /**
-     * Cancel the method
+     * Cancel the command
      */
     void cancel();
 }

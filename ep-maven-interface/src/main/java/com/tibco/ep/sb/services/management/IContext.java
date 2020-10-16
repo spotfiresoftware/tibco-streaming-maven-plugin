@@ -33,12 +33,13 @@ package com.tibco.ep.sb.services.management;
 import java.util.Map;
 
 /**
- * The context class
+ * The context interface
  */
 public interface IContext extends IAdminServiceAware {
 
     /**
      * Enables tracing
+     *
      * @return This
      */
     IContext withTracingEnabled();

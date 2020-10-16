@@ -31,7 +31,7 @@
 package com.tibco.ep.sb.services.management;
 
 /**
- * The destination class
+ * The destination interface
  */
 public interface IDestination extends IAdminServiceAware {
 

@@ -31,7 +31,7 @@
 package com.tibco.ep.sb.services.management;
 
 /**
- * The node class
+ * The node interface
  */
 public interface INode extends IDestination {
 

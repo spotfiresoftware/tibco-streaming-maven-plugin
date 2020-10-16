@@ -31,7 +31,7 @@
 package com.tibco.ep.sb.services.management;
 
 /**
- * The deploy fragment command class
+ * The deploy fragment command interface
  */
 public interface IDeployFragmentCommand extends ICommand {
 }
