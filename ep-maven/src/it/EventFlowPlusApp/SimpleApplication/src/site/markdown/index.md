@@ -1,3 +1,0 @@
-# SimpleApplication
-
-My Application
