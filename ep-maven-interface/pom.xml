@@ -34,47 +34,18 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.tibco.ep</groupId>
+    <parent>
+        <groupId>com.tibco.ep</groupId>
+        <artifactId>ep-maven</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
     <artifactId>ep-maven-interface</artifactId>
-    <version>1.7.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>Event Processing Maven Interface</name>
-    <description>Event Processing Maven Interface</description>
-
-    <url>https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</url>
-
+    <name>Event Processing Maven Plugin Interface</name>
+    <description>Event Processing Maven Plugin Interface</description>
     <inceptionYear>2020</inceptionYear>
-
-    <organization>
-        <name>TIBCO Software Inc.</name>
-        <url>http://www.tibco.com</url>
-    </organization>
-
-    <developers>
-        <developer>
-            <id>plord</id>
-            <name>Peter Lord</name>
-            <email>plord@tibco.com</email>
-            <organization>TIBCO Software Inc.</organization>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-    </developers>
-
-    <licenses>
-        <license>
-            <name>BSD 3-Clause License</name>
-            <url>https://raw.githubusercontent.com/TIBCOSoftware/tibco-streaming-maven-plugin/master/docs/LICENSE</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</connection>
-        <url>https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</url>
-    </scm>
 
     <properties>
         <maven.site.skip>false</maven.site.skip>
@@ -86,67 +57,37 @@
         <gpg.skip>true</gpg.skip>
     </properties>
 
-    <profiles>
-        <profile>
-            <id>enforcer</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>Dependencies</id>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <dependencyConvergence/>
-                                        <banDuplicatePomDependencyVersions/>
-                                    </rules>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    
-    </profiles>
-
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce-versions</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>[3.0,)</version>
-                                </requireMavenVersion>
-                                <!-- maven isn't yet converged -->
-                                <!-- <dependencyConvergence/> -->
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
+            <!-- Flatten the current POM so that we don't have to ship its parent POM -->
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <configuration>
+                    <!-- Configure the flatten mode to OSS Repository Hosting -->
+                    <flattenMode>ossrh</flattenMode>
+                    <!--
+                        Include these additional elements, to keep aligned with previous iteration
+                         of the plugin.
+                    -->
+                    <pomElements>
+                        <inceptionYear/>
+                        <organization/>
+                    </pomElements>
+                    <!--
+                        By default the flattened POM is generated next to the plugin, so locate it
+                        in target.
+                        NB: the generated file will be: target/flattened_pom/.flattened-pom.xml
+                     -->
+                    <outputDirectory>./target/flattened_pom</outputDirectory>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>attach-sources</id>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>flatten</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -186,97 +127,7 @@
                     </execution>
                 </executions>
             </plugin>
-
         </plugins>
-
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
-                    <configuration>
-                        <showDeprecation>true</showDeprecation>
-                        <showWarnings>true</showWarnings>
-                        <target>1.8</target>
-                        <source>1.8</source>
-                    </configuration>
-                </plugin>
-                
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <configuration>
-                        <archive>
-                            <manifestEntries>
-                                <Implementation-Title>${project.name}</Implementation-Title>
-                                <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
-                                <Implementation-URL>${project.organization.url}</Implementation-URL>
-                                <Implementation-Vendor-Id>${project.groupId}:${project.artifactId}</Implementation-Vendor-Id>
-                                <Implementation-Version>${project.version} ${buildNumber} ${milestone}</Implementation-Version>
-                            </manifestEntries>
-                        </archive>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.1.0</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.8.2</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>com.github.github</groupId>
-                    <artifactId>site-maven-plugin</artifactId>
-                    <version>0.12</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0-M2</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>3.0.0</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.1.1</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jxr-plugin</artifactId>
-                    <version>3.0.0</version>
-                </plugin>
-                
-                <plugin>
-                    <groupId>com.github.spotbugs</groupId>
-                    <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>3.1.12.1</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
-                </plugin>
-
-            </plugins>
-
-        </pluginManagement>
-
     </build>
 
     <reporting>
@@ -317,6 +168,7 @@
                 <configuration>
                     <linksource>true</linksource>
                     <sourcetab>4</sourcetab>
+                    <source>8</source>
                     <additionalJOptions>
                         <additionalJOption>-verbose</additionalJOption>
                         <additionalJOption>-Xdoclint:all</additionalJOption>
@@ -363,22 +215,6 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.12</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>3.14.0</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <dependency>

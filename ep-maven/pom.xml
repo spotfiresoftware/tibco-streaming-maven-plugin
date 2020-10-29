@@ -27,54 +27,26 @@
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <!-- vim: set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab : -->
 
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>com.tibco.ep</groupId>
+        <artifactId>ep-maven</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
     <groupId>com.tibco.ep</groupId>
     <artifactId>ep-maven-plugin</artifactId>
-    <version>1.7.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Event Processing Maven Plugin</name>
     <description>Event Processing Maven Plugin</description>
-
-    <url>https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</url>
-
-    <inceptionYear>2018</inceptionYear>
-
-    <organization>
-        <name>TIBCO Software Inc.</name>
-        <url>http://www.tibco.com</url>
-    </organization>
-
-    <developers>
-        <developer>
-            <id>plord</id>
-            <name>Peter Lord</name>
-            <email>plord@tibco.com</email>
-            <organization>TIBCO Software Inc.</organization>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-    </developers>
-
-    <licenses>
-        <license>
-            <name>BSD 3-Clause License</name>
-            <url>https://raw.githubusercontent.com/TIBCOSoftware/tibco-streaming-maven-plugin/master/docs/LICENSE</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</connection>
-        <url>https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</url>
-    </scm>
 
     <properties>
         <maven.site.skip>false</maven.site.skip>
@@ -88,6 +60,11 @@
 
         <!-- by default skip gpg signing.  Enabled in jenkins only -->
         <gpg.skip>true</gpg.skip>
+
+        <!-- Skipping integration tests by default -->
+        <skipIntegrationTests>true</skipIntegrationTests>
+
+        <integration.test.sb.version>11.0.0-SNAPSHOT</integration.test.sb.version>
     </properties>
 
     <!-- use mvn site -Puml to re-generate svg from source ( then commit ) -->
@@ -117,92 +94,128 @@
             </build>
         </profile>
 
-        <profile>
-            <id>coverage</id>
-            <activation>
-                <property>
-                    <name>cobertura.skip</name>
-                    <value>false</value>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>net.sourceforge.cobertura</groupId>
-                    <artifactId>cobertura</artifactId>
-                    <version>2.1.1</version>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>org.ow2.asm</groupId>
-                            <artifactId>asm</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>org.ow2.asm</groupId>
-                            <artifactId>asm-commons</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>org.ow2.asm</groupId>
-                            <artifactId>asm-tree</artifactId>
-                        </exclusion>
-                    </exclusions> 
-                </dependency>
-                <dependency>
-                    <groupId>org.ow2.asm</groupId>
-                    <artifactId>asm</artifactId>
-                    <version>6.0</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.ow2.asm</groupId>
-                    <artifactId>asm-commons</artifactId>
-                    <version>6.0</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.ow2.asm</groupId>
-                    <artifactId>asm-tree</artifactId>
-                    <version>6.0</version>
-                </dependency>
-            </dependencies>
-        </profile>
-
+        <!-- We define platform specific dependencies in profiles with complete artifactId as
+            maven-flatten-plugin cannot resolve dynamic dependencies.
+            See: http://www.mojohaus.org/flatten-maven-plugin/faq.html -->
         <profile>
             <id>linux profile</id>
             <activation>
-                <os><name>linux</name><arch>amd64</arch></os>
+                <os>
+                    <name>linux</name>
+                    <arch>amd64</arch>
+                </os>
             </activation>
             <properties>
                 <com.tibco.platform>linux</com.tibco.platform>
                 <com.tibco.arch>x86_64</com.tibco.arch>
             </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.tibco.ep.sb.rt</groupId>
+                        <artifactId>platform_linuxx86_64</artifactId>
+                        <type>zip</type>
+                        <version>${sb.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tibco.ep.dtm</groupId>
+                        <artifactId>platform_linuxx86_64</artifactId>
+                        <type>zip</type>
+                        <version>${dtm.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
         </profile>
+
         <profile>
             <id>linux aarch64 profile</id>
             <activation>
-                <os><name>linux</name><arch>aarch64</arch></os>
+                <os>
+                    <name>linux</name>
+                    <arch>aarch64</arch>
+                </os>
             </activation>
             <properties>
                 <com.tibco.platform>linux</com.tibco.platform>
                 <com.tibco.arch>aarch64</com.tibco.arch>
             </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.tibco.ep.sb.rt</groupId>
+                        <artifactId>platform_linuxaarch64</artifactId>
+                        <type>zip</type>
+                        <version>${sb.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tibco.ep.dtm</groupId>
+                        <artifactId>platform_linuxaarch64</artifactId>
+                        <type>zip</type>
+                        <version>${dtm.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
         </profile>
+
         <profile>
             <id>mac profile</id>
             <activation>
-                <os><name>mac os x</name></os>
+                <os>
+                    <name>mac os x</name>
+                </os>
             </activation>
             <properties>
                 <com.tibco.platform>osx</com.tibco.platform>
                 <com.tibco.arch>x86_64</com.tibco.arch>
             </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.tibco.ep.sb.rt</groupId>
+                        <artifactId>platform_osxx86_64</artifactId>
+                        <type>zip</type>
+                        <version>${sb.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tibco.ep.dtm</groupId>
+                        <artifactId>platform_osxx86_64</artifactId>
+                        <type>zip</type>
+                        <version>${dtm.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
         </profile>
+
         <profile>
+            <!-- FIX THIS FL: do we still need a solaris profile ? -->
             <id>solaris profile</id>
             <activation>
-                <os><name>SunOS</name></os>
+                <os>
+                    <name>SunOS</name>
+                </os>
             </activation>
             <properties>
                 <com.tibco.platform>sol</com.tibco.platform>
                 <com.tibco.arch>64</com.tibco.arch>
             </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.tibco.ep.sb.rt</groupId>
+                        <artifactId>platform_sol64</artifactId>
+                        <type>zip</type>
+                        <version>${sb.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tibco.ep.dtm</groupId>
+                        <artifactId>platform_sol64</artifactId>
+                        <type>zip</type>
+                        <version>${dtm.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
         </profile>
+
         <profile>
             <id>windows profile</id>
             <activation>
@@ -215,7 +228,24 @@
                 <com.tibco.platform>windows</com.tibco.platform>
                 <com.tibco.arch>x64</com.tibco.arch>
             </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.tibco.ep.sb.rt</groupId>
+                        <artifactId>platform_windowsx64</artifactId>
+                        <type>zip</type>
+                        <version>${sb.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tibco.ep.dtm</groupId>
+                        <artifactId>platform_windowsx64</artifactId>
+                        <type>zip</type>
+                        <version>${dtm.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
         </profile>
+
         <profile>
             <id>Enable real DTM + DB</id>
             <activation>
@@ -224,268 +254,23 @@
                 </property>
             </activation>
             <properties>
-                <dtm.version>3.0.0-SNAPSHOT</dtm.version>
-                <sb.version>10.0.0-SNAPSHOT</sb.version>
+                <dtm.version>11.0.0-SNAPSHOT</dtm.version>
+                <sb.version>11.0.0-SNAPSHOT</sb.version>
             </properties>
         </profile>
-        <profile>
-            <id>enforcer</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-enforcer-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>Dependencies</id>
-                                <goals>
-                                    <goal>enforce</goal>
-                                </goals>
-                                <configuration>
-                                    <rules>
-                                        <dependencyConvergence/>
-                                        <banDuplicatePomDependencyVersions/>
-                                    </rules>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    
     </profiles>
 
     <dependencyManagement>
         <dependencies>
-
             <dependency>
                 <groupId>com.tibco.ep</groupId>
                 <artifactId>ep-maven-interface</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <!-- set of common dependencies to converge -->
-            <dependency>
-                <groupId>org.apache.maven.shared</groupId>
-                <artifactId>maven-shared-utils</artifactId>
-                <version>3.2.1</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.6</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-provider-api</artifactId>
-                <version>3.3.3</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven.shared</groupId>
-                <artifactId>maven-artifact-transfer</artifactId>
-                <version>0.9.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-artifact</artifactId>
-                <version>3.6.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-model</artifactId>
-                <version>3.6.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-repository-metadata</artifactId>
-                <version>3.6.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-archiver</artifactId>
-                <version>4.1.0</version>
-                <exclusions>
-                    <!-- see https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-12402 -->
-                    <exclusion>
-                        <groupId>org.apache.commons</groupId>
-                        <artifactId>commons-compress</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-compress</artifactId>
-                <version>1.19</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-classworlds</artifactId>
-                <version>2.6.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-component-annotations</artifactId>
-                <version>2.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-io</artifactId>
-                <version>3.1.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-utils</artifactId>
-                <version>3.2.1</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>1.13</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.tibco.ep.sb.rt</groupId>
-                <artifactId>platform_${com.tibco.platform}${com.tibco.arch}</artifactId>
-                <type>zip</type>
-                <version>${sb.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.tibco.ep.dtm</groupId>
-                <artifactId>platform_${com.tibco.platform}${com.tibco.arch}</artifactId>
-                <type>zip</type>
-                <version>${dtm.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-plugin-api</artifactId>
-                <version>3.6.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-core</artifactId>
-                <version>3.6.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-compat</artifactId>
-                <version>3.6.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.maven.plugin-tools</groupId>
-                <artifactId>maven-plugin-annotations</artifactId>
-                <version>3.6.0</version>
-            </dependency>
-
-
-            <dependency>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.1.1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.1.1</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.apache.maven.reporting</groupId>
-                        <artifactId>maven-reporting-api</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.maven.reporting</groupId>
-                        <artifactId>maven-reporting-impl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.maven.doxia</groupId>
-                        <artifactId>doxia-site-renderer</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.12</version>
-            </dependency>
-
-            <!-- FIX THIS - need to upgrade.  See FLUENCY-8308 -->
-            <dependency>
-                <groupId>org.apache.maven.surefire</groupId>
-                <artifactId>surefire-api</artifactId>
-                <version>2.4.3</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.codehaus.plexus</groupId>
-                <artifactId>plexus-interpolation</artifactId>
-                <version>1.26</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.apache.maven.plugin-testing</groupId>
-                <artifactId>maven-plugin-testing-harness</artifactId>
-                <version>3.3.0</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>1.7.26</version>
-            </dependency>
-
-            <dependency>
-                <groupId>net.sourceforge.cobertura</groupId>
-                <artifactId>cobertura</artifactId>
-                <version>2.1.1</version>
-                <!-- tool not part of JDK 10+ -->
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.sun</groupId>
-                        <artifactId>tools</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- required for JDK 10+ -->
-            <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>2.3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-impl</artifactId>
-                <version>2.3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-runtime</artifactId>
-                <version>2.3.1</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.activation</groupId>
-                <artifactId>activation</artifactId>
-                <version>1.1.1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.assertj</groupId>
-                <artifactId>assertj-core</artifactId>
-                <version>3.14.0</version>
-            </dependency>
-
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
-
         <dependency>
             <groupId>com.tibco.ep</groupId>
             <artifactId>ep-maven-interface</artifactId>
@@ -587,90 +372,36 @@
 
     <build>
 
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-
-        <testResources>
-            <testResource>
-                <targetPath>${project.build.directory}/projects</targetPath>
-                <directory>src/test/projects</directory>
-                <filtering>true</filtering>
-            </testResource>
-        </testResources>
-
         <plugins>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>enforce-versions</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <requireMavenVersion>
-                                    <version>[3.0,)</version>
-                                </requireMavenVersion>
-                                <!-- maven isn't yet converged -->
-                                <!-- <dependencyConvergence/> -->
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
+            <!-- Flatten the current POM so that we don't have to ship its parent POM -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
-                <artifactId>buildnumber-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>create</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <artifactId>flatten-maven-plugin</artifactId>
                 <configuration>
-                    <doCheck>false</doCheck>
-                    <doUpdate>false</doUpdate>
+                    <!-- Configure the flatten mode to OSS Repository Hosting -->
+                    <flattenMode>ossrh</flattenMode>
+                    <!--
+                        Include these additional elements, to keep aligned with previous iteration
+                         of the plugin.
+                    -->
+                    <pomElements>
+                        <inceptionYear/>
+                        <organization/>
+                    </pomElements>
+                    <!--
+                        By default the flattened POM is generated next to the plugin, so locate it
+                        in target.
+                        NB: the generated file will be: target/flattened_pom/.flattened-pom.xml
+                     -->
+                    <outputDirectory>./target/flattened_pom</outputDirectory>
                 </configuration>
-
-                <!-- fake dependencies - we need these downloaded before the plugin tests -->
-                <dependencies>
-                    <dependency>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                        <version>1.7.26</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>junit</groupId>
-                        <artifactId>junit</artifactId>
-                        <version>4.12</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.apache.commons</groupId>
-                        <artifactId>commons-lang3</artifactId>
-                        <version>3.9</version>
-                    </dependency>
-                </dependencies>
-
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>attach-sources</id>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
                         <goals>
-                            <goal>jar</goal>
+                            <goal>flatten</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -684,9 +415,9 @@
                 <configuration>
                     <server>github</server>
                     <message>Updated site documentation from jenkins</message>
-                     <merge>true</merge>
-                     <skip>false</skip>
-                     <path>${project.version}/${project.artifactId}</path>
+                    <merge>true</merge>
+                    <skip>false</skip>
+                    <path>${project.version}/${project.artifactId}</path>
                 </configuration>
             </plugin>
 
@@ -711,235 +442,58 @@
                 </executions>
             </plugin>
 
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-clean-plugin</artifactId>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src/test/projects/application/target</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/test/projects/lifecycle/target</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/test/projects/liveview/target</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/test/projects/eventflow/target</directory>
+                        </fileset>
+                        <fileset>
+                            <directory>src/test/projects/java/target</directory>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
+
+            <!-- Execute Integration tests. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-invoker-plugin</artifactId>
+                <configuration>
+                    <!-- Add <debug>true</debug> to get additional debugging info. -->
+                    <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                    <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                    <pomIncludes>
+                        <pomInclude>*/pom.xml</pomInclude>
+                    </pomIncludes>
+                    <postBuildHookScript>verify</postBuildHookScript>
+                    <settingsFile>src/it/settings.xml</settingsFile>
+                    <skipInvocation>${skipIntegrationTests}</skipInvocation>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>integration-test</id>
+                        <goals>
+                            <goal>install</goal>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
         </plugins>
-
-        <pluginManagement>
-            <plugins>
-
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>buildnumber-maven-plugin</artifactId>
-                    <version>1.4</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.8.1</version>
-                    <configuration>
-                        <showDeprecation>true</showDeprecation>
-                        <showWarnings>true</showWarnings>
-                        <target>1.8</target>
-                        <source>1.8</source>
-                    </configuration>
-                </plugin>
-                
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <configuration>
-                        <archive>
-                            <manifestEntries>
-                                <Implementation-Title>${project.name}</Implementation-Title>
-                                <Implementation-Vendor>${project.organization.name}</Implementation-Vendor>
-                                <Implementation-URL>${project.organization.url}</Implementation-URL>
-                                <Implementation-Vendor-Id>${project.groupId}:${project.artifactId}</Implementation-Vendor-Id>
-                                <Implementation-Version>${project.version} ${buildNumber} ${milestone}</Implementation-Version>
-                            </manifestEntries>
-                        </archive>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-plugin-plugin</artifactId>
-                    <version>3.6.0</version>
-                    <executions>
-                        <execution>
-                            <id>default-descriptor</id>
-                            <phase>process-classes</phase>
-                        </execution>
-                        <execution>
-                            <id>generated-helpmojo</id>
-                            <goals>
-                                <goal>helpmojo</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-
-                <!-- configure both and xml reports for jenkins / sonar -->
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>cobertura-maven-plugin</artifactId>
-                    <configuration>
-                        <formats>
-                            <format>xml</format>
-                            <format>html</format>
-                        </formats>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.1.0</version>
-                    <configuration>
-                        <filesets>
-                            <fileset><directory>src/test/projects/application/target</directory></fileset>
-                            <fileset><directory>src/test/projects/lifecycle/target</directory></fileset>
-                            <fileset><directory>src/test/projects/liveview/target</directory></fileset>
-                            <fileset><directory>src/test/projects/eventflow/target</directory></fileset>
-                            <fileset><directory>src/test/projects/java/target</directory></fileset>
-                        </filesets>
-                    </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-source-plugin</artifactId>
-                    <version>3.1.0</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-site-plugin</artifactId>
-                    <version>3.8.2</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>com.github.github</groupId>
-                    <artifactId>site-maven-plugin</artifactId>
-                    <version>0.12</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0-M2</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>3.0.0</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.1.1</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jxr-plugin</artifactId>
-                    <version>3.0.0</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>com.kryshchuk.maven.plugins</groupId>
-                    <artifactId>umlet-maven-plugin</artifactId>
-                    <version>1.2</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.1.0</version>
-                </plugin>
-                
-                <plugin>
-                    <groupId>com.github.spotbugs</groupId>
-                    <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>3.1.12.1</version>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-gpg-plugin</artifactId>
-                    <version>1.6</version>
-                </plugin>
-
-            </plugins>
-
-        </pluginManagement>
-
     </build>
-
-    <reporting>
-        <plugins>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-project-info-reports-plugin</artifactId>
-                <configuration>
-                    <dependencyDetailsEnabled>true</dependencyDetailsEnabled>
-                    <dependencyLocationsEnabled>true</dependencyLocationsEnabled>
-                    <linkOnly>true</linkOnly>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>summary</report>
-                            <report>ci-management</report>
-                            <report>scm</report>
-                            <report>issue-management</report>
-                            <report>dependencies</report>
-                            <report>dependency-convergence</report>
-                            <report>plugins</report>
-                            <report>licenses</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-plugin-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <linksource>true</linksource>
-                    <sourcetab>4</sourcetab>
-                    <additionalJOptions>
-                        <additionalJOption>-verbose</additionalJOption>
-                        <additionalJOption>-Xdoclint:all</additionalJOption>
-                    </additionalJOptions>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jxr-plugin</artifactId>
-            </plugin>
-
-            <plugin>
-                <groupId>org.owasp</groupId>
-                <artifactId>dependency-check-maven</artifactId>
-                <version>5.2.4</version>
-                <configuration>
-                    <failBuildOnCVSS>8</failBuildOnCVSS>
-                </configuration>
-                <reportSets>
-                    <reportSet>
-                        <reports>
-                            <report>check</report>
-                        </reports>
-                    </reportSet>
-                </reportSets>
-            </plugin>
-
-            <plugin>
-                <groupId>com.github.spotbugs</groupId>
-                <artifactId>spotbugs-maven-plugin</artifactId>
-            </plugin>
-
-        </plugins>
-    </reporting>
 
     <distributionManagement>
         <snapshotRepository>

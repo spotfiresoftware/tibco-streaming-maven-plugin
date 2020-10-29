@@ -30,6 +30,7 @@
 
 package com.tibco.ep.sb.services.stubs.admin;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -55,7 +56,7 @@ public abstract class Stub {
 
         if (parameters.length > 0) {
             logmsg += Stream.of(parameters)
-                .map(o -> o == null ? "[null]" : o.toString())
+                .map(Objects::toString)
                 .collect(Collectors.joining(", "));
         }
 

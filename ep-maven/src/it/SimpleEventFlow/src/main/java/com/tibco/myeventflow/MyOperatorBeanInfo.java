@@ -27,45 +27,25 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+package com.tibco.myeventflow;
 
-package com.tibco.ep.sb.services;
-
-import com.tibco.ep.sb.services.management.IAdminService;
-
-import java.util.ServiceLoader;
+import com.streambase.sb.operator.parameter.*;
 
 /**
- * The main service interface
- */
-public interface IRuntimeService {
+* A BeanInfo class controls what properties are exposed, add 
+* metadata about properties (such as which properties are optional), and access 
+* special types of properties that can't be automatically derived via reflection. 
+* If a BeanInfo class is present, only the properties explicitly declared in
+* this class will be exposed by StreamBase.
+*/
+public class MyOperatorBeanInfo extends SBSimpleBeanInfo {
 
-    /**
-     * Get a non-stubbed service implementation if possible, otherwise return the stub one.
-     *
-     * @param classLoader The class loader to use to load services
-     * @return A runtime service implementation
-     */
-    static IRuntimeService getServiceImplementation(ClassLoader classLoader) {
+	/*
+	* The order of properties below determines the order they are displayed within
+	* the StreamBase Studio property view. 
+	*/
+	public SBPropertyDescriptor[] getPropertyDescriptorsChecked() {
+		return new SBPropertyDescriptor[] {};
+	}
 
-        //  Get a non stubbed service implementation, if possible.
-        //
-        IRuntimeService service = null;
-
-        for (IRuntimeService s : ServiceLoader.load(IRuntimeService.class, classLoader)) {
-
-            if (service != null) {
-                throw new IllegalStateException("Cannot have multiple " + IRuntimeService.class  + " service implementations.");
-            }
-
-            service = s;
-        }
-
-        assert service != null;
-        return service;
-    }
-
-    /**
-     * @return The admin service
-     */
-    IAdminService getAdminService();
 }

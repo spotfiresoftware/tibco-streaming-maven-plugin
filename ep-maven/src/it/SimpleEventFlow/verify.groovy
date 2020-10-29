@@ -28,44 +28,36 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.tibco.ep.sb.services;
+checkSequence(new File(basedir, "build.log"),
+        "[INFO] [A.SimpleEventFlow] Finished \"install node\"",
+        "[INFO] [SimpleEventFlow] Finished \"start node\"",
+        "[INFO] [A.SimpleEventFlow] Running com.tibco.perf.myeventflow.MyEventFlowTest",
+        "[INFO] [A.SimpleEventFlow] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0",
+        "BUILD SUCCESS",
+        "[INFO] [A.SimpleEventFlow] Finished \"stop node\"",
+        "[INFO] [A.SimpleEventFlow] Finished \"remove node\"",
+        "BUILD SUCCESS")
 
-import com.tibco.ep.sb.services.management.IAdminService;
+static def checkSequence(File file, String... sequence) {
 
-import java.util.ServiceLoader;
+    List<String> contents = new ArrayList<>(Arrays.asList(sequence))
+    List<String> lines = []
+    file.eachLine {lines.add(it) }
 
-/**
- * The main service interface
- */
-public interface IRuntimeService {
+    System.out.println("Scanning file: " + file)
 
-    /**
-     * Get a non-stubbed service implementation if possible, otherwise return the stub one.
-     *
-     * @param classLoader The class loader to use to load services
-     * @return A runtime service implementation
-     */
-    static IRuntimeService getServiceImplementation(ClassLoader classLoader) {
-
-        //  Get a non stubbed service implementation, if possible.
-        //
-        IRuntimeService service = null;
-
-        for (IRuntimeService s : ServiceLoader.load(IRuntimeService.class, classLoader)) {
-
-            if (service != null) {
-                throw new IllegalStateException("Cannot have multiple " + IRuntimeService.class  + " service implementations.");
-            }
-
-            service = s;
+    for (int i = 0 ; i < lines.size() ; i++) {
+        if (contents.isEmpty()) {
+            return;
         }
-
-        assert service != null;
-        return service;
+        if (lines.get(i).contains(contents.get(0))) {
+            System.out.println("Line " + i + ": " + contents.get(0))
+            contents.remove(0);
+        }
     }
 
-    /**
-     * @return The admin service
-     */
-    IAdminService getAdminService();
+    if (!contents.isEmpty()) {
+        throw new AssertionError("Could not find " + contents.get(0))
+    }
+    System.out.println("Scan OK.")
 }

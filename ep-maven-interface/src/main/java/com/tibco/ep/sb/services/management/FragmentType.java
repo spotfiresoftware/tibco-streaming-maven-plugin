@@ -41,13 +41,13 @@ public enum FragmentType {
     /**
      * EventFlow
      */
-    EVENTFLOW,
+    EVENT_FLOW,
     /**
      * LiveView
      */
-    LIVEVIEW,
+    LIVE_VIEW,
     /**
-     * TCS
+     * TIBCO Cloud Streaming
      */
-    TCS
+    CLOUD_STREAMING
 }
