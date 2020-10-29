@@ -60,7 +60,7 @@ public interface IRuntimeService {
             service = s;
         }
 
-        assert service != null;
+        assert service != null : "No service found for " + IRuntimeService.class;
         return service;
     }
 

@@ -557,6 +557,11 @@
                 <directory>src/test/projects</directory>
                 <filtering>true</filtering>
             </testResource>
+            <testResource>
+                <targetPath>${project.build.directory}/test-classes</targetPath>
+                <directory>src/test/resources</directory>
+                <filtering>true</filtering>
+            </testResource>
         </testResources>
 
         <plugins>

@@ -30,9 +30,9 @@
 
 package com.tibco.ep.sb.services.stubs;
 
-import com.tibco.ep.sb.services.stubs.admin.AdminService;
 import com.tibco.ep.sb.services.IRuntimeService;
 import com.tibco.ep.sb.services.management.IAdminService;
+import com.tibco.ep.sb.services.stubs.admin.AdminService;
 
 /**
  * The stub implementation of {@link IRuntimeService}
