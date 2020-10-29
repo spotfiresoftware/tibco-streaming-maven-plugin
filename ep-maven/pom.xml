@@ -52,19 +52,10 @@
         <maven.site.skip>false</maven.site.skip>
         <maven.site.deploy.skip>false</maven.site.deploy.skip>
 
-        <!-- defaults to this version, ie use stub.  Can override with -DuseReal -->
-        <dtm.version>${project.version}</dtm.version>
-        <sb.version>${project.version}</sb.version>
-
         <archetype.test.ignoreEOLStyle>true</archetype.test.ignoreEOLStyle>
-
-        <!-- by default skip gpg signing.  Enabled in jenkins only -->
-        <gpg.skip>true</gpg.skip>
 
         <!-- Skipping integration tests by default -->
         <skipIntegrationTests>true</skipIntegrationTests>
-
-        <integration.test.sb.version>11.0.0-SNAPSHOT</integration.test.sb.version>
     </properties>
 
     <!-- use mvn site -Puml to re-generate svg from source ( then commit ) -->
@@ -92,171 +83,6 @@
 
                 </plugins>
             </build>
-        </profile>
-
-        <!-- We define platform specific dependencies in profiles with complete artifactId as
-            maven-flatten-plugin cannot resolve dynamic dependencies.
-            See: http://www.mojohaus.org/flatten-maven-plugin/faq.html -->
-        <profile>
-            <id>linux profile</id>
-            <activation>
-                <os>
-                    <name>linux</name>
-                    <arch>amd64</arch>
-                </os>
-            </activation>
-            <properties>
-                <com.tibco.platform>linux</com.tibco.platform>
-                <com.tibco.arch>x86_64</com.tibco.arch>
-            </properties>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.tibco.ep.sb.rt</groupId>
-                        <artifactId>platform_linuxx86_64</artifactId>
-                        <type>zip</type>
-                        <version>${sb.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tibco.ep.dtm</groupId>
-                        <artifactId>platform_linuxx86_64</artifactId>
-                        <type>zip</type>
-                        <version>${dtm.version}</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-        </profile>
-
-        <profile>
-            <id>linux aarch64 profile</id>
-            <activation>
-                <os>
-                    <name>linux</name>
-                    <arch>aarch64</arch>
-                </os>
-            </activation>
-            <properties>
-                <com.tibco.platform>linux</com.tibco.platform>
-                <com.tibco.arch>aarch64</com.tibco.arch>
-            </properties>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.tibco.ep.sb.rt</groupId>
-                        <artifactId>platform_linuxaarch64</artifactId>
-                        <type>zip</type>
-                        <version>${sb.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tibco.ep.dtm</groupId>
-                        <artifactId>platform_linuxaarch64</artifactId>
-                        <type>zip</type>
-                        <version>${dtm.version}</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-        </profile>
-
-        <profile>
-            <id>mac profile</id>
-            <activation>
-                <os>
-                    <name>mac os x</name>
-                </os>
-            </activation>
-            <properties>
-                <com.tibco.platform>osx</com.tibco.platform>
-                <com.tibco.arch>x86_64</com.tibco.arch>
-            </properties>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.tibco.ep.sb.rt</groupId>
-                        <artifactId>platform_osxx86_64</artifactId>
-                        <type>zip</type>
-                        <version>${sb.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tibco.ep.dtm</groupId>
-                        <artifactId>platform_osxx86_64</artifactId>
-                        <type>zip</type>
-                        <version>${dtm.version}</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-        </profile>
-
-        <profile>
-            <!-- FIX THIS FL: do we still need a solaris profile ? -->
-            <id>solaris profile</id>
-            <activation>
-                <os>
-                    <name>SunOS</name>
-                </os>
-            </activation>
-            <properties>
-                <com.tibco.platform>sol</com.tibco.platform>
-                <com.tibco.arch>64</com.tibco.arch>
-            </properties>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.tibco.ep.sb.rt</groupId>
-                        <artifactId>platform_sol64</artifactId>
-                        <type>zip</type>
-                        <version>${sb.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tibco.ep.dtm</groupId>
-                        <artifactId>platform_sol64</artifactId>
-                        <type>zip</type>
-                        <version>${dtm.version}</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-        </profile>
-
-        <profile>
-            <id>windows profile</id>
-            <activation>
-                <property>
-                    <name>path.separator</name>
-                    <value>;</value>
-                </property>
-            </activation>
-            <properties>
-                <com.tibco.platform>windows</com.tibco.platform>
-                <com.tibco.arch>x64</com.tibco.arch>
-            </properties>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.tibco.ep.sb.rt</groupId>
-                        <artifactId>platform_windowsx64</artifactId>
-                        <type>zip</type>
-                        <version>${sb.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tibco.ep.dtm</groupId>
-                        <artifactId>platform_windowsx64</artifactId>
-                        <type>zip</type>
-                        <version>${dtm.version}</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-        </profile>
-
-        <profile>
-            <id>Enable real DTM + DB</id>
-            <activation>
-                <property>
-                    <name>useReal</name>
-                </property>
-            </activation>
-            <properties>
-                <dtm.version>11.0.0-SNAPSHOT</dtm.version>
-                <sb.version>11.0.0-SNAPSHOT</sb.version>
-            </properties>
         </profile>
     </profiles>
 
@@ -431,7 +257,9 @@
                         <goals>
                             <goal>sign</goal>
                         </goals>
-                        <!-- needed for newer gpg
+                        <!-- needed for newer gpg (2.1 vs 2.0):
+                        https://stackoverflow.com/questions/28859942/how-do-i-get-the-maven-gpg-plugin-to-use-a-passphrase-from-environment-variable
+
                         <configuration>
                             <gpgArguments>
                                 <arg>- -pinentry-mode</arg>

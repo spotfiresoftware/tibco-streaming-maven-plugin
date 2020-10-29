@@ -66,15 +66,15 @@
         <dependency>
             <groupId>com.tibco.ep.dtm</groupId>
             <artifactId>sdk</artifactId>
-            <version>${dtm.version}</version>
+            <version>${unit.test.sb.version}</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- should normally come from importing the plugin -->
+        <!-- force an import to test markers on zip platforms -->
         <dependency>
             <groupId>com.tibco.ep.dtm</groupId>
             <artifactId>platform_${com.tibco.platform}${com.tibco.arch}</artifactId>
-            <version>${dtm.version}</version>
+            <version>${unit.test.sb.version}</version>
             <type>zip</type>
             <scope>test</scope>
         </dependency>

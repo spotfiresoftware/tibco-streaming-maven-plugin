@@ -49,6 +49,16 @@
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
 
         <junit.version>4.12</junit.version>
+
+        <!-- by default skip gpg signing.  Enabled in jenkins only -->
+        <gpg.skip>true</gpg.skip>
+
+        <!--
+            The unit test version for SB/DTM is the version of this project (using stubs).
+            The integration test version is a real version.
+         -->
+        <unit.test.sb.version>${project.version}</unit.test.sb.version>
+        <integration.test.sb.version>11.0.0-SNAPSHOT</integration.test.sb.version>
     </properties>
 
     <!-- Common project properties -->
@@ -169,6 +179,167 @@
                 </dependency>
             </dependencies>
         </profile>
+
+        <!-- use mvn site -Puml to re-generate svg from source ( then commit ) -->
+        <profile>
+            <id>uml</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.kryshchuk.maven.plugins</groupId>
+                        <artifactId>umlet-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>create svg</id>
+                                <goals>
+                                    <goal>convert</goal>
+                                </goals>
+                                <configuration>
+                                    <format>svg</format>
+                                    <outputDirectory>src/site/resources/uml</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- We define platform specific dependencies in profiles with complete artifactId as
+            maven-flatten-plugin cannot resolve dynamic dependencies.
+            See: http://www.mojohaus.org/flatten-maven-plugin/faq.html -->
+        <profile>
+            <id>linux profile</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <properties>
+                <com.tibco.platform>linux</com.tibco.platform>
+                <com.tibco.arch>x86_64</com.tibco.arch>
+            </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.tibco.ep.sb.rt</groupId>
+                        <artifactId>platform_linuxx86_64</artifactId>
+                        <type>zip</type>
+                        <version>${unit.test.sb.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tibco.ep.dtm</groupId>
+                        <artifactId>platform_linuxx86_64</artifactId>
+                        <type>zip</type>
+                        <version>${unit.test.sb.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+
+        <profile>
+            <id>linux aarch64 profile</id>
+            <activation>
+                <os>
+                    <name>linux</name>
+                    <arch>aarch64</arch>
+                </os>
+            </activation>
+            <properties>
+                <com.tibco.platform>linux</com.tibco.platform>
+                <com.tibco.arch>aarch64</com.tibco.arch>
+            </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.tibco.ep.sb.rt</groupId>
+                        <artifactId>platform_linuxaarch64</artifactId>
+                        <type>zip</type>
+                        <version>${unit.test.sb.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tibco.ep.dtm</groupId>
+                        <artifactId>platform_linuxaarch64</artifactId>
+                        <type>zip</type>
+                        <version>${unit.test.sb.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+
+        <profile>
+            <id>mac profile</id>
+            <activation>
+                <os>
+                    <name>mac os x</name>
+                </os>
+            </activation>
+            <properties>
+                <com.tibco.platform>osx</com.tibco.platform>
+                <com.tibco.arch>x86_64</com.tibco.arch>
+            </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.tibco.ep.sb.rt</groupId>
+                        <artifactId>platform_osxx86_64</artifactId>
+                        <type>zip</type>
+                        <version>${unit.test.sb.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tibco.ep.dtm</groupId>
+                        <artifactId>platform_osxx86_64</artifactId>
+                        <type>zip</type>
+                        <version>${unit.test.sb.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+
+        <profile>
+            <id>windows profile</id>
+            <activation>
+                <property>
+                    <name>path.separator</name>
+                    <value>;</value>
+                </property>
+            </activation>
+            <properties>
+                <com.tibco.platform>windows</com.tibco.platform>
+                <com.tibco.arch>x64</com.tibco.arch>
+            </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.tibco.ep.sb.rt</groupId>
+                        <artifactId>platform_windowsx64</artifactId>
+                        <type>zip</type>
+                        <version>${unit.test.sb.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tibco.ep.dtm</groupId>
+                        <artifactId>platform_windowsx64</artifactId>
+                        <type>zip</type>
+                        <version>${unit.test.sb.version}</version>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+
+        <profile>
+            <id>Enable real DTM + DB</id>
+            <activation>
+                <property>
+                    <name>useReal</name>
+                </property>
+            </activation>
+            <properties>
+                <unit.test.sb.version>11.0.0-SNAPSHOT</unit.test.sb.version>
+            </properties>
+        </profile>
+
     </profiles>
 
     <dependencyManagement>
@@ -309,7 +480,7 @@
                 <version>${junit.version}</version>
             </dependency>
 
-            <!-- FIX THIS - need to upgrade.  See FLUENCY-8308 -->
+            <!-- FIX THIS - need to upgrade.  See SB-32909 -->
             <dependency>
                 <groupId>org.apache.maven.surefire</groupId>
                 <artifactId>surefire-api</artifactId>

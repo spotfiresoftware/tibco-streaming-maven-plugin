@@ -52,9 +52,6 @@
         <maven.site.deploy.skip>false</maven.site.deploy.skip>
 
         <archetype.test.ignoreEOLStyle>true</archetype.test.ignoreEOLStyle>
-
-        <!-- by default skip gpg signing.  Enabled in jenkins only -->
-        <gpg.skip>true</gpg.skip>
     </properties>
 
     <build>

@@ -27,25 +27,20 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.tibco.myeventflow;
+package com.tibco.test;
 
 import com.streambase.sb.operator.parameter.*;
 
 /**
-* A BeanInfo class controls what properties are exposed, add 
-* metadata about properties (such as which properties are optional), and access 
-* special types of properties that can't be automatically derived via reflection. 
-* If a BeanInfo class is present, only the properties explicitly declared in
-* this class will be exposed by StreamBase.
-*/
+ * Simple operator Bean Info
+ */
 public class MyOperatorBeanInfo extends SBSimpleBeanInfo {
 
-	/*
-	* The order of properties below determines the order they are displayed within
-	* the StreamBase Studio property view. 
-	*/
-	public SBPropertyDescriptor[] getPropertyDescriptorsChecked() {
-		return new SBPropertyDescriptor[] {};
-	}
+    /**
+     * No configuration parameter
+     */
+    public SBPropertyDescriptor[] getPropertyDescriptorsChecked() {
+        return new SBPropertyDescriptor[]{};
+    }
 
 }
