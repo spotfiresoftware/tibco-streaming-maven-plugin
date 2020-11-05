@@ -1,0 +1,229 @@
+<!--
+  Copyright (C) 2020, TIBCO Software Inc.
+  
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+  
+  1. Redistributions of source code must retain the above copyright notice,
+     this list of conditions and the following disclaimer.
+  
+  2. Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
+  
+  3. Neither the name of the copyright holder nor the names of its contributors
+     may be used to endorse or promote products derived from this software
+     without specific prior written permission.
+  
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- vim: set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab : -->
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.tibco.ep</groupId>
+        <artifactId>ep-maven</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>ep-maven-interface</artifactId>
+    <packaging>jar</packaging>
+
+    <name>Event Processing Maven Plugin Interface</name>
+    <description>Event Processing Maven Plugin Interface</description>
+    <inceptionYear>2020</inceptionYear>
+
+    <properties>
+        <maven.site.skip>false</maven.site.skip>
+        <maven.site.deploy.skip>false</maven.site.deploy.skip>
+
+        <archetype.test.ignoreEOLStyle>true</archetype.test.ignoreEOLStyle>
+    </properties>
+
+    <build>
+        <plugins>
+
+            <!-- Flatten the current POM so that we don't have to ship its parent POM -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <configuration>
+                    <!-- Configure the flatten mode to OSS Repository Hosting -->
+                    <flattenMode>ossrh</flattenMode>
+                    <!--
+                        Include these additional elements, to keep aligned with previous iteration
+                         of the plugin.
+                    -->
+                    <pomElements>
+                        <inceptionYear/>
+                        <organization/>
+                    </pomElements>
+                    <!--
+                        By default the flattened POM is generated next to the plugin, so locate it
+                        in target.
+                        NB: the generated file will be: target/flattened_pom/.flattened-pom.xml
+                     -->
+                    <outputDirectory>./target/flattened_pom</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--  deploy site documentation to github pages -->
+            <!--  in CI use mvn site com.github.github:site-maven-plugin:site -->
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <configuration>
+                    <server>github</server>
+                    <message>Updated site documentation from jenkins</message>
+                     <merge>true</merge>
+                     <skip>false</skip>
+                     <path>${project.version}/${project.artifactId}</path>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <!-- needed for newer gpg
+                        <configuration>
+                            <gpgArguments>
+                                <arg>- -pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration> -->
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+    <reporting>
+        <plugins>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <configuration>
+                    <dependencyDetailsEnabled>true</dependencyDetailsEnabled>
+                    <dependencyLocationsEnabled>true</dependencyLocationsEnabled>
+                    <linkOnly>true</linkOnly>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>summary</report>
+                            <report>ci-management</report>
+                            <report>scm</report>
+                            <report>issue-management</report>
+                            <report>dependencies</report>
+                            <report>dependency-convergence</report>
+                            <report>plugins</report>
+                            <report>licenses</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <linksource>true</linksource>
+                    <sourcetab>4</sourcetab>
+                    <source>8</source>
+                    <additionalJOptions>
+                        <additionalJOption>-verbose</additionalJOption>
+                        <additionalJOption>-Xdoclint:all</additionalJOption>
+                    </additionalJOptions>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jxr-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <configuration>
+                    <failBuildOnCVSS>8</failBuildOnCVSS>
+                </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>check</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+            </plugin>
+
+        </plugins>
+    </reporting>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+</project>

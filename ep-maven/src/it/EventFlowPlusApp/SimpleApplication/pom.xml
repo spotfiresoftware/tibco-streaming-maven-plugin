@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright (C) 2020, TIBCO Software Inc.
+
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+
+  1. Redistributions of source code must retain the above copyright notice,
+     this list of conditions and the following disclaimer.
+
+  2. Redistributions in binary form must reproduce the above copyright notice,
+     this list of conditions and the following disclaimer in the documentation
+     and/or other materials provided with the distribution.
+
+  3. Neither the name of the copyright holder nor the names of its contributors
+     may be used to endorse or promote products derived from this software
+     without specific prior written permission.
+
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+  POSSIBILITY OF SUCH DAMAGE.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- vim: set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab : -->
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.tibco.test</groupId>
+    <artifactId>SimpleApplication</artifactId>
+    <packaging>ep-application</packaging>
+    <version>@project.version@</version>
+    <name>SimpleApplication</name>
+    <description>Simple Application with an Event Flow</description>
+
+    <!-- common definitions for this version of Streaming -->
+    <parent>
+        <groupId>com.tibco.ep.sb.parent</groupId>
+        <artifactId>ep-application</artifactId>
+        <version>@integration.test.sb.version@</version>
+        <relativePath/>
+    </parent>
+
+    <properties>
+        <cluster.name>simple_cluster</cluster.name>
+        <integration.node.name>Node1</integration.node.name>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.tibco.ep</groupId>
+                <artifactId>ep-maven-plugin</artifactId>
+                <version>@project.version@</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <clusterName>${cluster.name}</clusterName>
+                </configuration>
+                <executions>
+
+                    <execution>
+                        <id>start-integration-node-app</id>
+                        <phase>pre-integration-test</phase>
+                        <goals><goal>start-nodes</goal></goals>
+
+                        <configuration>
+                            <nodes>
+                                <node>${integration.node.name}</node>
+                            </nodes>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>stop-integration-node-app</id>
+                        <phase>post-integration-test</phase>
+                        <goals><goal>stop-nodes</goal></goals>
+
+                        <configuration>
+                            <failOnStopError>false</failOnStopError>
+                            <nodes>
+                                <node>${integration.node.name}</node>
+                            </nodes>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>Wait for ${integration.node.name} to start</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <waitfor maxwait="20" maxwaitunit="minute"
+                                         checkevery="500"
+                                         timeoutproperty="atimeout">
+                                    <resourcecontains
+                                            resource="${project.build.directory}/test-nodes/${integration.node.name}.${cluster.name}/logs/default-engine-for-com.tibco.test.SimpleEventFlow.log"
+                                            substring=" sbd at "/>
+                                </waitfor>
+                                <fail message="Node ${integration.node.name} failed to start in time">
+                                    <condition>
+                                        <isset property="atimeout"/>
+                                    </condition>
+                                </fail>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.tibco.test</groupId>
+            <artifactId>SimpleEventFlow</artifactId>
+            <version>@project.version@</version>
+            <type>ep-eventflow-fragment</type>
+        </dependency>
+    </dependencies>
+</project>
