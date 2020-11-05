@@ -48,7 +48,7 @@
         <maven.site.skip>true</maven.site.skip>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
 
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
 
         <!-- by default skip gpg signing.  Enabled in jenkins only -->
         <gpg.skip>true</gpg.skip>
