@@ -154,12 +154,12 @@ public class RuntimeServiceTest {
         //  Deploy command.
         //
         AbstractDeployFragmentCommandBuilder deployCommandBuilder = destination
-            .newDeployFragmentCommand(FragmentType.EVENT_FLOW, "target")
+            .newDeployFragmentCommand(FragmentType.EVENTFLOW, "target")
             .withExecutionOptions(Arrays.asList("exec1", "exec2"))
             .withApplicationArguments(Arrays.asList("app1", "app2"));
         assertThat(deployCommandBuilder.getApplicationArguments()).containsExactly("app1", "app2");
         assertThat(deployCommandBuilder.getExecutionOptions()).containsExactly("exec1", "exec2");
-        assertThat(deployCommandBuilder.getFragmentType()).isEqualTo(FragmentType.EVENT_FLOW);
+        assertThat(deployCommandBuilder.getFragmentType()).isEqualTo(FragmentType.EVENTFLOW);
         IDeployFragmentCommand deployFragmentCommand = deployCommandBuilder.build();
         assertThat(deployFragmentCommand).isNotNull();
 

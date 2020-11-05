@@ -54,6 +54,10 @@
     <properties>
         <cluster.name>simple_cluster</cluster.name>
         <integration.node.name>Node1</integration.node.name>
+
+        <!-- Configure how long we will wait for application to start -->
+        <max.wait.node.startup.duration>20</max.wait.node.startup.duration>
+        <max.wait.node.startup.unit>minute</max.wait.node.startup.unit>
     </properties>
 
     <build>
@@ -108,14 +112,15 @@
                         </goals>
                         <configuration>
                             <target>
-                                <waitfor maxwait="20" maxwaitunit="minute"
+                                <waitfor maxwait="${max.wait.node.startup.duration}"
+                                         maxwaitunit="${max.wait.node.startup.unit}"
                                          checkevery="500"
                                          timeoutproperty="atimeout">
                                     <resourcecontains
                                             resource="${project.build.directory}/test-nodes/${integration.node.name}.${cluster.name}/logs/default-engine-for-com.tibco.test.SimpleEventFlow.log"
                                             substring=" sbd at "/>
                                 </waitfor>
-                                <fail message="Node ${integration.node.name} failed to start in time">
+                                <fail message="Node ${integration.node.name} failed to start in time (${max.wait.node.startup.duration} ${max.wait.node.startup.unit})">
                                     <condition>
                                         <isset property="atimeout"/>
                                     </condition>
