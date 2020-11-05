@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Copyright (C) 2018, TIBCO Software Inc.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of the copyright holder nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -65,12 +65,12 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
     /**
      * <p>List of host names for the client discovery.</p>
-     * 
+     *
      * <p>This is used on each administration client invocation.</p>
-     * 
+     *
      * <p>Example use in pom.xml:</p>
      * <img src="uml/discoveryHosts.svg" alt="pom">
-     * 
+     *
      * @since 1.0.0
      */
     @Parameter
@@ -79,13 +79,13 @@ abstract class BaseExecuteMojo extends BaseMojo {
     /**
      * <p>Port number for discovery.  If not set a random free port is selected and
      * persisted to a file</p>
-     * 
+     *
      * <p>Example use in pom.xml:</p>
      * <img src="uml/discoveryPort.svg" alt="pom">
-     * 
+     *
      * <p>Example use on commandline:</p>
      * <img src="uml/discoveryPort-commandline.svg" alt="pom">
-     * 
+     *
      * @since 1.0.0
      */
     @Parameter(property="discoveryPort")
@@ -93,10 +93,10 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
     /**
      * <p>User name.  If not set authentication is by platform credentials</p>
-     * 
+     *
      * <p>Example use in pom.xml:</p>
      * <img src="uml/userName.svg" alt="pom">
-     * 
+     *
      * @since 1.0.0
      */
     @Parameter
@@ -104,10 +104,10 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
     /**
      * <p>Password</p>
-     * 
+     *
      * <p>Example use in pom.xml:</p>
      * <img src="uml/password.svg" alt="pom">
-     * 
+     *
      * @since 1.0.0
      */
     @Parameter
@@ -115,10 +115,10 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
     /**
      * <p>Filename to be used to store generated discovery port</p>
-     * 
+     *
      * <p>Example use in pom.xml:</p>
      * <img src="uml/discoveryPortFile.svg" alt="pom">
-     * 
+     *
      * @since 1.0.0
      */
     @Parameter(defaultValue = "${project.build.directory}/discovery.port")
@@ -126,14 +126,14 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
     /**
      * <p>cluster name to append to the node names.</p>
-     * 
+     *
      * <p>Nodes are started with a service name obtained by concatenating the node names and the cluster
      * name.  For example with a node name of <b>A</b> plus a cluster name of <b>test</b>
      * results in a service name of <b>A.test</b>.</p>
-     * 
+     *
      * <p>Example use in pom.xml:</p>
      * <img src="uml/clusterName.svg" alt="pom">
-     * 
+     *
      * @since 1.0.0
      */
     @Parameter(defaultValue = "${project.artifactId}")
@@ -141,10 +141,10 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
     /**
      * <p>Directory to install test nodes.</p>
-     * 
+     *
      * <p>Example use in pom.xml:</p>
      * <img src="uml/nodeDirectory.svg" alt="pom">
-     * 
+     *
      * @since 1.0.0
      */
     @Parameter(defaultValue = "${project.build.directory}/test-nodes")
@@ -166,16 +166,16 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
     /**
      * <p>Build type - DEVELOPMENT or PRODUCTION</p>
-     * 
+     *
      * <p>Determines build type to use when installing nodes and deploying
      * applications.<p>
-     * 
+     *
      * <p>Example use in pom.xml:</p>
      * <img src="uml/buildtype.svg" alt="pom">
-     * 
+     *
      * <p>Example use on commandline:</p>
      * <img src="uml/buildtype-commandline.svg" alt="pom">
-     * 
+     *
      * @since 1.0.0
      */
     @Parameter(property="build")
@@ -184,15 +184,15 @@ abstract class BaseExecuteMojo extends BaseMojo {
     /**
      * <p>Environment variables - these environment variables are passed through to
      * created processes.</p>
-     * 
+     *
      * <p>Example use in pom.xml:</p>
      * <img src="uml/environmentVariables.svg" alt="pom">
-     * 
+     *
      * <p>Example use on commandline:</p>
      * <img src="uml/environmentVariables-commandline.svg" alt="pom">
-     * 
+     *
      * <p><b>User property is:</b> <tt>environmentVariables</tt>.</p>
-     * 
+     *
      * @since 1.0.0
      */
     @Parameter
@@ -200,7 +200,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
     /**
      * Additional parameters supported by install node, to support command-line
-     * 
+     *
      * @since 1.0.0
      */
     @Parameter( property = "environmentVariables", readonly=true )
@@ -209,14 +209,14 @@ abstract class BaseExecuteMojo extends BaseMojo {
     /**
      * For random port numbers
      */
-    private Random rand = new Random(); 
+    private Random rand = new Random();
 
     private static boolean shuttingDown = false;
-    
+
     /**
      * Find a free UDP port
      * @param saveFile Filename to save port number
-     * 
+     *
      * @return free port
      */
     int findFreeUDPPort(File saveFile) {
@@ -224,7 +224,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
         // If the save file exists, use it
         //
         if (saveFile.exists()) {
-            
+
             InputStreamReader fileReader = null;
             BufferedReader bufferedReader = null;
             try {
@@ -292,7 +292,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
             }
             catch (SocketException ex) {
                 // port not free, we'll keep trying
-            } 
+            }
         }
         getLog().warn("Free UDP port not found, will try 0");
 
@@ -301,7 +301,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
     /**
      * Run administration command by servicename
-     * 
+     *
      * @param serviceName service name
      * @param userName user name
      * @param password password
@@ -309,7 +309,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
      * @param target  administration target
      * @param parameters administration parameters
      * @param failOnError if true, fail on error
-     * 
+     *
      * @throws MojoExecutionException node install failed
      */
     void runAdministrationCommand(final String serviceName, final String userName, final String password, final String command, final String target, final Map<String,String> parameters, final boolean failOnError) throws MojoExecutionException {
@@ -334,7 +334,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
                 destination = dtmDestinationConstructor.newInstance(serviceName, dtmContext);
             }
             if (command.equals("browse") && target.equals("services")) {
-                Object start = dtmBrowseServicesCommandConstructor.newInstance(dtmContext); 
+                Object start = dtmBrowseServicesCommandConstructor.newInstance(dtmContext);
 
                 try {
                     destination = dtmBrowseServicesCommand_getDestination.invoke(start);
@@ -346,7 +346,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
                 } catch (IllegalArgumentException e) {
                     throw new MojoExecutionException("Invalid arguments to management API "+dtmDestination_setDiscoveryPort.toString());
                 }
-                
+
                 Object monitor = createMonitor(command+" "+target, serviceName, failOnError, false);
                 try {
                     dtmBrowseServicesCommand_execute.invoke(start, parameters, monitor);
@@ -365,7 +365,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
                     throw new MojoExecutionException("command: "+command+" "+target+" failed: node " + serviceName + " error code " + rc);
                 }
             } else {
-                Object start = dtmCommandConstructor.newInstance(command, target, destination); 
+                Object start = dtmCommandConstructor.newInstance(command, target, destination);
                 if (discoveryHosts != null && discoveryHosts.length > 0) {
                     for (String discoveryHost : discoveryHosts) {
                         try {
@@ -412,7 +412,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
     /**
      * Run administration command by admin port
-     * 
+     *
      * @param adminPort admin port
      * @param hostname hostname
      * @param userName user name
@@ -421,7 +421,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
      * @param target  administration target
      * @param parameters administration parameters
      * @param failOnError if true, fail on error
-     * 
+     *
      * @throws MojoExecutionException node install failed
      */
     void runAdministrationCommand(final int adminPort, final String hostname, final String userName, final String password, final String command, final String target, final Map<String,String> parameters, final boolean failOnError) throws MojoExecutionException {
@@ -434,7 +434,13 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
             if (command.equals("browse") && target.equals("services")) {
                 Object start = dtmBrowseServicesCommandConstructor.newInstance(dtmContext);
-                
+
+                try {
+                    destination = dtmBrowseServicesCommand_getDestination.invoke(start);
+                } catch (IllegalArgumentException e) {
+                    throw new MojoExecutionException("Invalid arguments to management API "+dtmBrowseServicesCommand_getDestination.toString());
+                }
+
                 Object monitor = createMonitor(command+" "+target, ""+adminPort, failOnError, false);
                 try {
                     dtmBrowseServicesCommand_execute.invoke(start, parameters, monitor);
@@ -459,7 +465,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
                 } else {
                     destination = dtmNodeConstructor.newInstance("", dtmContext);
                 }
-                
+
                 Object start = dtmCommandConstructor.newInstance(command, target, destination);
                 try {
                     dtmNode_setAdministrationPort.invoke(destination, adminPort);
@@ -507,14 +513,14 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
     /**
      * Install a single new node
-     * 
+     *
      * @param nodeDirectory node directory path
      * @param userName user name
      * @param password password
      * @param nodeName node name
      * @param parameters additional parameters
      * @return Full results of the command
-     * 
+     *
      * @throws MojoExecutionException node install failed
      */
     String installNode(final String nodeDirectory, String userName, String password, final String nodeName, Map<String, String> parameters) throws MojoExecutionException {
@@ -618,7 +624,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
                 }
             };
             Runtime.getRuntime().addShutdownHook(hook);
-            
+
             Object monitor = createMonitor("install node", nodeName, true, true);
             try {
                 dtmInstallNodeCommand_execute.invoke(install, params, monitor);
@@ -642,7 +648,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
                 }
                 Runtime.getRuntime().removeShutdownHook(hook);
             }
-            
+
             return monitor.toString();
 
         } catch (InstantiationException e) {
@@ -709,12 +715,12 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
     /**
      * Stop node(s)
-     * 
+     *
      * @param serviceName service name
      * @param userName user name
      * @param password password
      * @param failOnError if true, fail on error
-     * 
+     *
      * @throws MojoExecutionException node install failed
      */
     void stopNodes(final String serviceName, final String userName, final String password, final boolean failOnError) throws MojoExecutionException {
@@ -722,22 +728,36 @@ abstract class BaseExecuteMojo extends BaseMojo {
     }
 
     /**
-     * Remove node(s)
-     * 
+     * Terminate node(s)
+     *
      * @param serviceName service name
      * @param userName user name
      * @param password password
      * @param failOnError if true, fail on error
-     * 
+     *
+     * @throws MojoExecutionException node install failed
+     */
+    void terminateNodes(final String serviceName, final String userName, final String password, final boolean failOnError) throws MojoExecutionException {
+        runAdministrationCommand(serviceName, userName, password, "terminate", "node", null, failOnError);
+    }
+
+    /**
+     * Remove node(s)
+     *
+     * @param serviceName service name
+     * @param userName user name
+     * @param password password
+     * @param failOnError if true, fail on error
+     *
      * @throws MojoExecutionException node install failed
      */
     void removeNodes(final String serviceName, final String userName, final String password, final boolean failOnError) throws MojoExecutionException {
-        runAdministrationCommand(serviceName, userName, password, "remove", "node", null, failOnError);    
+        runAdministrationCommand(serviceName, userName, password, "remove", "node", null, failOnError);
     }
 
     /**
      * Reset the environment for this context
-     * 
+     *
      * @throws IllegalAccessException reflection error
      * @throws IllegalArgumentException reflection error
      * @throws InvocationTargetException reflection error

@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Copyright (C) 2018, TIBCO Software Inc.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of the copyright holder nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -42,41 +42,43 @@ import java.util.Properties;
 
 /**
  * <p>Test a java fragment using junit and surefire.</p>
- * 
- * <p>A java runner for surefire is created and deployed to the test nodes - 
+ *
+ * <p>A java runner for surefire is created and deployed to the test nodes -
  * this runner invokes surefire and hence junit to run the test cases.</p>
- * 
+ *
  * <p>The java runner sets the system property <b>net.sourceforge.cobertura.datafile</b>
  * to a unique file in the build directory.  So when coverage is enabled, these
  * per-node reports are merged into a single report for processing.</p>
- * 
+ *
  * <p>The java runner takes the configured reportsDirectory property and
  * appends the node name - the node specific test report files are created in
  * this directory.  When all the test have finished, these node specific test
  * reports are renamed into the configured reportsDirectory directory.</p>
- * 
+ *
  * <p>The maven property jenkins.executionId.reportsDirectory is set so that
  * jenkins can locate the test reports.</p>
- * 
+ *
  * <p>Java assertions are always enabled.  Options file is always ignored.</p>
- * 
+ *
  * <p>The following system properties are set :</p>
  * <ul>
  * <li><b>com.tibco.ep.dtm.fragment.version</b> - fragment version</li>
  * <li><b>com.tibco.ep.dtm.fragment.identifier</b> - fragment identifier</li>
  * </ul>
+ *
+ * <p>Nodes are terminated on unit test failure, unless skipStop is set.</p>
  */
 @Mojo(name = "test-java-fragment", defaultPhase = TEST, threadSafe = true)
 public class TestJavaFragmentMojo extends BaseTestMojo {
-    
+
     /**
      * <p>Additional resources directory for HOCON configurations</p>
-     * 
+     *
      * <p>This is added to the list of resource directories</p>
-     * 
+     *
      * <p>Example use in pom.xml:</p>
      * <img src="uml/package-configurationDirectory.svg" alt="pom">
-     * 
+     *
      * @since 1.0.0
      */
     @Parameter( defaultValue = "${project.basedir}/src/main/configurations", required = true )
@@ -84,17 +86,17 @@ public class TestJavaFragmentMojo extends BaseTestMojo {
 
     /**
      * <p>Additional resources directory for test HOCON configurations</p>
-     * 
+     *
      * <p>This is added to the list of test resource directories</p>
-     * 
+     *
      * <p>Example use in pom.xml:</p>
      * <img src="uml/package-testConfigurationDirectory.svg" alt="pom">
-     * 
+     *
      * @since 1.0.0
      */
     @Parameter( defaultValue = "${project.basedir}/src/test/configurations", required = true )
     File testConfigurationDirectory;
-    
+
     public void execute() throws MojoExecutionException {
         getLog().debug("Testing Java fragment");
 
@@ -115,14 +117,14 @@ public class TestJavaFragmentMojo extends BaseTestMojo {
                 }
             }
         }
-        
+
         if ((hasExecutions && mojoExecution.getExecutionId().startsWith("default-")) || skipTests || installOnly || !testCasesFound) {
             getLog().info("Tests are skipped (skipTests="+skipTests+",hasExecutions="+hasExecutions+",installOnly="+installOnly+",testCasesFound="+testCasesFound+")");
             return;
         }
-        
+
         prechecks();
-        
+
         Resource resource = new Resource();
         resource.setDirectory(configurationDirectory.getAbsolutePath());
         resource.setTargetPath("configurations");
@@ -130,10 +132,10 @@ public class TestJavaFragmentMojo extends BaseTestMojo {
         resource = new Resource();
         resource.setDirectory(testConfigurationDirectory.getAbsolutePath());
         resource.setTargetPath("test-configuration");
-        project.getBuild().addTestResource(resource);  
-        
+        project.getBuild().addTestResource(resource);
+
         initializeAdministration(true);
-        
+
         // run test cases
         //
         runJunitTests(true, null, null);
