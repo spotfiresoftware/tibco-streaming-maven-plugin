@@ -200,6 +200,27 @@
 
         <plugins>
 
+            <!-- Packaging the plugin as a single JAR simplify download/installation -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <includes>
+                                    <include>com.tibco.ep:ep-maven-interface</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <!-- Flatten the current POM so that we don't have to ship its parent POM -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
