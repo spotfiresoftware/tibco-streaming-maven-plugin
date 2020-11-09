@@ -86,20 +86,11 @@
         </profile>
     </profiles>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.tibco.ep</groupId>
-                <artifactId>ep-maven-interface</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>com.tibco.ep</groupId>
             <artifactId>ep-maven-interface</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
