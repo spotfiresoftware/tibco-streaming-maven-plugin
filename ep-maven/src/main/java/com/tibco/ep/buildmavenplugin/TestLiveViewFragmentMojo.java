@@ -169,11 +169,14 @@ public class TestLiveViewFragmentMojo extends BaseTestMojo {
         resource.setTargetPath("test-configuration");
         project.getBuild().addTestResource(resource);
 
-        initializeAdministration(true);
+        initializeAdministration(ErrorHandling.FAIL);
 
         // run test cases
         //
-        runJunitTests(true, eventflowDirectories, liveviewDirectory);
+        newJunitTest()
+            .withEventFlowDirectories(eventflowDirectories)
+            .withLiveViewDirectory(liveviewDirectory)
+            .run();
     }
 
 }

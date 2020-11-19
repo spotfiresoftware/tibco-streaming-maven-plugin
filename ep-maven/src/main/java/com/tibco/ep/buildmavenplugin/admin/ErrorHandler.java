@@ -28,19 +28,19 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.tibco.ep.sb.services.stubs;
+package com.tibco.ep.buildmavenplugin.admin;
 
-import com.tibco.ep.sb.services.IRuntimeService;
-import com.tibco.ep.sb.services.management.IAdminService;
-import com.tibco.ep.sb.services.stubs.admin.AdminService;
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
- * The stub implementation of {@link IRuntimeService}
+ * A functional interface to specify behavior upon error in a command execution
  */
-public class StubbedRuntimeServices implements IRuntimeService {
-
-    @Override
-    public IAdminService getAdminService() {
-        return new AdminService();
-    }
+@FunctionalInterface
+public interface ErrorHandler {
+    /**
+     * @param runner     The runner
+     * @param resultCode The result code
+     * @throws MojoExecutionException To report errors to Maven
+     */
+    void onError(RuntimeCommandRunner runner, int resultCode) throws MojoExecutionException;
 }

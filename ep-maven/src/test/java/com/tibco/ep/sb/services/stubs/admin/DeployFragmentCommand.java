@@ -34,17 +34,55 @@ import com.tibco.ep.sb.services.management.AbstractDeployFragmentCommandBuilder;
 import com.tibco.ep.sb.services.management.FragmentType;
 import com.tibco.ep.sb.services.management.IDeployFragmentCommand;
 import com.tibco.ep.sb.services.management.IDestination;
+import com.tibco.ep.sb.services.management.INotifier;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * The deploy fragment stub implementation
  */
 public class DeployFragmentCommand extends Command implements IDeployFragmentCommand {
 
+    private final boolean fail;
+
     /**
      * @param builder The builder
      */
     public DeployFragmentCommand(AbstractDeployFragmentCommandBuilder builder) {
         super(builder);
+
+        List<String> options = builder.getExecutionOptions();
+
+        long count = 0;
+        for (String s : options) {
+            if (s.startsWith("ignoreoptionsfile")) {
+                count++;
+            }
+        }
+
+        this.fail = (count > 1);
+
+        //  Setup test completion.
+        //
+        for (String target : Arrays.asList(
+            "com.tibco.ep.buildmavenplugin.surefire.Runner",
+            "com.tibco.ep.buildmavenplugin.DummyTest")) {
+
+            upon("deploy", target,
+                (params, notifier) -> {
+                    notifier.info("", "Failures: 0, Errors: 0, Skipped: 0");
+                });
+        }
+    }
+
+    @Override
+    public void execute(Map<String, String> parameters, INotifier notifier) {
+        if (fail) {
+            throw new IllegalStateException("Invalid parameters");
+        }
+        super.execute(parameters, notifier);
     }
 
     /**
@@ -53,9 +91,9 @@ public class DeployFragmentCommand extends Command implements IDeployFragmentCom
     static class Builder extends AbstractDeployFragmentCommandBuilder {
 
         /**
-         * @param destination The destination
+         * @param destination  The destination
          * @param fragmentType The fragment type
-         * @param target The target
+         * @param target       The target
          */
         public Builder(IDestination destination, FragmentType fragmentType, String target) {
             super(destination, fragmentType, target);

@@ -134,12 +134,11 @@ public class TestJavaFragmentMojo extends BaseTestMojo {
         resource.setTargetPath("test-configuration");
         project.getBuild().addTestResource(resource);
 
-        initializeAdministration(true);
+        initializeAdministration(ErrorHandling.FAIL);
 
         // run test cases
         //
-        runJunitTests(true, null, null);
-
+        newJunitTest().run();
     }
 
 }

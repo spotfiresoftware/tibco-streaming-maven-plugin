@@ -29,6 +29,21 @@
  ******************************************************************************/
 package com.tibco.ep.buildmavenplugin;
 
+import com.tibco.ep.buildmavenplugin.admin.RuntimeCommandRunner;
+import com.tibco.ep.buildmavenplugin.surefire.Runner;
+import com.tibco.ep.sb.services.management.AbstractDeployFragmentCommandBuilder;
+import com.tibco.ep.sb.services.management.FragmentType;
+import com.tibco.ep.sb.services.management.IDestination;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionException;
+import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
+import org.apache.maven.artifact.resolver.DefaultArtifactResolver;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.codehaus.plexus.util.DirectoryScanner;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
@@ -54,66 +69,13 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionException;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
-import org.apache.maven.artifact.resolver.DefaultArtifactResolver;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.codehaus.plexus.util.DirectoryScanner;
-
-import com.tibco.ep.buildmavenplugin.surefire.Runner;
-
 /**
  * Base test
- *
  */
 abstract class BaseTestMojo extends BaseExecuteMojo {
 
     // maven read-only parameters
     //
-
-    /**
-     * The classpath elements of the project being tested.
-     *
-     * @since 1.0.0
-     */
-    @Parameter(property="project.testClasspathElements", readonly = true, required = true)
-    private List<String> classpathElements;
-
-    /**
-     * The directory to search for generated test classes of the project being
-     * tested.
-     *
-     * @since 1.0.0
-     */
-    @Parameter(property="project.build.testOutputDirectory", readonly = true, required = true)
-    private File testOutputDirectory;
-
-    /**
-     * The directory to search for generated classes of the project being
-     * tested.
-     *
-     * @since 1.0.0
-     */
-    @Parameter(property="project.build.outputDirectory", readonly = true, required = true)
-    private File classesDirectory;
-
-    // maven user parameters
-    //
-
-    /**
-     * <p>Additional classpath elements</p>
-     *
-     * <p>Example use in pom.xml:</p>
-     * <img src="uml/additionalClasspathElements.svg" alt="pom">
-     *
-     * @since 1.0.0
-     */
-    @Parameter
-    private List<String> additionalClasspathElements;
 
     /**
      * <p>Servicename to determine which nodes to execute on.</p>
@@ -127,7 +89,6 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
      */
     @Parameter
     String serviceName;
-
     /**
      * <p>Set this to 'true' to skip running tests, but still compile them.</p>
      *
@@ -141,7 +102,6 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
      */
     @Parameter(property = "skipTests", defaultValue = "false")
     boolean skipTests;
-
     /**
      * <p>Set this to 'true' to only install nodes</p>
      *
@@ -156,6 +116,8 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
     @Parameter(property = "installOnly")
     boolean installOnly;
 
+    // maven user parameters
+    //
     /**
      * <p>Specify this parameter to run individual tests by file name, overriding
      * the <code>includes</code>/<code>excludes</code> parameter.</p>
@@ -172,9 +134,8 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
      *
      * @since 1.0.0
      */
-    @Parameter(property="test")
+    @Parameter(property = "test")
     String test;
-
     /**
      * <p>List of patterns used to specify the tests that should be included in
      * testing. </p>
@@ -190,7 +151,6 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
      */
     @Parameter
     List<String> includes;
-
     /**
      * <p>List of patterns used to specify the tests that should be excluded in
      * testing.</p>
@@ -206,7 +166,6 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
      */
     @Parameter
     List<String> excludes;
-
     /**
      * <p>Java options to pass to the execution environment</p>
      * <br />
@@ -218,11 +177,11 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
      * <img src="uml/javaOptions-commandline.svg" alt="pom">
      *
      * <p><b>User property is:</b> <tt>options</tt>.</p>
+     *
      * @since 1.0.0
      */
     @Parameter
     String[] javaOptions;
-
     /**
      * <p>Java system properties to pass to the execution environment</p>
      *
@@ -233,15 +192,13 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
      */
     @Parameter
     Map<String, String> systemPropertyVariables;
-
     /**
      * Additional javaOptions to append
      *
      * @since 1.1.0
      */
-    @Parameter( property = "options", readonly=true )
+    @Parameter(property = "options", readonly = true)
     String[] optionsProperty;
-
     /**
      * <p>Node options to pass to the execution environment.  See the deployment
      * tool documentation for details</p>
@@ -253,19 +210,18 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
      * <img src="uml/nodeOptions-commandline.svg" alt="pom">
      *
      * <p><b>User property is:</b> <tt>nodeOptions</tt>.</p>
+     *
      * @since 1.0.0
      */
     @Parameter
     Map<String, String> nodeOptions;
-
     /**
      * <p>Additional nodeOptions to append</p>
      *
      * @since 1.1.0
      */
-    @Parameter( property = "nodeOptions", readonly=true )
+    @Parameter(property = "nodeOptions", readonly = true)
     String[] nodeOptionsProperty;
-
     /**
      * <p>Location of the junit reports</p>
      *
@@ -276,7 +232,6 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}/surefire-reports")
     File reportsDirectory;
-
     /**
      * <p>
      * Test main class
@@ -298,7 +253,6 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
      */
     @Parameter
     String testMain;
-
     /**
      * <p>
      * Set this to 'true' to have the unit test use System.exit() to terminate the test.
@@ -311,7 +265,6 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
      */
     @Parameter(defaultValue = "false")
     boolean useSystemExit;
-
     /**
      * <p>Set this to 'true' to skip stopping test nodes</p>
      *
@@ -325,364 +278,129 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
      */
     @Parameter(property = "skipStop")
     boolean skipStop;
-
-    private MyClassloader coverageClassLoader = null;
+    /**
+     * The classpath elements of the project being tested.
+     *
+     * @since 1.0.0
+     */
+    @Parameter(property = "project.testClasspathElements", readonly = true, required = true)
+    private List<String> classpathElements;
+    /**
+     * The directory to search for generated test classes of the project being
+     * tested.
+     *
+     * @since 1.0.0
+     */
+    @Parameter(property = "project.build.testOutputDirectory", readonly = true, required = true)
+    private File testOutputDirectory;
+    /**
+     * The directory to search for generated classes of the project being
+     * tested.
+     *
+     * @since 1.0.0
+     */
+    @Parameter(property = "project.build.outputDirectory", readonly = true, required = true)
+    private File classesDirectory;
+    /**
+     * <p>Additional classpath elements</p>
+     *
+     * <p>Example use in pom.xml:</p>
+     * <img src="uml/additionalClasspathElements.svg" alt="pom">
+     *
+     * @since 1.0.0
+     */
+    @Parameter
+    private List<String> additionalClasspathElements;
+    private PluginClassloader coverageClassLoader = null;
 
     /**
-     * Run junit based test cases
+     * Build a String array of include/exclude patterns. Convert the list of
+     * Java files to a String array of class files. FIX THIS: undocumented code
+     * originally from Surefire.
      *
-     * @param failOnError if true, fail on error
-     * @param eventFlowDirectories eventflow source directories
-     * @param liveviewDirectory liveview source directory
-     *
-     * @throws MojoExecutionException node install failed
+     * @param list
+     * @return
      */
-    void runJunitTests(final boolean failOnError, File[] eventFlowDirectories, File liveviewDirectory) throws MojoExecutionException {
+    private static String[] processIncludesExcludes(List<String> list) {
+        String[] incs = new String[list.size()];
 
-        // Set some application fragment parameters
-        //
-        List<String> applArguments = new ArrayList<>();
-        String[] testClasses = scanForTests();
-        if (testClasses.length == 0) {
-            getLog().info("No test cases found");
-            return;
+        for (int i = 0; i < incs.length; i++) {
+            incs[i] = ((String) list.get(i)).replace(".java", ".class");
         }
-
-        applArguments.add(""+this.useSystemExit);
-        applArguments.addAll(Arrays.asList(testClasses));
-
-        // set jenkins property so it can find the reports when run as a maven job
-        //
-        Properties modelProperties = project.getModel().getProperties();
-        String propertyName = "jenkins."+mojoExecution.getExecutionId()+".reportsDirectory";
-        modelProperties.setProperty(propertyName, reportsDirectory.getAbsolutePath());
-        project.getModel().setProperties(modelProperties);
-
-        if (testMain != null) {
-            ArrayList<String> fullJavaOptions = new ArrayList<String>();
-            if (systemPropertyVariables != null && systemPropertyVariables.size() >0) {
-                for (Entry<String, String> entry : systemPropertyVariables.entrySet()) {
-                    fullJavaOptions.add("-D"+entry.getKey() + "=" + entry.getValue());
-                }
-            }
-            deploy(failOnError, "JAVA", testMain, clusterName, userName, password, fullJavaOptions.toArray(new String[fullJavaOptions.size()]), applArguments, eventFlowDirectories, liveviewDirectory, false);
-        }
-
-        String thisServiceName=serviceName;
-        if (serviceName == null ||serviceName.length() == 0) {
-            thisServiceName = clusterName;
-        }
-
-        // form list of java options - set in pom + command line
-        //
-        ArrayList<String> fullJavaOptions = new ArrayList<String>();
-        if (javaOptions != null && javaOptions.length > 0) {
-            fullJavaOptions.addAll(Arrays.asList(javaOptions));
-        }
-        if (optionsProperty != null && optionsProperty.length > 0) {
-            fullJavaOptions.addAll(Arrays.asList(optionsProperty));
-        }
-        if (systemPropertyVariables != null && systemPropertyVariables.size() >0) {
-            for (Entry<String, String> entry : systemPropertyVariables.entrySet()) {
-                fullJavaOptions.add("-D"+entry.getKey() + "=" + entry.getValue());
-            }
-        }
-
-        if (this.ignoreLeaks != null && this.ignoreLeaks.length >0) {
-            String ignoreLeaks = String.join(",", this.ignoreLeaks);
-            fullJavaOptions.add("-DIgnoreLeaks="+ignoreLeaks);
-        }
-
-        deploy(failOnError, "JAVA", Runner.class.getName(), thisServiceName, userName, password, fullJavaOptions.toArray(new String[fullJavaOptions.size()]), applArguments, eventFlowDirectories, liveviewDirectory, true);
+        return incs;
     }
 
-    /**
-     * Deploy fragment
-     *
-     * @param failOnError if true, fail on error
-     * @param fragmentType fragment type JAVA, STREAMBASE, LIVEVIEW or EVENT_PROCESSING
-     * @param fragment fragment name
-     * @param deployServiceName deploy service name
-     * @param userName user name
-     * @param password password
-     * @param deployJavaOptions java options
-     * @param applArguments arguments
-     * @param eventflowDirectories eventflow source directories
-     * @param liveviewDirectory liveview source directory
-     * @param wait if true wait for the command to complete
-     *
-     * @throws MojoExecutionException node install failed
-     */
-    void deploy(final boolean failOnError, final String fragmentType, final String fragment, final String deployServiceName, final String userName, final String password, final String[] deployJavaOptions, final List<String> applArguments, final File[] eventflowDirectories, final File liveviewDirectory, final boolean wait) throws MojoExecutionException {
+    private void terminateNodes(String deployServiceName) {
+        try {
+            newCommand(deployServiceName)
+                .commandAndTarget("terminate", "node")
+                .errorHandling(ErrorHandling.IGNORE)
+                .run();
+        } catch (MojoExecutionException e) {
+            getLog().debug("Could not terminate nodes", e);
+        }
+    }
 
-        // attempt to remove node if install failed
+    private void removeNodes(String deployServiceName) {
+        try {
+            removeNodes(deployServiceName, ErrorHandling.IGNORE);
+        } catch (MojoExecutionException e) {
+            getLog().debug("Could not remove nodes", e);
+        }
+    }
+
+    private void stopNodes(String deployServiceName) {
+        try {
+            stopNodes(deployServiceName, ErrorHandling.IGNORE);
+        } catch (MojoExecutionException e) {
+            getLog().debug("Could not stop nodes", e);
+        }
+    }
+
+    private String getFullNativePath() {
+        // if there are any native libraries, set library path
         //
-        Thread hook = new Thread() {
-            public void run() {
-                getLog().error("Test was aborted - attempting to clean up");
-                try {
-                    stopNodes(deployServiceName, userName, password, false);
-                } catch (MojoExecutionException e) {
-                }
-                try {
-                    removeNodes(deployServiceName, userName, password, false);
-                } catch (MojoExecutionException e) {
+        String osName = System.getProperty("os.name").replaceAll("\\s", "");
+        if (osName.startsWith("Windows")) {
+            osName = "Windows";
+        }
+        StringBuilder fullNativePath = new StringBuilder();
+        for (String suffix : new String[]{"gpp", "msvc"}) {
+            for (String type : new String[]{"jni", "shared"}) {
+                File nativePath = new File(project.getBuild()
+                    .getDirectory() + File.separator + "nar" +
+                    File.separator + "lib" +
+                    File.separator + System.getProperty("os.arch") + "-" + osName + "-" + suffix +
+                    File.separator + type);
+                if (nativePath.isDirectory()) {
+                    if (fullNativePath.length() > 0) {
+                        fullNativePath.append(File.pathSeparator);
+                    }
+                    fullNativePath.append(nativePath.getAbsolutePath());
                 }
             }
-        };
-        Runtime.getRuntime().addShutdownHook(hook);
-
-        // if discovery port is set use it, otherwise use a unused & persistent value
-        //
-        int actualDiscoveryPort;
-        if (discoveryPort == null) {
-            actualDiscoveryPort = findFreeUDPPort(discoveryPortFile);
-        } else {
-            actualDiscoveryPort=discoveryPort;
         }
+        return fullNativePath.toString();
+    }
 
+    private String getClassPath(List<File> eventflowDirectories, File liveviewDirectory) throws MojoExecutionException {
         // Set classpath for the test run
         //
-        StringBuffer classPath = new StringBuffer();
+        StringBuilder classPath = new StringBuilder();
         classPath.append(constructClassPath());
 
         // add eventflow directories
         //
-        if (eventflowDirectories != null) {
-            for (File eventFlowDirectory : eventflowDirectories) {
-                classPath.append(File.pathSeparatorChar);
-                classPath.append(eventFlowDirectory.getAbsolutePath());
-            }
+        for (File eventFlowDirectory : eventflowDirectories) {
+            classPath.append(File.pathSeparatorChar);
+            classPath.append(eventFlowDirectory.getAbsolutePath());
         }
+
         if (liveviewDirectory != null) {
             classPath.append(File.pathSeparatorChar);
             classPath.append(liveviewDirectory.getAbsolutePath());
         }
-        System.setProperty("java.class.path", classPath.toString());
-
-        Map<String, String> params = new HashMap<String, String>();
-
-        try {
-
-            setEnvironment();
-
-            Object destination;
-            if (userName != null && userName.length() > 0 ) {
-                destination = dtmDestinationConstructorUsernamePassword.newInstance(deployServiceName, dtmContext, userName, password);
-            } else {
-                destination = dtmDestinationConstructor.newInstance(deployServiceName, dtmContext);
-            }
-            Method m = destination.getClass().getMethod("addDiscoveryHost", java.lang.String.class);
-            if (discoveryHosts != null && discoveryHosts.length > 0) {
-                for (String discoveryHost : discoveryHosts) {
-                    m.invoke(destination, discoveryHost);
-                }
-            }
-
-            m = destination.getClass().getMethod("setDiscoveryPort", int.class);
-            m.invoke(destination, actualDiscoveryPort);
-
-            @SuppressWarnings({ "unchecked", "rawtypes" })
-            Object command = dtmDeployFragmentCommandConstructor.newInstance(Enum.valueOf((Class<Enum>) fragmentTypeClass, fragmentType), fragment, destination);
-
-            // Set some execution options
-            //
-            List<String> exeParams = new ArrayList<>();
-
-            if (deployJavaOptions != null && deployJavaOptions.length > 0) {
-                exeParams.addAll(Arrays.asList(deployJavaOptions));
-            }
-
-            // copy node options so we can create unique values
-            //
-            HashMap<String, String> finalNodeOptions = new HashMap<String, String>();
-
-            // ignore user's options file if it exists
-            //
-            finalNodeOptions.put("ignoreoptionsfile", "true");
-
-            // build type
-            //
-            if (buildtype != null && buildtype != BuldType.ALL && buildtype != BuldType.TESTCOV) {
-                finalNodeOptions.put("buildtype", buildtype.toString());
-            }
-
-            if (nodeOptions != null) {
-                finalNodeOptions.putAll(nodeOptions);
-            }
-
-            if (nodeOptionsProperty != null) {
-                for (String s : nodeOptionsProperty) {
-                    if (s.startsWith("ignoreoptionsfile")) {
-                        finalNodeOptions.remove("ignoreoptionsfile");
-                    }
-                }
-            }
-
-            for (Entry<String, String> entry : finalNodeOptions.entrySet()) {
-                exeParams.add(entry.getKey() + "=" + entry.getValue());
-            }
-
-            // add on any command-line node options
-            //
-            if (nodeOptionsProperty != null) {
-                for (String s : nodeOptionsProperty) {
-                    exeParams.add(s);
-                }
-            }
-
-            // enable assertions
-            //
-            exeParams.add("-enableassertions");
-
-            // java classpath
-            //
-            exeParams.add("-Djava.class.path="+classPath);
-
-            // StreamBase test settings
-            //
-            List<String> directories = new ArrayList<>();
-            if (eventflowDirectories != null) {
-                for (File eventflowDirectory : eventflowDirectories) {
-                    directories.add(eventflowDirectory.getAbsolutePath());
-                }
-            }
-            if (liveviewDirectory != null) {
-                directories.add(liveviewDirectory.getAbsolutePath());
-            }
-            directories.addAll(project.getTestCompileSourceRoots());
-
-            // add any sub directories
-            //
-            List<String> subDirectories = new ArrayList<String>();
-            for (String path : directories) {
-                File streambaseSourceDirectory = new File(path);
-                if (streambaseSourceDirectory.exists()) {
-                    try {
-                        Files.walkFileTree(streambaseSourceDirectory.toPath(), new SimpleFileVisitor<Path>() {
-                            @Override
-                            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
-
-                                if (dir.toFile().exists()) {
-                                    subDirectories.add(dir.toString());
-                                }
-                                return FileVisitResult.CONTINUE;
-                            }
-                        });
-                    } catch (IOException e) {
-                        throw new MojoExecutionException("Failed to read resource directory: " + e.getMessage(), e);
-                    }
-                }
-            }
-            directories.addAll(subDirectories);
-
-            // pass through maven settings
-            //
-            exeParams.add("-D"+REPORTS_DIRECTORY+"="+reportsDirectory.getAbsolutePath());
-            exeParams.add("-Dcom.tibco.ep.dtm.fragment.version="+project.getVersion());
-            exeParams.add("-Dcom.tibco.ep.dtm.fragment.identifier="+project.getGroupId()+"."+project.getArtifactId());
-
-            // if there are any native libraries, set library path
-            //
-            String osName = System.getProperty("os.name").replaceAll("\\s","");
-            if (osName.startsWith("Windows")) {
-                osName = "Windows";
-            }
-            StringBuffer fullNativePath = new StringBuffer();
-            for (String suffix : new String[] { "gpp", "msvc" }) {
-                for (String type : new String[] { "jni", "shared" }) {
-                    File nativePath = new File(project.getBuild().getDirectory()+File.separator+"nar"+
-                            File.separator+"lib"+
-                            File.separator+System.getProperty("os.arch")+"-"+osName+"-"+suffix+
-                            File.separator+type);
-                    if (nativePath.isDirectory()) {
-                        if (fullNativePath.length() > 0) {
-                            fullNativePath.append(File.pathSeparator);
-                        }
-                        fullNativePath.append(nativePath.getAbsolutePath());
-                    }
-                }
-            }
-            exeParams.add("-Djava.library.path="+fullNativePath.toString());
-
-            getLog().debug("Execution options = "+exeParams.toString());
-            try {
-                dtmDeployFragmentCommand_setExecutionOptions.invoke(command, exeParams);
-            } catch (IllegalArgumentException e) {
-                Runtime.getRuntime().removeShutdownHook(hook);
-                throw new MojoExecutionException("Invalid arguments to management API "+dtmDeployFragmentCommand_setExecutionOptions.toString());
-            }
-
-            getLog().debug("Application options = "+applArguments.toString());
-            try {
-                dtmDeployFragmentCommand_setApplicationArguments.invoke(command, applArguments);
-            } catch (IllegalArgumentException e) {
-                Runtime.getRuntime().removeShutdownHook(hook);
-                throw new MojoExecutionException("Invalid arguments to management API "+dtmDeployFragmentCommand_setApplicationArguments.toString());
-            }
-
-            try {
-                dtmDeployFragmentCommand_execute.invoke(command, params, createMonitor("junit", deployServiceName, failOnError, false));
-            } catch (IllegalArgumentException e) {
-                Runtime.getRuntime().removeShutdownHook(hook);
-                throw new MojoExecutionException("Invalid arguments to management API "+dtmDeployFragmentCommand_execute.toString());
-            }
-
-            if (wait) {
-                int rc;
-                try {
-                    rc = (int)dtmDeployFragmentCommand_waitForCompletion.invoke(command);
-                } catch (IllegalArgumentException e) {
-                    Runtime.getRuntime().removeShutdownHook(hook);
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmDeployFragmentCommand_waitForCompletion.toString());
-                }
-                if (failOnError && rc != 0) {
-                    Runtime.getRuntime().removeShutdownHook(hook);
-
-                    // avoid process leak on unit test failure
-                    //
-                    if (!skipStop) {
-                    	try {
-                    		stopNodes(deployServiceName, userName, password, false);
-                    	} catch (MojoExecutionException e) {
-                    	}
-                    	try {
-                    		terminateNodes(deployServiceName, userName, password, false);
-                    	} catch (MojoExecutionException e) {
-                    	}
-                    }
-
-                    throw new MojoExecutionException("launching junit test cases failed failed: node " + deployServiceName + " error code " + rc);
-                }
-            } else {
-                try {
-                    // 10 seconds from the old deploytimeout value
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                }
-            }
-
-            mergeCobertura();
-            mergeTestReports();
-
-        } catch (InstantiationException e) {
-            Runtime.getRuntime().removeShutdownHook(hook);
-            throw new MojoExecutionException(e.getMessage());
-        } catch (IllegalAccessException e) {
-            Runtime.getRuntime().removeShutdownHook(hook);
-            throw new MojoExecutionException(e.getMessage());
-        } catch (InvocationTargetException e) {
-            Runtime.getRuntime().removeShutdownHook(hook);
-            throw new MojoExecutionException(e.getCause().getMessage());
-        } catch (NoSuchMethodException e) {
-            Runtime.getRuntime().removeShutdownHook(hook);
-            throw new MojoExecutionException(e.getMessage());
-        } catch (SecurityException e) {
-            Runtime.getRuntime().removeShutdownHook(hook);
-            throw new MojoExecutionException(e.getMessage());
-        }
-
-        Runtime.getRuntime().removeShutdownHook(hook);
+        return classPath.toString();
     }
 
     /**
@@ -695,7 +413,7 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
 
         // to tests to find
         //
-        if ( !testOutputDirectory.exists() ) {
+        if (!testOutputDirectory.exists()) {
             return new String[0];
         }
 
@@ -709,8 +427,8 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
             // "includes" format:
             // FooTest -> **/FooTest.java
 
-            includeList = new ArrayList<String>();
-            excludeList = new ArrayList<String>();
+            includeList = new ArrayList<>();
+            excludeList = new ArrayList<>();
 
             for (String testRegex : test.split(",")) {
                 // Strip ".java" off the end if it exists:
@@ -747,18 +465,13 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
 
         scanner.setBasedir(testOutputDirectory);
 
-        if (includeList != null) {
-            scanner.setIncludes(processIncludesExcludes(includeList));
-        }
-        if (excludeList != null) {
-            scanner.setExcludes(processIncludesExcludes(excludeList));
-        }
+        scanner.setIncludes(processIncludesExcludes(includeList));
+        scanner.setExcludes(processIncludesExcludes(excludeList));
 
         scanner.scan();
 
         String[] files = scanner.getIncludedFiles();
-        for (int i = 0; i < files.length; i++)
-        {
+        for (int i = 0; i < files.length; i++) {
             String thisTest = files[i];
 
             // Remove trailing ".extension", and convert path characters to
@@ -775,31 +488,13 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
     }
 
     /**
-     * Build a String array of include/exclude patterns. Convert the list of
-     * Java files to a String array of class files. FIX THIS: undocumented code
-     * originally from Surefire.
-     *
-     * @param list
-     * @return
-     */
-    private static String[] processIncludesExcludes(List<String> list) {
-        String[] incs = new String[list.size()];
-
-        for (int i = 0; i < incs.length; i++) {
-            incs[i] = ((String) list.get(i)).replace(".java", ".class");
-        }
-        return incs;
-    }
-
-    /**
      * Construct a ClassLoader instance whose classpath includes everything from
      * classpathElements and additionalClasspathElements.
      *
      * @return a new ClassLoader instance.
-     * @throws MojoExecutionException
-     *             If invalid classpath elements are given.
+     * @throws MojoExecutionException If invalid classpath elements are given.
      */
-    String constructClassPath() throws MojoExecutionException {
+    private String constructClassPath() throws MojoExecutionException {
         StringBuilder buf = new StringBuilder();
         Artifact plugin;
 
@@ -832,10 +527,10 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
         // include a classpath element for this plugin (we need the Runner):
         //
         assert (project.getPluginArtifactMap() != null);
-        plugin = (Artifact) project.getPluginArtifactMap().get("com.tibco.ep:ep-maven-plugin");
+        plugin = project.getPluginArtifactMap().get("com.tibco.ep:ep-maven-plugin");
         if (plugin == null) {
             throw new MojoExecutionException("Cannot locate an artifact for plugin "
-                    + "com.tibco.ep:ep-maven-plugin." + " Add this to the plugins section of your POM.");
+                + "com.tibco.ep:ep-maven-plugin." + " Add this to the plugins section of your POM.");
         }
         buf.append(File.pathSeparatorChar);
         buf.append(getArtifactPath(plugin));
@@ -850,69 +545,63 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
 
         // locate dependencies, filtering as needed, and add to classpath
         //
-        final ArtifactFilter filter = new ArtifactFilter() {
-            @Override
-            public boolean include(Artifact artifact) {
-                // Skip binary archives
+        final ArtifactFilter filter = artifact -> {
+            // Skip binary archives
+            //
+            if (artifact.getType().equals("tgz") || artifact.getType().equals("zip")) {
+                return false;
+            }
+
+            String scope = artifact.getScope();
+            String groupId = artifact.getGroupId();
+            String artifactId = artifact.getArtifactId();
+
+            // skip provided
+            //
+            if (scope != null && scope.equals(Artifact.SCOPE_PROVIDED)) {
+
+                // cobertura exception
                 //
-                if (artifact.getType().equals("tgz") || artifact.getType().equals("zip")) {
-                    return false;
-                }
-
-                String scope = artifact.getScope();
-                String groupId = artifact.getGroupId();
-                String artifactId = artifact.getArtifactId();
-
-                // skip provided
-                //
-                if (scope != null && scope.equals(Artifact.SCOPE_PROVIDED)) {
-
-                    // cobertura exception
-                    //
-                    if (artifactId.equals("cobertura") && groupId.equals("net.sourceforge.cobertura")) {
-                        for (String goal : session.getGoals()) {
-                            if (goal.equals("cobertura:cobertura")) {
-                                return true;
-                            }
+                if (artifactId.equals("cobertura") && groupId
+                    .equals("net.sourceforge.cobertura")) {
+                    for (String goal : session.getGoals()) {
+                        if (goal.equals("cobertura:cobertura")) {
+                            return true;
                         }
                     }
-
-                    // cobertura not required
-                    //
-                    return false;
                 }
 
-                // skip specific streambase depndencies that are in the runtime
+                // cobertura not required
                 //
-                if (groupId.equals("com.tibco.ep.thirdparty")) {
-                    if (artifactId.equals("tibco-sb-sbtest-unit") ||
-                            artifactId.equals("tibco-sb-sbclient") ||
-                            artifactId.equals("tibco-sb-sbserver")) {
-                        return false;
-                    }
-                }
-                return true;
+                return false;
             }
+
+            // skip specific streambase dependencies that are in the runtime
+            //
+            if (groupId.equals("com.tibco.ep.thirdparty")) {
+                return !artifactId.equals("tibco-sb-sbtest-unit") &&
+                    !artifactId.equals("tibco-sb-sbclient") &&
+                    !artifactId.equals("tibco-sb-sbserver");
+            }
+            return true;
         };
 
         try {
             // Note that this is using a deprecated API ... however, everyone
             // else seems to use this as well !
             //
-            DefaultArtifactResolver actualResolver = (DefaultArtifactResolver)artifactResolver;
-            ArtifactResolutionResult result = actualResolver.resolveTransitively(getProjectDependencies(), project.getArtifact(),
-                    project.getManagedVersionMap(), localRepository, project.getRemoteArtifactRepositories(),
-                    null, filter );
-            for (Artifact artifact : (Set<Artifact>)result.getArtifacts()) {
+            DefaultArtifactResolver actualResolver = (DefaultArtifactResolver) artifactResolver;
+            ArtifactResolutionResult result = actualResolver
+                .resolveTransitively(getProjectDependencies(), project.getArtifact(),
+                    project.getManagedVersionMap(), localRepository, project
+                        .getRemoteArtifactRepositories(),
+                    null, filter);
+            for (Artifact artifact : (Set<Artifact>) result.getArtifacts()) {
                 buf.append(File.pathSeparatorChar);
                 buf.append(artifact.getFile());
             }
-        }
-        catch ( final ArtifactResolutionException e ) {
-            e.printStackTrace();
-        }
-        catch ( final ArtifactNotFoundException e ) {
-            e.printStackTrace();
+        } catch (final ArtifactResolutionException | ArtifactNotFoundException e) {
+            getLog().warn(e);
         }
 
         getLog().debug("Full classpath: [" + buf.toString() + "]");
@@ -923,15 +612,15 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
     /**
      * Merge node specific report to a cluster report in the expected location
      */
-    void mergeCobertura() {
+    private void mergeCobertura() {
 
         // check to see if we've got anything to merge
         //
-        File coberturaDirectory = new File(reportsDirectory,"cobertura");
+        File coberturaDirectory = new File(reportsDirectory, "cobertura");
         if (!coberturaDirectory.exists()) {
             return;
         }
-        ArrayList<String> files = new ArrayList<String>();
+        ArrayList<String> files = new ArrayList<>();
         File[] coberturaFiles = coberturaDirectory.listFiles();
         if (coberturaFiles == null) {
             return;
@@ -947,7 +636,8 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
             if (coverageClassLoader == null) {
                 AccessController.doPrivileged(new PrivilegedAction<Void>() {
                     public Void run() {
-                        coverageClassLoader = new MyClassloader(new URL[0], this.getClass().getClassLoader());
+                        coverageClassLoader = new PluginClassloader(new URL[0], this.getClass()
+                            .getClassLoader());
                         return null;
                     }
                 });
@@ -962,28 +652,33 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
                 //
                 // should this be easier ?
                 //
-                Set<Artifact> coverageDependencies = new HashSet<Artifact>();
+                Set<Artifact> coverageDependencies = new HashSet<>();
 
                 final ArtifactFilter filter = new ArtifactFilter() {
                     @Override
                     public boolean include(Artifact artifact) {
-                        if (artifact.getArtifactId().equals("cobertura") && artifact.getGroupId().equals("net.sourceforge.cobertura")) {
+                        if (artifact.getArtifactId().equals("cobertura") && artifact.getGroupId()
+                            .equals("net.sourceforge.cobertura")) {
                             coverageDependencies.add(artifact);
                             return true;
                         }
-                        if (artifact.getArtifactId().equals("oro") && artifact.getGroupId().equals("oro")) {
+                        if (artifact.getArtifactId().equals("oro") && artifact.getGroupId()
+                            .equals("oro")) {
                             coverageDependencies.add(artifact);
                             return true;
                         }
-                        if (artifact.getArtifactId().equals("slf4j-api") && artifact.getGroupId().equals("org.slf4j")) {
+                        if (artifact.getArtifactId().equals("slf4j-api") && artifact.getGroupId()
+                            .equals("org.slf4j")) {
                             coverageDependencies.add(artifact);
                             return true;
                         }
-                        if (artifact.getArtifactId().equals("logback-core") && artifact.getGroupId().equals("ch.qos.logback")) {
+                        if (artifact.getArtifactId().equals("logback-core") && artifact.getGroupId()
+                            .equals("ch.qos.logback")) {
                             coverageDependencies.add(artifact);
                             return true;
                         }
-                        if (artifact.getArtifactId().equals("logback-classic") && artifact.getGroupId().equals("ch.qos.logback")) {
+                        if (artifact.getArtifactId().equals("logback-classic") && artifact
+                            .getGroupId().equals("ch.qos.logback")) {
                             coverageDependencies.add(artifact);
                             return true;
                         }
@@ -991,31 +686,37 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
                     }
                 };
                 try {
-                    DefaultArtifactResolver actualResolver = (DefaultArtifactResolver)artifactResolver;
-                    actualResolver.resolveTransitively(getProjectDependencies(), project.getArtifact(),
-                            project.getManagedVersionMap(), localRepository, project.getRemoteArtifactRepositories(),
-                            null, filter );
+                    DefaultArtifactResolver actualResolver = (DefaultArtifactResolver) artifactResolver;
+                    actualResolver
+                        .resolveTransitively(getProjectDependencies(), project.getArtifact(),
+                            project.getManagedVersionMap(), localRepository, project
+                                .getRemoteArtifactRepositories(),
+                            null, filter);
                     for (Artifact artifact : coverageDependencies) {
                         URL url = new File(getArtifactPath(artifact)).toURI().toURL();
                         coverageClassLoader.addURL(url);
                     }
-                }
-                catch ( final ArtifactResolutionException e ) {
-                }
-                catch ( final ArtifactNotFoundException e ) {
+                } catch (final ArtifactResolutionException | ArtifactNotFoundException e) {
+                    getLog().debug(e);
                 }
 
 
                 // find cobertura class, constructors and methods
                 //
-                Class<?> argumentsBuilderClass = Class.forName("net.sourceforge.cobertura.dsl.ArgumentsBuilder", true, coverageClassLoader);
+                Class<?> argumentsBuilderClass = Class
+                    .forName("net.sourceforge.cobertura.dsl.ArgumentsBuilder", true, coverageClassLoader);
                 Constructor<?> argumentsBuilderConstructor = argumentsBuilderClass.getConstructor();
-                Method argumentsBuilder_addFileToMerge = argumentsBuilderClass.getMethod("addFileToMerge", String.class);
-                Method argumentsBuilder_setDataFile = argumentsBuilderClass.getMethod("setDataFile", String.class);
+                Method argumentsBuilder_addFileToMerge = argumentsBuilderClass
+                    .getMethod("addFileToMerge", String.class);
+                Method argumentsBuilder_setDataFile = argumentsBuilderClass
+                    .getMethod("setDataFile", String.class);
                 Method argumentsBuilder_build = argumentsBuilderClass.getMethod("build");
-                Class<?> argumentsClass = Class.forName("net.sourceforge.cobertura.dsl.Arguments", true, coverageClassLoader);
-                Class<?> coberturaClass = Class.forName("net.sourceforge.cobertura.dsl.Cobertura", true, coverageClassLoader);
-                Constructor<?> coberturaClassConstructor = coberturaClass.getConstructor(argumentsClass);
+                Class<?> argumentsClass = Class
+                    .forName("net.sourceforge.cobertura.dsl.Arguments", true, coverageClassLoader);
+                Class<?> coberturaClass = Class
+                    .forName("net.sourceforge.cobertura.dsl.Cobertura", true, coverageClassLoader);
+                Constructor<?> coberturaClassConstructor = coberturaClass
+                    .getConstructor(argumentsClass);
                 Method cobertura_merge = coberturaClass.getMethod("merge");
                 Method cobertura_saveProjectData = coberturaClass.getMethod("saveProjectData");
 
@@ -1025,49 +726,41 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
                 // add in source files
                 //
                 for (String sourceFile : files) {
-                    getLog().info("Reading node coverage report "+sourceFile);
+                    getLog().info("Reading node coverage report " + sourceFile);
                     argumentsBuilder_addFileToMerge.invoke(builder, sourceFile);
                 }
 
                 // add in destination
                 //
-                String coverageOutput = project.getBuild().getDirectory()+File.separator+"cobertura"+File.separator+"cobertura.ser";
-                argumentsBuilder_setDataFile.invoke(builder,  coverageOutput);
+                String coverageOutput = project.getBuild()
+                    .getDirectory() + File.separator + "cobertura" + File.separator + "cobertura.ser";
+                argumentsBuilder_setDataFile.invoke(builder, coverageOutput);
 
-                getLog().info("Writing cluster coverage report "+coverageOutput);
+                getLog().info("Writing cluster coverage report " + coverageOutput);
 
                 // and merge
                 //
-                cobertura_saveProjectData.invoke(cobertura_merge.invoke(coberturaClassConstructor.newInstance(argumentsBuilder_build.invoke(builder))));
+                cobertura_saveProjectData.invoke(cobertura_merge.invoke(coberturaClassConstructor
+                    .newInstance(argumentsBuilder_build.invoke(builder))));
 
-            } catch (ClassNotFoundException e) {
-                getLog().warn("Cannot find cobertura class to start merge "+e.getMessage());
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                getLog().warn("Cannot find cobertura class to start merge "+e.getMessage());
-                e.printStackTrace();
-            } catch (SecurityException e) {
-                getLog().warn("Cannot find cobertura class to start merge "+e.getMessage());
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                getLog().warn("Cannot find cobertura class to start merge "+e.getMessage());
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
-                getLog().warn("Cannot find cobertura class to start merge "+e.getMessage());
-                e.printStackTrace();
+            } catch (ClassNotFoundException
+                | NoSuchMethodException
+                | SecurityException
+                | IllegalAccessException
+                | IllegalArgumentException
+                | MalformedURLException
+                | InstantiationException e) {
+
+                getLog().warn("Cannot find cobertura class to start merge " + e.getMessage(), e);
+
             } catch (InvocationTargetException e) {
-                getLog().warn("Cannot find cobertura class to start merge "+e.getCause().getMessage());
-                e.printStackTrace();
-            } catch (MalformedURLException e) {
-                getLog().warn("Cannot find cobertura class to start merge "+e.getMessage());
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                getLog().warn("Cannot find cobertura class to start merge "+e.getMessage());
-                e.printStackTrace();
+                getLog().warn("Cannot find cobertura class to start merge " + e.getCause()
+                    .getMessage(), e);
             } finally {
                 try {
                     coverageClassLoader.close();
                 } catch (IOException e) {
+                    //  Ignored.
                 }
             }
 
@@ -1077,9 +770,9 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
     /**
      * Merge node specific test reports to a single directory
      */
-    void mergeTestReports() {
+    private void mergeTestReports() {
 
-        if (!reportsDirectory.exists() ) {
+        if (!reportsDirectory.exists()) {
             // no test reports found
             return;
         }
@@ -1090,15 +783,340 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
                 File[] nodeFiles = nodeDirectory.listFiles();
                 if (nodeFiles != null) {
                     for (File testFile : nodeFiles) {
-                        File target = new File(reportsDirectory, nodeDirectory.getName()+"-"+testFile.getName());
+                        File target = new File(reportsDirectory, nodeDirectory
+                            .getName() + "-" + testFile.getName());
                         try {
-                            Files.move(testFile.toPath(), target.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                            Files.move(testFile.toPath(), target
+                                .toPath(), StandardCopyOption.REPLACE_EXISTING);
                         } catch (IOException e) {
                             getLog().warn(e.getCause());
                         }
                     }
                 }
             }
+        }
+    }
+
+    /**
+     * @return A new JUNIT test runner
+     */
+    public JunitTests newJunitTest() {
+        return new JunitTests();
+    }
+
+    Deployment newDeployment(FragmentType fragmentType, String fragment) {
+        return new Deployment(fragmentType, fragment);
+    }
+
+    /**
+     * Class to run JUNIT base tests
+     */
+    class JunitTests {
+        private List<File> eventFlowDirectories;
+        private File liveviewDirectory;
+
+        private JunitTests() {
+            eventFlowDirectories = new ArrayList<>();
+            liveviewDirectory = null;
+        }
+
+        /**
+         * @param eventFlowDirectories The event flow directories
+         * @return This
+         */
+        public JunitTests withEventFlowDirectories(File[] eventFlowDirectories) {
+            this.eventFlowDirectories = toNonNullList(eventFlowDirectories);
+            return this;
+        }
+
+        /**
+         * @param liveViewDirectory The live view directory
+         * @return This
+         */
+        public JunitTests withLiveViewDirectory(File liveViewDirectory) {
+            this.liveviewDirectory = liveViewDirectory;
+            return this;
+        }
+
+        /**
+         * Run the tests
+         *
+         * @throws MojoExecutionException Wraps any execution failure
+         */
+        void run() throws MojoExecutionException {
+            // Set some application fragment parameters
+            //
+            List<String> applicationArguments = new ArrayList<>();
+            String[] testClasses = scanForTests();
+            if (testClasses.length == 0) {
+                getLog().info("No test cases found");
+                return;
+            }
+
+            applicationArguments.add("" + BaseTestMojo.this.useSystemExit);
+            applicationArguments.addAll(Arrays.asList(testClasses));
+
+            // set jenkins property so it can find the reports when run as a maven job
+            //
+            Properties modelProperties = project.getModel().getProperties();
+            String propertyName = "jenkins." + mojoExecution.getExecutionId() + ".reportsDirectory";
+            modelProperties.setProperty(propertyName, reportsDirectory.getAbsolutePath());
+            project.getModel().setProperties(modelProperties);
+
+            if (testMain != null) {
+                List<String> fullJavaOptions = new ArrayList<>();
+                if (systemPropertyVariables != null && systemPropertyVariables.size() > 0) {
+                    for (Entry<String, String> entry : systemPropertyVariables.entrySet()) {
+                        fullJavaOptions.add("-D" + entry.getKey() + "=" + entry.getValue());
+                    }
+                }
+
+                newDeployment(FragmentType.JAVA, testMain)
+                    .withServiceName(clusterName)
+                    .withJavaOptions(fullJavaOptions)
+                    .withApplicationArguments(applicationArguments)
+                    .withEventFlowDirectories(eventFlowDirectories)
+                    .withLiveViewDirectory(liveviewDirectory)
+                    .withWait(false)
+                    .run();
+            }
+
+            String thisServiceName = serviceName;
+            if (serviceName == null || serviceName.length() == 0) {
+                thisServiceName = clusterName;
+            }
+
+            // form list of java options - set in pom + command line
+            //
+            List<String> fullJavaOptions = new ArrayList<>();
+            if (javaOptions != null && javaOptions.length > 0) {
+                fullJavaOptions.addAll(Arrays.asList(javaOptions));
+            }
+            if (optionsProperty != null && optionsProperty.length > 0) {
+                fullJavaOptions.addAll(Arrays.asList(optionsProperty));
+            }
+            if (systemPropertyVariables != null && systemPropertyVariables.size() > 0) {
+                for (Entry<String, String> entry : systemPropertyVariables.entrySet()) {
+                    fullJavaOptions.add("-D" + entry.getKey() + "=" + entry.getValue());
+                }
+            }
+
+            if (BaseTestMojo.this.ignoreLeaks != null && BaseTestMojo.this.ignoreLeaks.length > 0) {
+                String ignoreLeaks = String.join(",", BaseTestMojo.this.ignoreLeaks);
+                fullJavaOptions.add("-DIgnoreLeaks=" + ignoreLeaks);
+            }
+
+            newDeployment(FragmentType.JAVA, Runner.class.getName())
+                .withServiceName(thisServiceName)
+                .withJavaOptions(fullJavaOptions)
+                .withApplicationArguments(applicationArguments)
+                .withEventFlowDirectories(eventFlowDirectories)
+                .withLiveViewDirectory(liveviewDirectory)
+                .withWait(true)
+                .run();
+        }
+    }
+
+    class Deployment {
+        private final FragmentType fragmentType;
+        private final String fragment;
+        private final List<String> javaOptions = new ArrayList<>();
+        private final List<String> applicationArguments = new ArrayList<>();
+        private final List<File> eventFlowDirectories = new ArrayList<>();
+        private String deployServiceName;
+        private File liveViewDirectory;
+        private boolean wait;
+
+        Deployment(FragmentType fragmentType, String fragment) {
+            this.fragmentType = fragmentType;
+            this.fragment = fragment;
+
+            wait = true;
+        }
+
+        public Deployment withServiceName(String serviceName) {
+            this.deployServiceName = serviceName;
+            return this;
+        }
+
+        public Deployment withLiveViewDirectory(File liveViewDirectory) {
+            this.liveViewDirectory = liveViewDirectory;
+            return this;
+        }
+
+        public Deployment withWait(boolean wait) {
+            this.wait = wait;
+            return this;
+        }
+
+        public Deployment withJavaOptions(List<String> javaOptions) {
+            this.javaOptions.addAll(javaOptions);
+            return this;
+        }
+
+        public Deployment withApplicationArguments(List<String> applArguments) {
+            this.applicationArguments.addAll(applArguments);
+            return this;
+        }
+
+        public Deployment withEventFlowDirectories(List<File> eventFlowDirectories) {
+            this.eventFlowDirectories.addAll(eventFlowDirectories);
+            return this;
+        }
+
+        void run() throws MojoExecutionException {
+
+            int actualDiscoveryPort = getDiscoveryPort();
+
+            String classPath = getClassPath(eventFlowDirectories, liveViewDirectory);
+            System.setProperty("java.class.path", classPath);
+
+            doSetEnvironment();
+
+            IDestination destination = newDestination(deployServiceName);
+            destination.setDiscoveryPort(actualDiscoveryPort);
+
+            AbstractDeployFragmentCommandBuilder deployCommandBuilder = destination
+                .newDeployFragmentCommand(fragmentType, fragment)
+                .withDestination(destination);
+
+            //  Set deploy options.
+            //
+            List<String> exeParams = new ArrayList<>(javaOptions);
+
+
+            //  Copy node options so we can create unique values
+            //
+            Map<String, String> finalNodeOptions = new HashMap<>();
+
+            // ignore user's options file if it exists
+            //
+            finalNodeOptions.put("ignoreoptionsfile", "true");
+
+            // build type
+            //
+            if (buildtype != null && buildtype != BuldType.ALL && buildtype != BuldType.TESTCOV) {
+                finalNodeOptions.put("buildtype", buildtype.toString());
+            }
+
+            if (nodeOptions != null) {
+                finalNodeOptions.putAll(nodeOptions);
+            }
+
+            if (nodeOptionsProperty != null) {
+                for (String s : nodeOptionsProperty) {
+                    if (s.startsWith("ignoreoptionsfile")) {
+                        finalNodeOptions.remove("ignoreoptionsfile");
+                    }
+                }
+            }
+
+            for (Entry<String, String> entry : finalNodeOptions.entrySet()) {
+                exeParams.add(entry.getKey() + "=" + entry.getValue());
+            }
+
+            // add on any command-line node options
+            //
+            if (nodeOptionsProperty != null) {
+                exeParams.addAll(Arrays.asList(nodeOptionsProperty));
+            }
+
+            // enable assertions
+            //
+            exeParams.add("-enableassertions");
+
+            // java classpath
+            //
+            exeParams.add("-Djava.class.path=" + classPath);
+
+            // StreamBase test settings
+            //
+            List<String> directories = new ArrayList<>();
+            for (File eventflowDirectory : eventFlowDirectories) {
+                directories.add(eventflowDirectory.getAbsolutePath());
+            }
+            if (liveViewDirectory != null) {
+                directories.add(liveViewDirectory.getAbsolutePath());
+            }
+            directories.addAll(project.getTestCompileSourceRoots());
+
+            // add any sub directories
+            //
+            List<String> subDirectories = new ArrayList<>();
+            for (String path : directories) {
+                File streambaseSourceDirectory = new File(path);
+                if (streambaseSourceDirectory.exists()) {
+                    try {
+                        Files.walkFileTree(streambaseSourceDirectory
+                            .toPath(), new SimpleFileVisitor<Path>() {
+                            @Override
+                            public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+
+                                if (dir.toFile().exists()) {
+                                    subDirectories.add(dir.toString());
+                                }
+                                return FileVisitResult.CONTINUE;
+                            }
+                        });
+                    } catch (IOException e) {
+                        throw new MojoExecutionException("Failed to read resource directory: " + e
+                            .getMessage(), e);
+                    }
+                }
+            }
+            directories.addAll(subDirectories);
+
+            // pass through maven settings
+            //
+            exeParams.add("-D" + REPORTS_DIRECTORY + "=" + reportsDirectory.getAbsolutePath());
+            exeParams.add("-Dcom.tibco.ep.dtm.fragment.version=" + project.getVersion());
+            exeParams
+                .add("-Dcom.tibco.ep.dtm.fragment.identifier=" + project
+                    .getGroupId() + "." + project
+                    .getArtifactId());
+            exeParams.add("-Djava.library.path=" + getFullNativePath());
+            getLog().debug("Execution options = " + exeParams);
+            deployCommandBuilder.withExecutionOptions(exeParams);
+
+            getLog().debug("Application options = " + applicationArguments);
+            deployCommandBuilder.withApplicationArguments(applicationArguments);
+
+            RuntimeCommandRunner deployRunner = newCommandRunner(deployCommandBuilder, deployServiceName, "node " + deployServiceName)
+                .recordOutput(false)
+                .wait(wait)
+
+                .shutdownHook(cmd -> {
+                    getLog().error("Test was aborted - attempting to clean up");
+                    stopNodes(deployServiceName);
+                    removeNodes(deployServiceName);
+                })
+
+                .onError((runner, resultCode) -> {
+                    runner.removeShutdownHook();
+
+                    // avoid process leak on unit test failure
+                    //
+                    if (!skipStop) {
+                        stopNodes(deployServiceName);
+                        terminateNodes(deployServiceName);
+                    }
+
+                    throw new MojoExecutionException("Launching junit test cases failed failed: node " + deployServiceName + " error code " + resultCode);
+                });
+            deployRunner.run();
+
+            if (!wait) {
+                try {
+                    //  FIX THIS (FL): is this needed in any way ?
+                    // 10 seconds from the old deploytimeout value
+                    Thread.sleep(10000);
+                } catch (InterruptedException e) {
+                    getLog().warn("Interrupted", e);
+                }
+            }
+
+            mergeCobertura();
+            mergeTestReports();
         }
     }
 }

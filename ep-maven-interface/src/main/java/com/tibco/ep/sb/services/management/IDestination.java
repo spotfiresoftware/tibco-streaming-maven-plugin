@@ -36,9 +36,16 @@ package com.tibco.ep.sb.services.management;
 public interface IDestination extends IAdminServiceAware {
 
     /**
+     * Set the discovery port
+     *
+     * @param discoveryPort The discovery port
+     */
+    void setDiscoveryPort(int discoveryPort);
+
+    /**
      * @param command The command
-     * @param target The target
-     * @return A new command buidler
+     * @param target  The target
+     * @return A new command builder
      */
     default AbstractCommandBuilder newCommand(String command, String target) {
         return getAdminService().newCommandBuilder()
@@ -49,7 +56,7 @@ public interface IDestination extends IAdminServiceAware {
 
     /**
      * @param fragmentType The fragment type
-     * @param target The target
+     * @param target       The target
      * @return A new deploy fragment comment builder
      */
     default AbstractDeployFragmentCommandBuilder newDeployFragmentCommand(FragmentType fragmentType, String target) {

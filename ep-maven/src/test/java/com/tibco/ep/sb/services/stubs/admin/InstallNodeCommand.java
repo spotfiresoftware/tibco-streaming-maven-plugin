@@ -34,6 +34,8 @@ import com.tibco.ep.sb.services.management.AbstractInstallNodeCommandBuilder;
 import com.tibco.ep.sb.services.management.IInstallNodeCommand;
 import com.tibco.ep.sb.services.management.INode;
 
+import java.io.File;
+
 /**
  * The install node command stub implementation
  */
@@ -44,6 +46,14 @@ public class InstallNodeCommand extends Command implements IInstallNodeCommand {
      */
     public InstallNodeCommand(Builder builder) {
         super(builder);
+
+        upon(builder.getCommand(), builder.getTarget(),
+
+            (params, notifier) -> {
+                notifier.info("", "Node started");
+                new File(params.get("nodedirectory"), ((Destination) getDestination()).getName())
+                    .mkdirs();
+            });
     }
 
     /**

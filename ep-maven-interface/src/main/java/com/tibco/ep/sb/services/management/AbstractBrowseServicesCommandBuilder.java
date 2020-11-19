@@ -43,6 +43,7 @@ public abstract class AbstractBrowseServicesCommandBuilder extends AbstractComma
     protected AbstractBrowseServicesCommandBuilder(IContext context) {
         super();
         this.context = context;
+        withCommand("browse").withTarget("services");
     }
 
     /**

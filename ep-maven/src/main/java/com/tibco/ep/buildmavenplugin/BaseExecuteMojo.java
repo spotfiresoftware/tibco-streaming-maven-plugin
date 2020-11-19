@@ -29,16 +29,26 @@
  ******************************************************************************/
 package com.tibco.ep.buildmavenplugin;
 
+import com.tibco.ep.buildmavenplugin.admin.RuntimeCommandNotifier;
+import com.tibco.ep.sb.services.management.AbstractBrowseServicesCommandBuilder;
+import com.tibco.ep.sb.services.management.AbstractCommandBuilder;
+import com.tibco.ep.sb.services.management.AbstractDestinationBuilder;
+import com.tibco.ep.sb.services.management.AbstractInstallNodeCommandBuilder;
+import com.tibco.ep.sb.services.management.AbstractNodeBuilder;
+import com.tibco.ep.sb.services.management.IBrowseServicesCommand;
+import com.tibco.ep.sb.services.management.IDestination;
+import com.tibco.ep.sb.services.management.INode;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Parameter;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
@@ -49,19 +59,21 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
-
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Parameter;
 
 /**
  * Base type
- *
  */
 abstract class BaseExecuteMojo extends BaseMojo {
 
     // maven user parameters
     //
+
+    /**
+     * For random port numbers
+     */
+    private static final Random RANDOM = new Random();
 
     /**
      * <p>List of host names for the client discovery.</p>
@@ -75,7 +87,6 @@ abstract class BaseExecuteMojo extends BaseMojo {
      */
     @Parameter
     String[] discoveryHosts;
-
     /**
      * <p>Port number for discovery.  If not set a random free port is selected and
      * persisted to a file</p>
@@ -88,9 +99,8 @@ abstract class BaseExecuteMojo extends BaseMojo {
      *
      * @since 1.0.0
      */
-    @Parameter(property="discoveryPort")
+    @Parameter(property = "discoveryPort")
     Integer discoveryPort;
-
     /**
      * <p>User name.  If not set authentication is by platform credentials</p>
      *
@@ -101,7 +111,6 @@ abstract class BaseExecuteMojo extends BaseMojo {
      */
     @Parameter
     String userName;
-
     /**
      * <p>Password</p>
      *
@@ -112,7 +121,6 @@ abstract class BaseExecuteMojo extends BaseMojo {
      */
     @Parameter
     String password;
-
     /**
      * <p>Filename to be used to store generated discovery port</p>
      *
@@ -123,7 +131,6 @@ abstract class BaseExecuteMojo extends BaseMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}/discovery.port")
     File discoveryPortFile;
-
     /**
      * <p>cluster name to append to the node names.</p>
      *
@@ -138,7 +145,6 @@ abstract class BaseExecuteMojo extends BaseMojo {
      */
     @Parameter(defaultValue = "${project.artifactId}")
     String clusterName;
-
     /**
      * <p>Directory to install test nodes.</p>
      *
@@ -149,21 +155,6 @@ abstract class BaseExecuteMojo extends BaseMojo {
      */
     @Parameter(defaultValue = "${project.build.directory}/test-nodes")
     File nodeDirectory;
-
-    /**
-     * Build type
-     */
-    public enum BuldType {
-        /** Development mode */
-        DEVELOPMENT,
-        /** Production mode */
-        PRODUCTION,
-        /** ALL mode - ignored */
-        ALL,
-        /** test coverage mode - ignored */
-        TESTCOV
-    }
-
     /**
      * <p>Build type - DEVELOPMENT or PRODUCTION</p>
      *
@@ -178,9 +169,8 @@ abstract class BaseExecuteMojo extends BaseMojo {
      *
      * @since 1.0.0
      */
-    @Parameter(property="build")
+    @Parameter(property = "build")
     BuldType buildtype;
-
     /**
      * <p>Environment variables - these environment variables are passed through to
      * created processes.</p>
@@ -197,100 +187,71 @@ abstract class BaseExecuteMojo extends BaseMojo {
      */
     @Parameter
     Map<String, String> environmentVariables;
-
     /**
      * Additional parameters supported by install node, to support command-line
      *
      * @since 1.0.0
      */
-    @Parameter( property = "environmentVariables", readonly=true )
+    @Parameter(property = "environmentVariables", readonly = true)
     String[] environment;
 
     /**
-     * For random port numbers
-     */
-    private Random rand = new Random();
-
-    private static boolean shuttingDown = false;
-
-    /**
-     * Find a free UDP port
-     * @param saveFile Filename to save port number
+     * Get the discovery port from plugin configuration or find a new one and persist it
      *
-     * @return free port
+     * @return The discovery port
      */
-    int findFreeUDPPort(File saveFile) {
+    int getDiscoveryPort() {
+        // if discovery port is set use it, otherwise use a unused & persistent value
+        //
+        if (discoveryPort != null) {
+            return discoveryPort;
+        }
 
         // If the save file exists, use it
         //
-        if (saveFile.exists()) {
+        if (discoveryPortFile.exists()) {
 
-            InputStreamReader fileReader = null;
-            BufferedReader bufferedReader = null;
-            try {
-                fileReader = new InputStreamReader(new FileInputStream(saveFile), StandardCharsets.UTF_8);
-                bufferedReader = new BufferedReader(fileReader);
-                int port = Integer.parseInt(bufferedReader.readLine());
-                return port;
-            } catch (FileNotFoundException e) {
-            } catch (NumberFormatException e) {
-            } catch (IOException e) {
-            } finally {
-                if (bufferedReader != null) {
-                    try {
-                        bufferedReader.close();
-                    } catch (IOException e) {
-                    }
-                }
-                if (fileReader != null) {
-                    try {
-                        fileReader.close();
-                    } catch (IOException e) {
-                    }
-                }
+            try (InputStreamReader fileReader = new InputStreamReader(
+                new FileInputStream(discoveryPortFile), StandardCharsets.UTF_8);
+                 BufferedReader bufferedReader = new BufferedReader(fileReader)) {
+
+                return Integer.parseInt(bufferedReader.readLine());
+
+            } catch (NumberFormatException | IOException e) {
+                getLog().debug("Caught error reading save file " + discoveryPortFile, e);
             }
         }
-        if (!saveFile.getParentFile().exists() && !saveFile.getParentFile().mkdirs()) {
+
+        if (!discoveryPortFile.getParentFile().exists()
+            && !discoveryPortFile.getParentFile().mkdirs()) {
+
             getLog().warn("Unable to create save parent directory, will try port 0");
             return 0;
         }
 
-        for (int count=0; count<10000; count++) {
-            int port = rand.nextInt(65536-49152)+49152;
+        for (int count = 0; count < 10000; count++) {
+
+            int port = RANDOM.nextInt(65536 - 49152) + 49152;
             try {
                 DatagramSocket socket = new DatagramSocket(port);
                 socket.close();
 
                 // save it to a file if possible
                 //
-                OutputStreamWriter fileWriter = null;
-                BufferedWriter bufferedWriter = null;
-                try {
-                    fileWriter = new OutputStreamWriter(new FileOutputStream(saveFile), StandardCharsets.UTF_8);
-                    bufferedWriter = new BufferedWriter(fileWriter);
-                    bufferedWriter.write(Integer.toString(port)+"\n");
+                try (OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(discoveryPortFile), StandardCharsets.UTF_8);
+                     BufferedWriter bufferedWriter = new BufferedWriter(fileWriter)) {
+
+                    bufferedWriter.write(port + "\n");
                 } catch (IOException e) {
-                    getLog().warn("UDP port number could not be save to file "+saveFile.getAbsolutePath());
-                } finally {
-                    if (bufferedWriter != null) {
-                        try {
-                            bufferedWriter.close();
-                        } catch (IOException e) {
-                        }
-                    }
-                    if (fileWriter != null) {
-                        try {
-                            fileWriter.close();
-                        } catch (IOException e) {
-                        }
-                    }
+                    getLog().warn("UDP port number could not be save to file "
+                        + discoveryPortFile.getAbsolutePath(), e);
                 }
 
-                getLog().info("UDP port "+port+" selected for discovery");
+                getLog().info("UDP port " + port + " selected for discovery");
 
                 return port;
-            }
-            catch (SocketException ex) {
+
+            } catch (SocketException ex) {
                 // port not free, we'll keep trying
             }
         }
@@ -300,249 +261,27 @@ abstract class BaseExecuteMojo extends BaseMojo {
     }
 
     /**
-     * Run administration command by servicename
-     *
-     * @param serviceName service name
-     * @param userName user name
-     * @param password password
-     * @param command administration command
-     * @param target  administration target
-     * @param parameters administration parameters
-     * @param failOnError if true, fail on error
-     *
-     * @throws MojoExecutionException node install failed
-     */
-    void runAdministrationCommand(final String serviceName, final String userName, final String password, final String command, final String target, final Map<String,String> parameters, final boolean failOnError) throws MojoExecutionException {
-
-        // if discovery port is set use it, otherwise use a unused & persistent value
-        //
-        int actualDiscoveryPort;
-        if (discoveryPort == null) {
-            actualDiscoveryPort = findFreeUDPPort(discoveryPortFile);
-        } else {
-            actualDiscoveryPort=discoveryPort;
-        }
-
-        try {
-            Object destination;
-
-            setEnvironment();
-
-            if (userName != null && userName.length() > 0 ) {
-                destination = dtmDestinationConstructorUsernamePassword.newInstance(serviceName, dtmContext, userName, password);
-            } else {
-                destination = dtmDestinationConstructor.newInstance(serviceName, dtmContext);
-            }
-            if (command.equals("browse") && target.equals("services")) {
-                Object start = dtmBrowseServicesCommandConstructor.newInstance(dtmContext);
-
-                try {
-                    destination = dtmBrowseServicesCommand_getDestination.invoke(start);
-                } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmBrowseServicesCommand_getDestination.toString());
-                }
-                try {
-                    dtmDestination_setDiscoveryPort.invoke(destination, actualDiscoveryPort);
-                } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmDestination_setDiscoveryPort.toString());
-                }
-
-                Object monitor = createMonitor(command+" "+target, serviceName, failOnError, false);
-                try {
-                    dtmBrowseServicesCommand_execute.invoke(start, parameters, monitor);
-                } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmBrowseServicesCommand_execute.toString()+" "+e.getMessage());
-                }
-
-                int rc;
-                try {
-                    rc = (int)dtmBrowseServicesCommand_waitForCompletion.invoke(start);
-                } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmBrowseServicesCommand_waitForCompletion.toString());
-                }
-
-                if (failOnError && rc != 0) {
-                    throw new MojoExecutionException("command: "+command+" "+target+" failed: node " + serviceName + " error code " + rc);
-                }
-            } else {
-                Object start = dtmCommandConstructor.newInstance(command, target, destination);
-                if (discoveryHosts != null && discoveryHosts.length > 0) {
-                    for (String discoveryHost : discoveryHosts) {
-                        try {
-                            dtmDestination_addDiscoveryHost.invoke(destination, discoveryHost);
-                        } catch (IllegalArgumentException e) {
-                            throw new MojoExecutionException("Invalid arguments to management API "+dtmDestination_addDiscoveryHost.toString());
-                        }
-                    }
-                }
-                try {
-                    dtmDestination_setDiscoveryPort.invoke(destination, actualDiscoveryPort);
-                } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmDestination_setDiscoveryPort.toString());
-                }
-
-                Object monitor = createMonitor(command+" "+target, serviceName, failOnError, false);
-                try {
-                    dtmCommand_execute.invoke(start, parameters, monitor);
-                } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_execute.toString());
-                }
-
-                int rc;
-                try {
-                    rc = (int)dtmCommand_waitForCompletion.invoke(start);
-                } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_waitForCompletion.toString());
-                }
-
-                if (failOnError && rc != 0) {
-                    throw new MojoExecutionException("command: "+command+" "+target+" failed: node " + serviceName + " error code " + rc);
-                }
-            }
-        } catch (InstantiationException e) {
-            throw new MojoExecutionException(e.getMessage());
-        } catch (IllegalAccessException e) {
-            throw new MojoExecutionException(e.getMessage());
-        } catch (InvocationTargetException e) {
-            throw new MojoExecutionException(e.getCause().getMessage());
-        } catch (SecurityException e) {
-            throw new MojoExecutionException(e.getMessage());
-        }
-    }
-
-    /**
-     * Run administration command by admin port
-     *
-     * @param adminPort admin port
-     * @param hostname hostname
-     * @param userName user name
-     * @param password password
-     * @param command administration command
-     * @param target  administration target
-     * @param parameters administration parameters
-     * @param failOnError if true, fail on error
-     *
-     * @throws MojoExecutionException node install failed
-     */
-    void runAdministrationCommand(final int adminPort, final String hostname, final String userName, final String password, final String command, final String target, final Map<String,String> parameters, final boolean failOnError) throws MojoExecutionException {
-
-        try {
-
-            Object destination;
-
-            setEnvironment();
-
-            if (command.equals("browse") && target.equals("services")) {
-                Object start = dtmBrowseServicesCommandConstructor.newInstance(dtmContext);
-
-                try {
-                    destination = dtmBrowseServicesCommand_getDestination.invoke(start);
-                } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmBrowseServicesCommand_getDestination.toString());
-                }
-
-                Object monitor = createMonitor(command+" "+target, ""+adminPort, failOnError, false);
-                try {
-                    dtmBrowseServicesCommand_execute.invoke(start, parameters, monitor);
-                } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmBrowseServicesCommand_execute.toString());
-                }
-
-                int rc;
-
-                try {
-                    rc = (int)dtmBrowseServicesCommand_waitForCompletion.invoke(start);
-                } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmBrowseServicesCommand_waitForCompletion.toString());
-                }
-
-                if (failOnError && rc != 0) {
-                    throw new MojoExecutionException("command: "+command+" "+target+" failed: node " + adminPort + " error code " + rc);
-                }
-            } else {
-                if (userName != null && userName.length() > 0 ) {
-                    destination = dtmNodeConstructorUsernamePassword.newInstance("", dtmContext, userName, password);
-                } else {
-                    destination = dtmNodeConstructor.newInstance("", dtmContext);
-                }
-
-                Object start = dtmCommandConstructor.newInstance(command, target, destination);
-                try {
-                    dtmNode_setAdministrationPort.invoke(destination, adminPort);
-                } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmNode_setAdministrationPort.toString());
-                }
-
-                if (hostname != null) {
-                    try {
-                        dtmNode_setHostName.invoke(destination, hostname);
-                    } catch (IllegalArgumentException e) {
-                        throw new MojoExecutionException("Invalid arguments to management API "+dtmNode_setHostName.toString());
-                    }
-                }
-
-                Object monitor = createMonitor(command+" "+target, ""+adminPort, failOnError, false);
-                try {
-                    dtmCommand_execute.invoke(start, parameters, monitor);
-                } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_execute.toString());
-                }
-
-                int rc;
-
-                try {
-                    rc = (int)dtmCommand_waitForCompletion.invoke(start);
-                } catch (IllegalArgumentException e) {
-                    throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_waitForCompletion.toString());
-                }
-
-                if (failOnError && rc != 0) {
-                    throw new MojoExecutionException("command: "+command+" "+target+" failed: node " + adminPort + " error code " + rc);
-                }
-            }
-        } catch (InstantiationException e) {
-            throw new MojoExecutionException(e.getMessage());
-        } catch (IllegalAccessException e) {
-            throw new MojoExecutionException(e.getMessage());
-        } catch (InvocationTargetException e) {
-            throw new MojoExecutionException(e.getCause().getMessage());
-        } catch (SecurityException e) {
-            throw new MojoExecutionException(e.getMessage());
-        }
-    }
-
-    /**
      * Install a single new node
      *
      * @param nodeDirectory node directory path
-     * @param userName user name
-     * @param password password
-     * @param nodeName node name
-     * @param parameters additional parameters
+     * @param nodeName      node name
+     * @param parameters    additional parameters
      * @return Full results of the command
-     *
      * @throws MojoExecutionException node install failed
      */
-    String installNode(final String nodeDirectory, String userName, String password, final String nodeName, Map<String, String> parameters) throws MojoExecutionException {
+    String installNode(final String nodeDirectory, final String nodeName, Map<String, String> parameters) throws MojoExecutionException {
+
+        removeNodeDirectory(nodeDirectory, nodeName);
 
         // if discovery port is set use it, otherwise use a unused & persistent value
         //
-        int actualDiscoveryPort;
-        if (discoveryPort == null) {
-            actualDiscoveryPort = findFreeUDPPort(discoveryPortFile);
-        } else {
-            actualDiscoveryPort=discoveryPort;
-        }
+        int actualDiscoveryPort = getDiscoveryPort();
 
-        Map<String, String> params;
-        if (parameters != null) {
-            params = new HashMap<String, String>(parameters);
-        } else {
-            params = new HashMap<String, String>();
-        }
+        assert parameters != null;
+        Map<String, String> params = new HashMap<>(parameters);
 
         if (discoveryHosts != null && discoveryHosts.length > 0) {
-            StringBuffer hosts = new StringBuffer();
+            StringBuilder hosts = new StringBuilder();
             for (String discoveryHost : discoveryHosts) {
                 if (hosts.length() > 0) {
                     hosts.append(",");
@@ -559,12 +298,51 @@ abstract class BaseExecuteMojo extends BaseMojo {
             params.put("buildtype", buildtype.toString());
         }
 
+        doSetEnvironment();
+        AbstractNodeBuilder nodeBuilder = getContext().newNode(nodeName);
+        updateUserNameAndPassword(nodeBuilder);
+
+        INode node = nodeBuilder.build();
+
+        AbstractInstallNodeCommandBuilder installNodeCommandBuilder = node
+            .newInstallNodeCommand();
+
+        params.put("nodedirectory", nodeDirectory);
+        getLog().debug("Parameters = " + params.toString());
+
+        RuntimeCommandNotifier notifier = newCommandRunner(installNodeCommandBuilder, nodeName, "node " + nodeName)
+            .errorHandling(ErrorHandling.FAIL)
+            .recordOutput(true)
+            .shutdownHook(command -> {
+
+                //  Try to remove the node if install is cancelled.
+                //
+                getLog().error("Install node was aborted - attempting to clean up");
+                command.cancel();
+
+                try {
+
+                    removeNodes(nodeName, ErrorHandling.IGNORE);
+
+                } catch (MojoExecutionException e) {
+
+                    //  Ignore failures.
+                    //
+                    getLog().debug("Remove node failed in shutdown hook", e);
+                }
+            })
+            .run(params);
+
+        return notifier.getOutput();
+    }
+
+    private void removeNodeDirectory(String nodeDirectory, String nodeName) throws MojoExecutionException {
         // remove node if it already existed
         //
-        File fullPath = new File(nodeDirectory+File.separator+nodeName);
+        File fullPath = new File(nodeDirectory + File.separator + nodeName);
         if (fullPath.exists()) {
-            stopNodes(nodeName, userName, password, false);
-            removeNodes(nodeName, userName, password, false);
+            stopNodes(nodeName, ErrorHandling.IGNORE);
+            removeNodes(nodeName, ErrorHandling.IGNORE);
 
             if (fullPath.exists()) {
                 Path directory = fullPath.toPath();
@@ -584,209 +362,272 @@ abstract class BaseExecuteMojo extends BaseMojo {
 
                     });
                 } catch (IOException e) {
-                    // ignore
+                    getLog().warn("Error while removing directory" + directory, e);
                 }
             }
-        }
-
-        try {
-
-            setEnvironment();
-
-            Object node;
-            if (userName != null && userName.length() > 0 ) {
-                node = dtmNodeConstructorUsernamePassword.newInstance(nodeName, dtmContext, userName, password);
-            } else {
-                node = dtmNodeConstructor.newInstance(nodeName, dtmContext);
-            }
-            Object install = dtmInstallNodeConstructor.newInstance(node);
-
-            params.put("nodedirectory", nodeDirectory);
-
-            getLog().debug("Parameters = "+params.toString());
-
-            // attempt to remove node if install failed
-            //
-            Thread hook = new Thread() {
-                public void run() {
-                    shuttingDown = true;
-                    getLog().error("Install node was aborted - attempting to clean up");
-                    try {
-                        dtmInstallNodeCommand_cancel.invoke(install);
-                    } catch (IllegalAccessException e) {
-                    } catch (IllegalArgumentException e) {
-                    } catch (InvocationTargetException e) {
-                    }
-                    try {
-                        removeNodes(nodeName, userName, password, false);
-                    } catch (MojoExecutionException e) {
-                    }
-                }
-            };
-            Runtime.getRuntime().addShutdownHook(hook);
-
-            Object monitor = createMonitor("install node", nodeName, true, true);
-            try {
-                dtmInstallNodeCommand_execute.invoke(install, params, monitor);
-            } catch (IllegalArgumentException e) {
-                throw new MojoExecutionException("Invalid arguments to management API "+dtmInstallNodeCommand_execute.toString());
-            }
-
-            int rc;
-
-            try {
-                rc = (int)dtmInstallNodeCommand_waitForCompletion.invoke(install);
-            } catch (IllegalArgumentException e) {
-                throw new MojoExecutionException("Invalid arguments to management API "+dtmInstallNodeCommand_waitForCompletion.toString());
-            }
-
-            if (shuttingDown) {
-                throw new MojoExecutionException("command: install node was aborted - attempting to clean up");
-            } else {
-                if (rc != 0) {
-                    throw new MojoExecutionException("command: install node failed: node " + nodeName + " error code " + rc);
-                }
-                Runtime.getRuntime().removeShutdownHook(hook);
-            }
-
-            return monitor.toString();
-
-        } catch (InstantiationException e) {
-            throw new MojoExecutionException(e.getMessage());
-        } catch (IllegalAccessException e) {
-            throw new MojoExecutionException(e.getMessage());
-        } catch (InvocationTargetException e) {
-            throw new MojoExecutionException(e.getCause().getMessage());
-        } catch (SecurityException e) {
-            throw new MojoExecutionException(e.getMessage());
         }
     }
 
     /**
      * Remove node
      *
-     * @param installPath Installation path
-     * @param failOnError if true, fail on error
-     *
-     * @throws MojoExecutionException node install failed
+     * @param installPath The installation path
+     * @param errorHandling The error handling
+     * @throws MojoExecutionException The node removal failed
      */
-    void removeNode(final String installPath, final boolean failOnError) throws MojoExecutionException {
+    void removeNode(String installPath, ErrorHandling errorHandling) throws MojoExecutionException {
 
-        Map<String, String> parameters = new HashMap<String, String>();
+        doSetEnvironment();
 
+        IDestination destination = getAdminService()
+            .newDestinationBuilder(getContext()).build();
+
+        AbstractCommandBuilder builder = getAdminService().newCommandBuilder()
+            .withCommand("remove").withTarget("node")
+            .withDestination(destination);
+
+        Map<String, String> parameters = new HashMap<>();
         parameters.put("installpath", installPath);
 
-        try {
-            Object destination;
-
-            setEnvironment();
-
-            destination = dtmDestinationConstructorEmpty.newInstance(dtmContext);
-            Object start = dtmCommandConstructor.newInstance("remove", "node", destination);
-
-            Object monitor = createMonitor("remove node", installPath, failOnError, false);
-            try {
-                dtmCommand_execute.invoke(start, parameters, monitor);
-            } catch (IllegalArgumentException e) {
-                throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_execute.toString());
-            }
-
-            int rc;
-            try {
-                rc = (int)dtmCommand_waitForCompletion.invoke(start);
-            } catch (IllegalArgumentException e) {
-                throw new MojoExecutionException("Invalid arguments to management API "+dtmCommand_waitForCompletion.toString());
-            }
-
-            if (failOnError && rc != 0) {
-                throw new MojoExecutionException("remove node installpath=" + installPath + " failed: error code " + rc);
-            }
-
-        } catch (InstantiationException e) {
-            throw new MojoExecutionException(e.getMessage());
-        } catch (IllegalAccessException e) {
-            throw new MojoExecutionException(e.getMessage());
-        } catch (InvocationTargetException e) {
-            throw new MojoExecutionException(e.getCause().getMessage());
-        } catch (SecurityException e) {
-            throw new MojoExecutionException(e.getMessage());
-        }
+        newCommandRunner(builder, installPath, "node installpath=" + installPath)
+            .recordOutput(false)
+            .errorHandling(errorHandling)
+            .run(parameters);
     }
 
     /**
      * Stop node(s)
      *
-     * @param serviceName service name
-     * @param userName user name
-     * @param password password
-     * @param failOnError if true, fail on error
-     *
-     * @throws MojoExecutionException node install failed
+     * @param serviceName The service name
+     * @param errorHandling The error handling
+     * @throws MojoExecutionException The node installation failed
      */
-    void stopNodes(final String serviceName, final String userName, final String password, final boolean failOnError) throws MojoExecutionException {
-        runAdministrationCommand(serviceName, userName, password, "stop", "node", null, failOnError);
-    }
-
-    /**
-     * Terminate node(s)
-     *
-     * @param serviceName service name
-     * @param userName user name
-     * @param password password
-     * @param failOnError if true, fail on error
-     *
-     * @throws MojoExecutionException node install failed
-     */
-    void terminateNodes(final String serviceName, final String userName, final String password, final boolean failOnError) throws MojoExecutionException {
-        runAdministrationCommand(serviceName, userName, password, "terminate", "node", null, failOnError);
+    void stopNodes(String serviceName, ErrorHandling errorHandling) throws MojoExecutionException {
+        newCommand(serviceName)
+            .commandAndTarget("stop", "node")
+            .errorHandling(errorHandling)
+            .run();
     }
 
     /**
      * Remove node(s)
      *
-     * @param serviceName service name
-     * @param userName user name
-     * @param password password
-     * @param failOnError if true, fail on error
-     *
-     * @throws MojoExecutionException node install failed
+     * @param serviceName The service name
+     * @param errorHandling The error handling
+     * @throws MojoExecutionException The node removal(s) failed
      */
-    void removeNodes(final String serviceName, final String userName, final String password, final boolean failOnError) throws MojoExecutionException {
-        runAdministrationCommand(serviceName, userName, password, "remove", "node", null, failOnError);
+    void removeNodes( String serviceName,  ErrorHandling errorHandling) throws MojoExecutionException {
+        newCommand(serviceName)
+            .commandAndTarget("remove", "node")
+            .errorHandling(errorHandling)
+            .run();
     }
 
     /**
      * Reset the environment for this context
-     *
-     * @throws IllegalAccessException reflection error
-     * @throws IllegalArgumentException reflection error
-     * @throws InvocationTargetException reflection error
      */
-    void setEnvironment() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    void doSetEnvironment() {
 
-        dtmContext_clearEnvironment.invoke(dtmContext);
+        getContext().clearEnvironment();
+        Map<String, String> allEnvironment = new HashMap<>();
 
-        Map<String, String> allEnvironment = new HashMap<String, String>();
         if (environmentVariables != null) {
             allEnvironment.putAll(environmentVariables);
         }
+
         if (environment != null) {
-            for(String argument : environment) {
+            for (String argument : environment) {
                 if (argument.contains("=")) {
                     String[] args = argument.split("=");
                     if (args.length == 2) {
                         allEnvironment.put(args[0], args[1]);
                     } else {
-                        getLog().warn("Invalid name/value "+argument);
+                        getLog().warn("Invalid name/value " + argument);
                     }
                 } else {
-                    getLog().warn("Invalid name/value "+argument);
+                    getLog().warn("Invalid name/value " + argument);
                 }
             }
         }
+
         if (!allEnvironment.isEmpty()) {
-            dtmContext_setEnvironment.invoke(dtmContext, allEnvironment);
+            getContext().withEnvironment(allEnvironment);
         }
     }
 
+    private void updateUserNameAndPassword(AbstractDestinationBuilder builder) {
+        if (userName != null && !userName.isEmpty()) {
+            builder.withUserName(userName).withPassword(password);
+        }
+    }
+
+    IDestination newDestination(String serviceName) {
+
+        AbstractDestinationBuilder builder = getContext().newDestination().withName(serviceName);
+        updateUserNameAndPassword(builder);
+
+        if (discoveryHosts != null && discoveryHosts.length > 0) {
+            for (String discoveryHost : discoveryHosts) {
+
+                builder.withAdditionalDiscoveryHost(discoveryHost);
+            }
+        }
+
+        return builder.build();
+    }
+
+    private INode newNode(int adminPort, String hostName) {
+        AbstractNodeBuilder builder = getContext()
+            .newNode(hostName)
+            .withAdministrationPort(adminPort);
+
+        updateUserNameAndPassword(builder);
+        return builder.build();
+    }
+
+    AdminCommand newCommand(String serviceName) {
+        return new AdminCommand(serviceName);
+    }
+
+    AdminCommand newCommand(int adminPort) {
+        return new AdminCommand(adminPort);
+    }
+
+    /**
+     * Build type
+     */
+    public enum BuldType {
+        /**
+         * Development mode
+         */
+        DEVELOPMENT,
+        /**
+         * Production mode
+         */
+        PRODUCTION,
+        /**
+         * ALL mode - ignored
+         */
+        ALL,
+        /**
+         * test coverage mode - ignored
+         */
+        TESTCOV
+    }
+
+    class AdminCommand {
+
+        private Optional<String> serviceName;
+        private Optional<Integer> adminPort;
+        private Optional<String> hostname;
+
+        private String command;
+        private String target;
+        private Map<String, String> parameters;
+        private ErrorHandling errorHandling;
+
+        private AdminCommand(String serviceName) {
+            this();
+            this.serviceName = Optional.of(serviceName);
+        }
+
+        private AdminCommand(int adminPort) {
+            this();
+            this.adminPort = Optional.of(adminPort);
+        }
+
+        private AdminCommand() {
+            serviceName = Optional.empty();
+            adminPort = Optional.empty();
+            hostname = Optional.empty();
+
+            errorHandling = ErrorHandling.FAIL;
+        }
+
+        public AdminCommand hostname(String hostname) {
+            this.hostname = Optional.ofNullable(hostname);
+            return this;
+        }
+
+        public AdminCommand commandAndTarget(String command, String target) {
+            this.command = command;
+            this.target = target;
+            return this;
+        }
+
+        public AdminCommand parameters(Map<String, String> parameters) {
+            this.parameters = parameters;
+            return this;
+        }
+
+        public AdminCommand errorHandling(ErrorHandling errorHandling) {
+            this.errorHandling = errorHandling;
+            return this;
+        }
+
+        void run() throws MojoExecutionException {
+
+            doSetEnvironment();
+
+            String shortDescription;
+            String longDescription;
+            AbstractCommandBuilder builder;
+
+            //  FIX THIS (FL): clarify how browse commands are supposed to work wrt parameters.
+            //
+
+            if (serviceName.isPresent()) {
+
+                assert !hostname.isPresent() : hostname;
+                assert !adminPort.isPresent() : adminPort;
+
+                shortDescription = serviceName.get();
+                longDescription = "node " + serviceName;
+
+                int actualDiscoveryPort = getDiscoveryPort();
+
+                if (command.equals("browse") && target.equals("services")) {
+
+                    AbstractBrowseServicesCommandBuilder browseBuilder = getContext()
+                        .newBrowseServicesCommand();
+
+                    IBrowseServicesCommand cmd = browseBuilder.build();
+                    IDestination destination = cmd.getDestination();
+                    destination.setDiscoveryPort(actualDiscoveryPort);
+
+                    builder = browseBuilder;
+
+                } else {
+
+                    IDestination destination = newDestination(serviceName.get());
+                    destination.setDiscoveryPort(actualDiscoveryPort);
+
+                    builder = destination.newCommand(command, target);
+                }
+
+            } else {
+
+                assert adminPort.isPresent();
+
+                shortDescription = String.valueOf(adminPort.get());
+                longDescription = "node port=" + adminPort.get()
+                    + (hostname.map(s -> " hostname=" + s).orElse(""));
+
+
+                if (command.equals("browse") && target.equals("services")) {
+
+                    builder = getContext().newBrowseServicesCommand();
+
+                } else {
+
+                    builder = newNode(adminPort.get(), hostname.orElse(""))
+                        .newCommand(command, target);
+                }
+            }
+
+            newCommandRunner(builder, shortDescription, longDescription)
+                .errorHandling(errorHandling)
+                .run(parameters);
+        }
+    }
 }

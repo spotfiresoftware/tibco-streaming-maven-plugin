@@ -47,7 +47,7 @@ public class Context extends ServiceAwareStub implements IContext {
      * @param adminService The admin service
      * @param installation The installation path
      */
-    public Context(AdminService adminService, Path installation) {
+    public Context(RuntimeAdminService adminService, Path installation) {
         super(adminService);
         logMethod("constructor", installation);
     }

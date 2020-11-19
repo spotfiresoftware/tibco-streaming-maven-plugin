@@ -28,37 +28,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.tibco.ep.sb.services.management;
+checkSequence(new File(basedir, "build.log"),
+        "[INFO] [Node1.simple_cluster] Running \"install node\"",
+        "[INFO] [simple_cluster] Running \"start node\"",
+        "Node started",
+        "[INFO] Executed tasks",
+        "[INFO] [Node1.simple_cluster] Running \"stop node\"",
+        "INFO] [Node1.simple_cluster] Finished \"remove node\"",
+        "BUILD SUCCESS")
 
-import java.util.Map;
+static def checkSequence(File file, String... sequence) {
 
-/**
- * The command interface
- */
-public interface ICommand {
+    List<String> contents = new ArrayList<>(Arrays.asList(sequence))
+    List<String> lines = []
+    file.eachLine {lines.add(it) }
 
-    /**
-     * @return The destination
-     */
-    IDestination getDestination();
+    System.out.println("Scanning file: " + file)
 
-    /**
-     * Launch the command execution
-     *
-     * @param parameters The command parameters
-     * @param notifier   The notifier
-     */
-    void execute(Map<String, String> parameters, INotifier notifier);
+    for (int i = 0 ; i < lines.size() ; i++) {
+        if (contents.isEmpty()) {
+            return;
+        }
+        if (lines.get(i).contains(contents.get(0))) {
+            System.out.println("Line " + i + ": " + contents.get(0))
+            contents.remove(0);
+        }
+    }
 
-    /**
-     * Wait for the command completion
-     *
-     * @return The result code
-     */
-    int waitForCompletion();
-
-    /**
-     * Cancel the command
-     */
-    void cancel();
+    if (!contents.isEmpty()) {
+        throw new AssertionError("Could not find " + contents.get(0))
+    }
+    System.out.println("Scan OK.")
 }

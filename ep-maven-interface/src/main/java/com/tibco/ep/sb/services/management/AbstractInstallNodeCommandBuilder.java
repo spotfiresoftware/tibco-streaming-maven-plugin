@@ -39,6 +39,7 @@ public abstract class AbstractInstallNodeCommandBuilder extends AbstractCommandB
      * @param node The node to install on
      */
     protected AbstractInstallNodeCommandBuilder(INode node) {
+        withCommand("install").withTarget("node");
         withDestination(node);
     }
 

@@ -35,7 +35,7 @@ import java.nio.file.Path;
 /**
  * The main entry point for admin service
  */
-public interface IAdminService {
+public interface IRuntimeAdminService {
 
     /**
      * Create a new context

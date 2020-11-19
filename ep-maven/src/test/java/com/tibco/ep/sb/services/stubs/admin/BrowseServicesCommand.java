@@ -45,7 +45,7 @@ public class BrowseServicesCommand extends Command implements IBrowseServicesCom
      * @param builder The builder
      */
     public BrowseServicesCommand(Builder builder) {
-        super(builder);
+        super(builder, new Destination());
         this.context = builder.getContext();
     }
 

@@ -28,44 +28,18 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.tibco.ep.sb.services;
-
-import com.tibco.ep.sb.services.management.IAdminService;
-
-import java.util.ServiceLoader;
+package com.tibco.ep.buildmavenplugin;
 
 /**
- * The main service interface
+ * Specify the behavior upon error
  */
-public interface IRuntimeService {
-
+public enum ErrorHandling {
     /**
-     * Get a non-stubbed service implementation if possible, otherwise return the stub one.
-     *
-     * @param classLoader The class loader to use to load services
-     * @return A runtime service implementation
+     * Fail the command
      */
-    static IRuntimeService getServiceImplementation(ClassLoader classLoader) {
-
-        //  Get a non stubbed service implementation, if possible.
-        //
-        IRuntimeService service = null;
-
-        for (IRuntimeService s : ServiceLoader.load(IRuntimeService.class, classLoader)) {
-
-            if (service != null) {
-                throw new IllegalStateException("Cannot have multiple " + IRuntimeService.class  + " service implementations.");
-            }
-
-            service = s;
-        }
-
-        assert service != null : "No service found for " + IRuntimeService.class;
-        return service;
-    }
-
+    FAIL,
     /**
-     * @return The admin service
+     * Ignore the error
      */
-    IAdminService getAdminService();
+    IGNORE
 }

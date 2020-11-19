@@ -49,8 +49,8 @@ public abstract class AbstractDeployFragmentCommandBuilder extends AbstractComma
      */
     public AbstractDeployFragmentCommandBuilder(IDestination destination, FragmentType fragmentType, String target) {
         this.fragmentType = fragmentType;
-        withTarget(target);
         withDestination(destination);
+        withCommand("deploy").withTarget(target);
     }
 
     /**
@@ -91,6 +91,12 @@ public abstract class AbstractDeployFragmentCommandBuilder extends AbstractComma
     public AbstractDeployFragmentCommandBuilder withApplicationArguments(List<String> applicationArguments) {
         this.applicationArguments.clear();
         this.applicationArguments.addAll(applicationArguments);
+        return this;
+    }
+
+    @Override
+    public AbstractDeployFragmentCommandBuilder withDestination(IDestination destination) {
+        super.withDestination(destination);
         return this;
     }
 

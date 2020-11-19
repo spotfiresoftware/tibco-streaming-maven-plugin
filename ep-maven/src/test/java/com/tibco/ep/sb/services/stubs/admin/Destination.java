@@ -31,7 +31,7 @@
 package com.tibco.ep.sb.services.stubs.admin;
 
 import com.tibco.ep.sb.services.management.AbstractDestinationBuilder;
-import com.tibco.ep.sb.services.management.IAdminService;
+import com.tibco.ep.sb.services.management.IRuntimeAdminService;
 import com.tibco.ep.sb.services.management.IContext;
 import com.tibco.ep.sb.services.management.IDestination;
 
@@ -41,6 +41,7 @@ import com.tibco.ep.sb.services.management.IDestination;
 public class Destination extends ServiceAwareStub implements IDestination {
 
     private final AbstractDestinationBuilder builder;
+    private int discoveryPort = 0;
 
     /**
      * @param builder The builder
@@ -54,9 +55,30 @@ public class Destination extends ServiceAwareStub implements IDestination {
         this.logMethod("constructor", builder);
     }
 
+    /**
+     * A destination no-op constructor
+     */
+    Destination() {
+        super(null);
+        builder = null;
+        this.logMethod("constructor");
+    }
+
+    /**
+     * @return The destination name
+     */
+    String getName() {
+        return builder.getName();
+    }
+
     @Override
     public String toString() {
-        return getClass().getSimpleName() + builder.toString();
+        return getClass().getSimpleName() + (builder != null ? builder.toString() : "");
+    }
+
+    @Override
+    public void setDiscoveryPort(int discoveryPort) {
+        this.discoveryPort = discoveryPort;
     }
 
     /**
@@ -68,7 +90,7 @@ public class Destination extends ServiceAwareStub implements IDestination {
          * @param service The service
          * @param context The context
          */
-        Builder(IAdminService service, IContext context) {
+        Builder(IRuntimeAdminService service, IContext context) {
             super(service, context);
         }
 

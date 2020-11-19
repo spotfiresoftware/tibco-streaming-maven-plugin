@@ -35,7 +35,7 @@ import com.tibco.ep.sb.services.management.AbstractDeployFragmentCommandBuilder;
 import com.tibco.ep.sb.services.management.AbstractDestinationBuilder;
 import com.tibco.ep.sb.services.management.AbstractNodeBuilder;
 import com.tibco.ep.sb.services.management.FragmentType;
-import com.tibco.ep.sb.services.management.IAdminService;
+import com.tibco.ep.sb.services.management.IRuntimeAdminService;
 import com.tibco.ep.sb.services.management.IBrowseServicesCommand;
 import com.tibco.ep.sb.services.management.ICommand;
 import com.tibco.ep.sb.services.management.IContext;
@@ -44,7 +44,6 @@ import com.tibco.ep.sb.services.management.IDestination;
 import com.tibco.ep.sb.services.management.IInstallNodeCommand;
 import com.tibco.ep.sb.services.management.INode;
 import com.tibco.ep.sb.services.management.INotifier;
-import com.tibco.ep.sb.services.stubs.StubbedRuntimeServices;
 import org.junit.Test;
 
 import java.nio.file.Paths;
@@ -65,9 +64,9 @@ public class RuntimeServiceTest {
      */
     @Test
     public void testStubbedServiceLoad() {
-        IRuntimeService svc = IRuntimeService.getServiceImplementation(getClass().getClassLoader());
+        IRuntimeAdminService svc = RuntimeServices.getAdminService(getClass().getClassLoader());
         assertThat(svc).isNotNull();
-        assertThat(svc).isInstanceOf(StubbedRuntimeServices.class);
+        assertThat(svc).isInstanceOf(IRuntimeAdminService.class);
     }
 
     /**
@@ -76,8 +75,7 @@ public class RuntimeServiceTest {
     @Test
     public void testStubbedAdminServiceImplementation() {
 
-        IRuntimeService svc = IRuntimeService.getServiceImplementation(getClass().getClassLoader());
-        IAdminService admin = svc.getAdminService();
+        IRuntimeAdminService admin = RuntimeServices.getAdminService(getClass().getClassLoader());
         assertThat(admin).isNotNull();
 
         //  Context.
@@ -97,7 +95,6 @@ public class RuntimeServiceTest {
             .withAdministrationPort(123)
             .withUserName("user")
             .withPassword("password")
-            .withDiscoverPort(1234)
             .withAdditionalDiscoveryHost("discovery_host");
         assertThat(nodeBuilder.getHostName()).isEqualTo("MyNodeHost");
         assertThat(nodeBuilder.getAdministrationPort()).isEqualTo(123);
@@ -110,42 +107,31 @@ public class RuntimeServiceTest {
             .withUserName("username")
             .withPassword("password")
             .withAdditionalDiscoveryHost("discovery_host1")
-            .withAdditionalDiscoveryHost("discovery_host2")
-            .withDiscoverPort(1234);
+            .withAdditionalDiscoveryHost("discovery_host2");
         assertThat(destinationBuilder.getName()).isEqualTo("destination_name");
         assertThat(destinationBuilder.getUserName()).isEqualTo("username");
         assertThat(destinationBuilder.getPassword()).isEqualTo("password");
         assertThat(destinationBuilder.getDiscoveryHosts())
             .contains("discovery_host1", "discovery_host2");
-        assertThat(destinationBuilder.getDiscoveryPort()).isEqualTo(1234);
         assertThat(destinationBuilder.getContext()).isEqualTo(ctx);
 
         IDestination destination = destinationBuilder.build();
+        destination.setDiscoveryPort(1234);
         AbstractCommandBuilder commandBuilder = destination.newCommand("command", "target")
-            .withEnvironment(environment)
             .withCommand("command")
             .withTarget("target")
-            .withUserName("user")
-            .withPassword("pass")
-            .withDestination(destination)
-            .withServiceName("service")
-            .withDiscoveryPort(1234);
-        assertThat(commandBuilder.getEnvironment()).isEqualTo(environment);
+            .withDestination(destination);
         assertThat(commandBuilder.getCommand()).isEqualTo("command");
         assertThat(commandBuilder.getTarget()).isEqualTo("target");
-        assertThat(commandBuilder.getUserName()).isEqualTo("user");
-        assertThat(commandBuilder.getPassword()).isEqualTo("pass");
         assertThat(commandBuilder.getDestination()).isEqualTo(destination);
-        assertThat(commandBuilder.getServiceName()).isEqualTo("service");
-        assertThat(commandBuilder.getDiscoveryPort()).isEqualTo(1234);
 
         //  Command.
         //
         ICommand commandWithDestination = commandBuilder.build();
         assertThat(commandWithDestination.getDestination()).isEqualTo(destination);
         DummyNotifier notifier = new DummyNotifier();
-        assertThat(commandWithDestination.executeAndWaitForCompletion(environment, notifier))
-            .isEqualTo(0);
+        commandWithDestination.execute(environment, notifier);
+        assertThat(commandWithDestination.waitForCompletion()).isEqualTo(0);
         assertThat(notifier.started).isTrue();
         assertThat(notifier.complete).isTrue();
         assertThat(notifier.info).isNotEmpty();

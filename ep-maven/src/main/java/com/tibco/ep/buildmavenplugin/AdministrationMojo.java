@@ -133,12 +133,19 @@ public class AdministrationMojo extends BaseExecuteMojo {
             return;
         }
         
-        initializeAdministration(true);
+        initializeAdministration(ErrorHandling.FAIL);
+
+        AdminCommand adminCommand = null;
         if (adminport == null) {
-            runAdministrationCommand(serviceName, userName, password, command, target, arguments, true);
+            adminCommand = newCommand(serviceName);
         } else {
-            runAdministrationCommand(adminport, hostname, userName, password, command, target, arguments, true);
+            adminCommand = newCommand(adminport).hostname(hostname);
         }
+
+        adminCommand
+            .commandAndTarget(command, target)
+            .parameters(arguments)
+            .run();
     }
 
 }

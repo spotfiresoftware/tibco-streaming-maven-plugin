@@ -38,5 +38,5 @@ public interface IAdminServiceAware {
     /**
      * @return The admin service.
      */
-    IAdminService getAdminService();
+    IRuntimeAdminService getAdminService();
 }

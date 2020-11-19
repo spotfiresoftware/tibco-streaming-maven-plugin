@@ -35,19 +35,19 @@ package com.tibco.ep.sb.services.management;
  */
 public class AbstractBaseBuilder {
 
-    private final IAdminService adminService;
+    private final IRuntimeAdminService adminService;
 
     /**
      * @param adminService The admin service
      */
-    public AbstractBaseBuilder(IAdminService adminService) {
+    public AbstractBaseBuilder(IRuntimeAdminService adminService) {
         this.adminService = adminService;
     }
 
     /**
      * @return The admin service
      */
-    public IAdminService getAdminService() {
+    public IRuntimeAdminService getAdminService() {
         return adminService;
     }
 }

@@ -30,7 +30,7 @@
 
 package com.tibco.ep.sb.services.stubs.admin;
 
-import com.tibco.ep.sb.services.management.IAdminService;
+import com.tibco.ep.sb.services.management.IRuntimeAdminService;
 import com.tibco.ep.sb.services.management.IAdminServiceAware;
 
 /**
@@ -38,17 +38,17 @@ import com.tibco.ep.sb.services.management.IAdminServiceAware;
  */
 public abstract class ServiceAwareStub extends Stub implements IAdminServiceAware {
 
-    private final IAdminService service;
+    private final IRuntimeAdminService service;
 
     /**
      * @param service The service
      */
-    public ServiceAwareStub(IAdminService service) {
+    public ServiceAwareStub(IRuntimeAdminService service) {
         this.service = service;
     }
 
     @Override
-    public IAdminService getAdminService() {
+    public IRuntimeAdminService getAdminService() {
         return service;
     }
 }

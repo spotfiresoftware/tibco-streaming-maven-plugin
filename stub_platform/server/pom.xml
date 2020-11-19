@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2018-2020, TIBCO Software Inc.
+  Copyright (C) 2020, TIBCO Software Inc.
   
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -32,43 +32,32 @@
 
     <!-- vim: set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab : -->
 
-
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>stub-platform</artifactId>
-    <packaging>pom</packaging>
-    <groupId>com.tibco.ep.ep-maven</groupId>
+    <artifactId>server</artifactId>
+    <packaging>jar</packaging>
+    <groupId>com.tibco.ep.sb</groupId>
 
-    <name>Stub Platform</name>
+    <name>Stub SB Server</name>
 
     <parent>
-        <groupId>com.tibco.ep</groupId>
-        <artifactId>ep-maven</artifactId>
+        <groupId>com.tibco.ep.ep-maven</groupId>
+        <artifactId>stub-platform</artifactId>
         <version>2.0.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>  
 
-    <properties>
-        <maven.site.skip>true</maven.site.skip>
-        <maven.site.deploy.skip>true</maven.site.deploy.skip>
-        <maven.deploy.skip>true</maven.deploy.skip>
-    </properties>
-
-    <modules>
-        <module>dtm/pom-dtm-linuxaarch64.xml</module>
-        <module>dtm/pom-dtm-linuxx86_64.xml</module>
-        <module>dtm/pom-dtm-osxx86_64.xml</module>
-        <module>dtm/pom-dtm-windowsx64.xml</module>
-        <module>sb/pom-sb-linuxaarch64.xml</module>
-        <module>sb/pom-sb-linuxx86_64.xml</module>
-        <module>sb/pom-sb-osxx86_64.xml</module>
-        <module>sb/pom-sb-windowsx64.xml</module>
-        <module>sdk</module>
-        <module>deploy</module>
-        <module>hoconschema</module>        
-        <module>logging</module>
-        <module>management</module>
-        <module>server</module>
-    </modules>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

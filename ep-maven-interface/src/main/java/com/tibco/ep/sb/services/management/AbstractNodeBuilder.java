@@ -43,7 +43,7 @@ public abstract class AbstractNodeBuilder extends AbstractDestinationBuilder  {
      * @param context The context
      * @param name The node name
      */
-    public AbstractNodeBuilder(IAdminService service, IContext context, String name) {
+    public AbstractNodeBuilder(IRuntimeAdminService service, IContext context, String name) {
         super(service, context);
         withName(name);
     }
@@ -98,11 +98,6 @@ public abstract class AbstractNodeBuilder extends AbstractDestinationBuilder  {
     @Override
     public AbstractNodeBuilder withAdditionalDiscoveryHost(String host) {
         return (AbstractNodeBuilder) super.withAdditionalDiscoveryHost(host);
-    }
-
-    @Override
-    public AbstractNodeBuilder withDiscoverPort(int port) {
-        return (AbstractNodeBuilder) super.withDiscoverPort(port);
     }
 
     /**

@@ -172,12 +172,12 @@ public class StopNodesMojo extends BaseExecuteMojo {
             return;
         }
 
-        boolean failOnError = failOnStopError;
+        ErrorHandling errorHandling = (failOnStopError ? ErrorHandling.FAIL : ErrorHandling.IGNORE);
         if (clean) {
-            failOnError = false;
+            errorHandling = ErrorHandling.IGNORE;
         }
 
-        initializeAdministration(failOnError);
+        initializeAdministration(errorHandling);
 
         // shut down
         //
@@ -187,7 +187,7 @@ public class StopNodesMojo extends BaseExecuteMojo {
             for (int i=0; i<nodes.length; i++) {
                 String nodeName = nodes[i]+"."+clusterName;
                 if (new File(nodeDirectory, nodeName).exists()) {
-                    stopNodes(nodeName, userName, password, failOnError);
+                    stopNodes(nodeName, errorHandling);
                 }
             }
         }
@@ -200,15 +200,16 @@ public class StopNodesMojo extends BaseExecuteMojo {
         // remove nodes
         //
         if (installPath != null) {
-            removeNode(installPath, failOnError);
+            removeNode(installPath, errorHandling);
         } else {
-            for (int i=0; i<nodes.length; i++) {
-                String nodeName = nodes[i]+"."+clusterName;
+            for (String node : nodes) {
+                String nodeName = node + "." + clusterName;
                 if (new File(nodeDirectory, nodeName).exists()) {
                     try {
-                        removeNodes(nodeName, userName, password, failOnError);
+                        removeNodes(nodeName, errorHandling);
                     } catch (MojoExecutionException e) {
-                        removeNode(new File(nodeDirectory, nodeName).getAbsolutePath(), failOnError);
+                        removeNode(new File(nodeDirectory, nodeName)
+                            .getAbsolutePath(), errorHandling);
                     }
                 }
             }

@@ -28,4 +28,4 @@
 # POSSIBILITY OF SUCH DAMAGE.
 #
 
-com.tibco.ep.sb.services.stubs.StubbedRuntimeServices # IRuntimeService implementation
+com.tibco.ep.sb.services.stubs.admin.RuntimeAdminService # IRuntimeAdminService implementation

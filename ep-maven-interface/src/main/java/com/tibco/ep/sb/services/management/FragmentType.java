@@ -49,5 +49,22 @@ public enum FragmentType {
     /**
      * TIBCO Cloud Streaming
      */
-    CLOUD_STREAMING
+    CLOUD_STREAMING;
+
+    /**
+     * Convert the string parameter to an actual fragment type value
+     *
+     * @param parameter The parameter
+     * @return The fragment type
+     */
+    public static FragmentType fromParameter(String parameter) {
+
+        //  FIX THIS (FL): should we rename it and break compatibility ?
+        //
+        if (parameter.equals("TCS")) {
+            return CLOUD_STREAMING;
+        }
+
+        return FragmentType.valueOf(parameter);
+    }
 }

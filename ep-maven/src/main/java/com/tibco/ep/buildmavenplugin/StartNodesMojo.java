@@ -201,20 +201,18 @@ public class StartNodesMojo extends BaseExecuteMojo {
             return;
         }
 
-        initializeAdministration(true);
+        initializeAdministration(ErrorHandling.FAIL);
 
         boolean staticDiscovery = false;
-        HashMap<String, Integer> adminPorts = new HashMap<String, Integer>();
+        Map<String, Integer> adminPorts = new HashMap<>();
 
         if (skipInstall || skipStart) {
             getLog().info("Install nodes is skipped");
         } else {
-            Map<String, String> defaultArguments;
-            if (installArguments != null) {
-                defaultArguments= new HashMap<String, String>(installArguments);
-            } else {
-                defaultArguments= new HashMap<String, String>();
-            }
+
+            Map<String, String> defaultArguments =
+                (installArguments != null ? new HashMap<>(installArguments) : new HashMap<>());
+
             if (nodeParameters != null) {
                 for(String argument : nodeParameters) {
                     if (argument.contains("=")) {
@@ -246,13 +244,18 @@ public class StartNodesMojo extends BaseExecuteMojo {
             // filter the final results to see if we are using static discovery on
             // the cluster
             //
-            for (int i=0; i<nodes.length; i++) {
-                String results = installNode(nodeDirectory.getAbsolutePath(), userName, password, nodes[i]+"."+clusterName, defaultArguments);
+            for (String node : nodes) {
+                String results = installNode(
+                    nodeDirectory.getAbsolutePath(),
+                    node + "." + clusterName,
+                    defaultArguments);
                 if (results.contains("Discovery Service: Disabled: disabled via install option")) {
                     staticDiscovery = true;
-                    Matcher m = Pattern.compile(".*Administration port is (\\d+)$", Pattern.MULTILINE).matcher(results);
-                    if (m.find( )) {
-                        adminPorts.put(nodes[i], Integer.parseInt(m.group(1)));
+                    Matcher m = Pattern
+                        .compile(".*Administration port is (\\d+)$", Pattern.MULTILINE)
+                        .matcher(results);
+                    if (m.find()) {
+                        adminPorts.put(node, Integer.parseInt(m.group(1)));
                     }
                 }
             }
@@ -260,7 +263,12 @@ public class StartNodesMojo extends BaseExecuteMojo {
 
         if (!installOnly && !skipStart) {
             if (!staticDiscovery) {
-                runAdministrationCommand(clusterName, userName, password, "start", "node", startArguments, true);
+
+                newCommand(clusterName)
+                    .commandAndTarget("start", "node")
+                    .parameters(startArguments)
+                    .run();
+
             } else {
                 Thread[] threads = new Thread[nodes.length];
                 for (int i=0; i<nodes.length; i++) {
@@ -271,7 +279,11 @@ public class StartNodesMojo extends BaseExecuteMojo {
                     threads[i] = new Thread(new Runnable() {
                         public void run() {
                             try {
-                                runAdministrationCommand(adminPort, null, userName, password, "start", "node", startArguments, false);
+
+                                newCommand(adminPort)
+                                    .commandAndTarget("start", "node")
+                                    .parameters(startArguments)
+                                    .run();
                             } catch (MojoExecutionException e) {
                                 e.printStackTrace();
                             }

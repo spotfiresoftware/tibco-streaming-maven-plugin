@@ -37,7 +37,7 @@ import com.tibco.ep.sb.services.management.AbstractDestinationBuilder;
 import com.tibco.ep.sb.services.management.AbstractInstallNodeCommandBuilder;
 import com.tibco.ep.sb.services.management.AbstractNodeBuilder;
 import com.tibco.ep.sb.services.management.FragmentType;
-import com.tibco.ep.sb.services.management.IAdminService;
+import com.tibco.ep.sb.services.management.IRuntimeAdminService;
 import com.tibco.ep.sb.services.management.IContext;
 import com.tibco.ep.sb.services.management.IDestination;
 import com.tibco.ep.sb.services.management.INode;
@@ -47,7 +47,7 @@ import java.nio.file.Path;
 /**
  * The admin service stub implementation
  */
-public class AdminService implements IAdminService {
+public class RuntimeAdminService implements IRuntimeAdminService {
     @Override
     public Context newContext(Path installation) {
         return new Context(this, installation);

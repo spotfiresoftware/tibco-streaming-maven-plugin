@@ -30,35 +30,7 @@
 
 package com.tibco.ep.sb.services.management;
 
-import java.util.Map;
+public interface IWrappedObject {
 
-/**
- * The command interface
- */
-public interface ICommand {
-
-    /**
-     * @return The destination
-     */
-    IDestination getDestination();
-
-    /**
-     * Launch the command execution
-     *
-     * @param parameters The command parameters
-     * @param notifier   The notifier
-     */
-    void execute(Map<String, String> parameters, INotifier notifier);
-
-    /**
-     * Wait for the command completion
-     *
-     * @return The result code
-     */
-    int waitForCompletion();
-
-    /**
-     * Cancel the command
-     */
-    void cancel();
+    Object getWrappedObject();
 }

@@ -43,13 +43,12 @@ public abstract class AbstractDestinationBuilder extends AbstractBaseBuilder {
     private String name;
     private String userName;
     private String password;
-    private Integer discoveryPort;
 
     /**
      * @param adminService The admin service
      * @param context      The context
      */
-    public AbstractDestinationBuilder(IAdminService adminService, IContext context) {
+    public AbstractDestinationBuilder(IRuntimeAdminService adminService, IContext context) {
         super(adminService);
         this.context = context;
     }
@@ -90,13 +89,6 @@ public abstract class AbstractDestinationBuilder extends AbstractBaseBuilder {
     }
 
     /**
-     * @return The discovery port
-     */
-    public Integer getDiscoveryPort() {
-        return discoveryPort;
-    }
-
-    /**
      * @param name The destination name
      * @return This
      */
@@ -134,15 +126,6 @@ public abstract class AbstractDestinationBuilder extends AbstractBaseBuilder {
         return this;
     }
 
-    /**
-     * @param port The discovery port
-     * @return This
-     */
-    public AbstractDestinationBuilder withDiscoverPort(int port) {
-        discoveryPort = port;
-        return this;
-    }
-
     public abstract IDestination build();
 
     @Override
@@ -153,7 +136,6 @@ public abstract class AbstractDestinationBuilder extends AbstractBaseBuilder {
             ", userName='" + userName + '\'' +
             ", password='" + password + '\'' +
             ", discoveryHosts=" + discoveryHosts +
-            ", discoveryPort=" + discoveryPort +
             "}";
     }
 }

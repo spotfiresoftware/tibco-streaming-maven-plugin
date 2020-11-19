@@ -28,37 +28,46 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.tibco.ep.sb.services.management;
+package com.tibco.ep.sb.services;
 
-import java.util.Map;
+import com.tibco.ep.sb.services.management.IRuntimeAdminService;
+
+import java.util.ServiceLoader;
 
 /**
- * The command interface
+ * Primary access point for runtime services
  */
-public interface ICommand {
+public class RuntimeServices {
+    private RuntimeServices() {
+        //  Never called.
+    }
+
+    private static <T> T getRuntimeService(Class<T> cls, ClassLoader classLoader) {
+
+        //  Get a service implementation. There should be only one.
+        //
+        T service = null;
+
+        for (T s : ServiceLoader.load(cls, classLoader)) {
+
+            if (service != null) {
+                throw new IllegalStateException("Cannot have multiple "
+                    + cls + " service implementations.");
+            }
+
+            service = s;
+        }
+
+        return service;
+    }
 
     /**
-     * @return The destination
-     */
-    IDestination getDestination();
-
-    /**
-     * Launch the command execution
+     * Get the administration service
      *
-     * @param parameters The command parameters
-     * @param notifier   The notifier
+     * @param classLoader The class loader
+     * @return The administration service
      */
-    void execute(Map<String, String> parameters, INotifier notifier);
-
-    /**
-     * Wait for the command completion
-     *
-     * @return The result code
-     */
-    int waitForCompletion();
-
-    /**
-     * Cancel the command
-     */
-    void cancel();
+    public static IRuntimeAdminService getAdminService(ClassLoader classLoader) {
+        return getRuntimeService(IRuntimeAdminService.class, classLoader);
+    }
 }

@@ -31,7 +31,7 @@
 package com.tibco.ep.sb.services.stubs.admin;
 
 import com.tibco.ep.sb.services.management.AbstractNodeBuilder;
-import com.tibco.ep.sb.services.management.IAdminService;
+import com.tibco.ep.sb.services.management.IRuntimeAdminService;
 import com.tibco.ep.sb.services.management.IContext;
 import com.tibco.ep.sb.services.management.INode;
 
@@ -60,7 +60,7 @@ public class Node extends Destination implements INode {
          * @param context The context
          * @param name The node name
          */
-        public Builder(IAdminService service, IContext context, String name) {
+        public Builder(IRuntimeAdminService service, IContext context, String name) {
             super(service, context, name);
         }
 
