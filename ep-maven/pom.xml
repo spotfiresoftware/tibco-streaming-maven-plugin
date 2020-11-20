@@ -146,10 +146,11 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- The SLF4J API dependency will be brought by DTM / SB-Server when we load them. -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <scope>test</scope>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>

@@ -28,45 +28,33 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.tibco.ep.sb.services.stubs.admin;
+package org.slf4j.impl;
 
+import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 /**
- * Base stub class
+ * The SLF4J logger factory for the Maven bridge implementation
  */
-public abstract class Stub {
+public class SLF4JMavenLoggerFactory implements ILoggerFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Stub.class);
+    private final ConcurrentMap<String, SLF4JMavenLogger> loggerMap = new ConcurrentHashMap<>();
 
-    /**
-     * No parameter constructor
-     */
-    protected Stub() {
-    }
-
-    /**
-     * Log a method call
-     *
-     * @param method     The method name
-     * @param parameters The parameters
-     */
-    void logMethod(String method, Object... parameters) {
-        String logmsg = "(STUB) " + this.getClass().getSimpleName() + ": " + method + "(";
-
-        if (parameters.length > 0) {
-            logmsg += Stream.of(parameters)
-                .map(Objects::toString)
-                .collect(Collectors.joining(", "));
+    @Override
+    public Logger getLogger(String name) {
+        SLF4JMavenLogger previous = loggerMap.get(name);
+        if (previous != null) {
+            return previous;
         }
 
-        logmsg += ")";
+        //  Create a new logger instance.
+        //
+        SLF4JMavenLogger slf4JMavenLogger = new SLF4JMavenLogger();
+        previous = loggerMap.putIfAbsent(name, slf4JMavenLogger);
 
-        LOGGER.info(logmsg);
+        return (previous == null ? slf4JMavenLogger : previous);
     }
 }

@@ -45,6 +45,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
@@ -56,6 +57,7 @@ import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
+import org.slf4j.impl.SLF4JMavenLogger;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import java.io.BufferedReader;
@@ -228,6 +230,15 @@ abstract class BaseMojo extends AbstractMojo {
     //  Runtime admin context.
     //
     private IContext context;
+
+    @Override
+    public void setLog(Log log) {
+        super.setLog(log);
+
+        //  Initialize the SLF4J - Maven binding, routing all logs to this Mojo's log handle.
+        //
+        SLF4JMavenLogger.setMavenLogger(log);
+    }
 
     /**
      * Determine if the given artifact belongs to an EP platform.

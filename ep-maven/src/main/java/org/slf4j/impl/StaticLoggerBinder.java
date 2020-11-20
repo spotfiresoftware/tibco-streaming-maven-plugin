@@ -1,20 +1,20 @@
-/*******************************************************************************
- * Copyright (C) 2018, TIBCO Software Inc.
- * 
+/*
+ * Copyright (C) 2020, TIBCO Software Inc.
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of the copyright holder nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -26,62 +26,57 @@
  * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
-package com.tibco.ep.buildmavenplugin;
+ */
 
-import java.io.File;
+package org.slf4j.impl;
 
-import org.apache.maven.plugin.Mojo;
-import org.apache.maven.plugin.testing.MojoRule;
-import org.apache.maven.plugin.testing.resources.TestResources;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.spi.LoggerFactoryBinder;
 
 /**
- * Unpack tests
- *
+ * The static logger binder for SLF4JMavenLogger
  */
-public class HelpTest extends BetterAbstractMojoTestCase  {
-    private Logger logger = LoggerFactory.getLogger(HelpTest.class);
+public class StaticLoggerBinder implements LoggerFactoryBinder {
 
     /**
-     * rule
+     * The unique instance of this class.
      */
-    @Rule
-    public MojoRule rule = new MojoRule();
+    private static final StaticLoggerBinder SINGLETON = new StaticLoggerBinder();
+    private static final String LOGGER_FACTORY_CLASS_STR = SLF4JMavenLoggerFactory.class.getName();
 
     /**
-     * resources
+     * Declare the version of the SLF4J API this implementation is compiled against.
+     * The value of this field is modified with each major release.
      */
-    @Rule
-    public TestResources resources = new TestResources();
-
+    // to avoid constant folding by the compiler, this field must *not* be final
+    public static String REQUESTED_API_VERSION = "1.7.26"; // !final
 
     /**
-     * Help
-     * 
-     * @throws Exception on error
+     * The ILoggerFactory instance returned by the {@link #getLoggerFactory} method
+     * should always be the same object
      */
-    @Test
-    public void testHelp() throws Exception {
-        SimulatedLog simulatedLog = new SimulatedLog(false);
+    private final ILoggerFactory loggerFactory;
 
-        File testPom = new File( "target/projects/eventflow", "pom.xml" );
-        Assert.assertNotNull(testPom);
-        Assert.assertTrue(testPom.exists());
-
-        Mojo help = lookupConfiguredMojo(testPom, "help");
-        Assert.assertNotNull(help);  
-        simulatedLog.reset();
-        help.setLog(simulatedLog);
-        help.execute();
-        assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
-        assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
-
+    private StaticLoggerBinder() {
+        loggerFactory = new SLF4JMavenLoggerFactory();
     }
 
+    /**
+     * Return the singleton of this class.
+     *
+     * @return the StaticLoggerBinder singleton
+     */
+    public static StaticLoggerBinder getSingleton() {
+        return SINGLETON;
+    }
+
+    @Override
+    public ILoggerFactory getLoggerFactory() {
+        return loggerFactory;
+    }
+
+    @Override
+    public String getLoggerFactoryClassStr() {
+        return LOGGER_FACTORY_CLASS_STR;
+    }
 }

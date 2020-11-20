@@ -59,6 +59,7 @@
          -->
         <unit.test.sb.version>${project.version}</unit.test.sb.version>
         <integration.test.sb.version>11.0.0-SNAPSHOT</integration.test.sb.version>
+        <slf4j.version>1.7.26</slf4j.version>
     </properties>
 
     <!-- Common project properties -->
@@ -343,6 +344,7 @@
     </profiles>
 
     <dependencyManagement>
+
         <dependencies>
             <!-- set of common dependencies to converge -->
             <dependency>
@@ -502,7 +504,7 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
-                <version>1.7.26</version>
+                <version>${slf4j.version}</version>
             </dependency>
 
             <dependency>
@@ -774,7 +776,7 @@
                     <dependency>
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
-                        <version>1.7.26</version>
+                        <version>${slf4j.version}</version>
                     </dependency>
                     <dependency>
                         <groupId>junit</groupId>
