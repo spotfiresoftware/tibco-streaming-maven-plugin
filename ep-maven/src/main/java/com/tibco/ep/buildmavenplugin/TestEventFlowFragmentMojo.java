@@ -157,7 +157,7 @@ public class TestEventFlowFragmentMojo extends BaseTestMojo {
         resource.setTargetPath("test-configuration");
         project.getBuild().addTestResource(resource);
 
-        initializeAdministration(ErrorHandling.FAIL);
+        initializeService(PlatformService.ADMINISTRATION, ErrorHandling.FAIL);
 
         // run test cases
         //

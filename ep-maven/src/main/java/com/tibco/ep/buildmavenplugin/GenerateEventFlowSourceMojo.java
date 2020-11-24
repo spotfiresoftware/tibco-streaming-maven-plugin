@@ -28,57 +28,22 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.tibco.ep.sb.services;
+package com.tibco.ep.buildmavenplugin;
 
-import com.tibco.ep.sb.services.build.IRuntimeBuildService;
-import com.tibco.ep.sb.services.management.IRuntimeAdminService;
+import com.tibco.ep.sb.services.build.BuildTarget;
+import org.apache.maven.plugins.annotations.Mojo;
 
-import java.util.ServiceLoader;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
 
-/**
- * Primary access point for runtime services
- */
-public class RuntimeServices {
-    private RuntimeServices() {
-        //  Never called.
-    }
-
-    private static <T> T getRuntimeService(Class<T> cls, ClassLoader classLoader) {
-
-        //  Get a service implementation. There should be only one.
-        //
-        T service = null;
-
-        for (T s : ServiceLoader.load(cls, classLoader)) {
-
-            if (service != null) {
-                throw new IllegalStateException("Cannot have multiple "
-                    + cls + " service implementations.");
-            }
-
-            service = s;
-        }
-
-        return service;
-    }
+//  Code generation uses static compiler options, that's NOT thread safe.
+//
+@Mojo(name = "generate-main-eventflow", defaultPhase = GENERATE_SOURCES, threadSafe = false)
+public class GenerateEventFlowSourceMojo extends BaseGenerateMojo {
 
     /**
-     * Get the administration service
-     *
-     * @param classLoader The class loader
-     * @return The administration service
+     * Public constructor
      */
-    public static IRuntimeAdminService getAdminService(ClassLoader classLoader) {
-        return getRuntimeService(IRuntimeAdminService.class, classLoader);
-    }
-
-    /**
-     * Get the build service
-     *
-     * @param classLoader The class loader
-     * @return The build service
-     */
-    public static IRuntimeBuildService getBuildService(ClassLoader classLoader) {
-        return getRuntimeService(IRuntimeBuildService.class, classLoader);
+    public GenerateEventFlowSourceMojo() {
+        super(BuildTarget.MAIN);
     }
 }

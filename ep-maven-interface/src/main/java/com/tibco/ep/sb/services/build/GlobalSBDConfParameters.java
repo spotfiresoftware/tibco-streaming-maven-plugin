@@ -28,57 +28,35 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.tibco.ep.sb.services;
-
-import com.tibco.ep.sb.services.build.IRuntimeBuildService;
-import com.tibco.ep.sb.services.management.IRuntimeAdminService;
-
-import java.util.ServiceLoader;
+package com.tibco.ep.sb.services.build;
 
 /**
- * Primary access point for runtime services
+ * The global SBDConf parameters
  */
-public class RuntimeServices {
-    private RuntimeServices() {
-        //  Never called.
-    }
+public class GlobalSBDConfParameters {
 
-    private static <T> T getRuntimeService(Class<T> cls, ClassLoader classLoader) {
+    private boolean ignoreUnboundCaptures = false;
 
-        //  Get a service implementation. There should be only one.
-        //
-        T service = null;
-
-        for (T s : ServiceLoader.load(cls, classLoader)) {
-
-            if (service != null) {
-                throw new IllegalStateException("Cannot have multiple "
-                    + cls + " service implementations.");
-            }
-
-            service = s;
-        }
-
-        return service;
+    /**
+     * @return True to ignore unbound captures
+     */
+    public boolean isIgnoreUnboundCaptures() {
+        return ignoreUnboundCaptures;
     }
 
     /**
-     * Get the administration service
-     *
-     * @param classLoader The class loader
-     * @return The administration service
+     * @param ignoreUnboundCaptures True to ignore unbound captures
+     * @return This
      */
-    public static IRuntimeAdminService getAdminService(ClassLoader classLoader) {
-        return getRuntimeService(IRuntimeAdminService.class, classLoader);
+    public GlobalSBDConfParameters withIgnoreUnboundCaptures(boolean ignoreUnboundCaptures) {
+        this.ignoreUnboundCaptures = ignoreUnboundCaptures;
+        return this;
     }
 
-    /**
-     * Get the build service
-     *
-     * @param classLoader The class loader
-     * @return The build service
-     */
-    public static IRuntimeBuildService getBuildService(ClassLoader classLoader) {
-        return getRuntimeService(IRuntimeBuildService.class, classLoader);
+    @Override
+    public String toString() {
+        return "SBDConf{" +
+            "ignoreUnboundCaptures=" + ignoreUnboundCaptures +
+            '}';
     }
 }

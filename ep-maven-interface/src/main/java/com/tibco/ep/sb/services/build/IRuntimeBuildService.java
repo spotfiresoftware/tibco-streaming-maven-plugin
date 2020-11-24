@@ -28,57 +28,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.tibco.ep.sb.services;
-
-import com.tibco.ep.sb.services.build.IRuntimeBuildService;
-import com.tibco.ep.sb.services.management.IRuntimeAdminService;
-
-import java.util.ServiceLoader;
+package com.tibco.ep.sb.services.build;
 
 /**
- * Primary access point for runtime services
+ * The runtime build service
  */
-public class RuntimeServices {
-    private RuntimeServices() {
-        //  Never called.
-    }
-
-    private static <T> T getRuntimeService(Class<T> cls, ClassLoader classLoader) {
-
-        //  Get a service implementation. There should be only one.
-        //
-        T service = null;
-
-        for (T s : ServiceLoader.load(cls, classLoader)) {
-
-            if (service != null) {
-                throw new IllegalStateException("Cannot have multiple "
-                    + cls + " service implementations.");
-            }
-
-            service = s;
-        }
-
-        return service;
-    }
+public interface IRuntimeBuildService {
 
     /**
-     * Get the administration service
+     * Trigger a build and collect results
      *
-     * @param classLoader The class loader
-     * @return The administration service
+     * @param name               The build name (for logging)
+     * @param buildTarget        The build target (main or test)
+     * @param parameters         The build parameters
+     * @param buildResultHandler The build result handler
      */
-    public static IRuntimeAdminService getAdminService(ClassLoader classLoader) {
-        return getRuntimeService(IRuntimeAdminService.class, classLoader);
-    }
-
-    /**
-     * Get the build service
-     *
-     * @param classLoader The class loader
-     * @return The build service
-     */
-    public static IRuntimeBuildService getBuildService(ClassLoader classLoader) {
-        return getRuntimeService(IRuntimeBuildService.class, classLoader);
-    }
+    void build(String name, BuildTarget buildTarget, BuildParameters parameters, IBuildResultHandler buildResultHandler);
 }

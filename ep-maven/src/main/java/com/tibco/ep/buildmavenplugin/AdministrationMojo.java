@@ -133,7 +133,7 @@ public class AdministrationMojo extends BaseExecuteMojo {
             return;
         }
         
-        initializeAdministration(ErrorHandling.FAIL);
+        initializeService(PlatformService.ADMINISTRATION, ErrorHandling.FAIL);
 
         AdminCommand adminCommand = null;
         if (adminport == null) {

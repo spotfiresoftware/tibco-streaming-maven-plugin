@@ -177,7 +177,7 @@ public class StopNodesMojo extends BaseExecuteMojo {
             errorHandling = ErrorHandling.IGNORE;
         }
 
-        initializeAdministration(errorHandling);
+        initializeService(PlatformService.ADMINISTRATION, errorHandling);
 
         // shut down
         //

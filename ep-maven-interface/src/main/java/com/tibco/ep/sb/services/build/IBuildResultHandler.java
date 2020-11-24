@@ -28,57 +28,20 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.tibco.ep.sb.services;
+package com.tibco.ep.sb.services.build;
 
-import com.tibco.ep.sb.services.build.IRuntimeBuildService;
-import com.tibco.ep.sb.services.management.IRuntimeAdminService;
-
-import java.util.ServiceLoader;
+import java.nio.file.Path;
+import java.util.Optional;
 
 /**
- * Primary access point for runtime services
+ * Interface that is called back when a module/interface is built
  */
-public class RuntimeServices {
-    private RuntimeServices() {
-        //  Never called.
-    }
-
-    private static <T> T getRuntimeService(Class<T> cls, ClassLoader classLoader) {
-
-        //  Get a service implementation. There should be only one.
-        //
-        T service = null;
-
-        for (T s : ServiceLoader.load(cls, classLoader)) {
-
-            if (service != null) {
-                throw new IllegalStateException("Cannot have multiple "
-                    + cls + " service implementations.");
-            }
-
-            service = s;
-        }
-
-        return service;
-    }
+public interface IBuildResultHandler {
 
     /**
-     * Get the administration service
-     *
-     * @param classLoader The class loader
-     * @return The administration service
+     * @param entityName The entity fully qualified name
+     * @param entityPath The entity path
+     * @param exception The exception, if any. (No exception indicates a successful build)
      */
-    public static IRuntimeAdminService getAdminService(ClassLoader classLoader) {
-        return getRuntimeService(IRuntimeAdminService.class, classLoader);
-    }
-
-    /**
-     * Get the build service
-     *
-     * @param classLoader The class loader
-     * @return The build service
-     */
-    public static IRuntimeBuildService getBuildService(ClassLoader classLoader) {
-        return getRuntimeService(IRuntimeBuildService.class, classLoader);
-    }
+    void onBuildResult(String entityName, Path entityPath, Optional<Exception> exception);
 }

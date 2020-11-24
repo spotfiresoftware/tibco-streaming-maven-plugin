@@ -30,12 +30,15 @@
 
 package com.tibco.ep.sb.services;
 
+import com.tibco.ep.sb.services.build.BuildParameters;
+import com.tibco.ep.sb.services.build.IBuildResultHandler;
+import com.tibco.ep.sb.services.build.IRuntimeBuildService;
+import com.tibco.ep.sb.services.build.BuildTarget;
 import com.tibco.ep.sb.services.management.AbstractCommandBuilder;
 import com.tibco.ep.sb.services.management.AbstractDeployFragmentCommandBuilder;
 import com.tibco.ep.sb.services.management.AbstractDestinationBuilder;
 import com.tibco.ep.sb.services.management.AbstractNodeBuilder;
 import com.tibco.ep.sb.services.management.FragmentType;
-import com.tibco.ep.sb.services.management.IRuntimeAdminService;
 import com.tibco.ep.sb.services.management.IBrowseServicesCommand;
 import com.tibco.ep.sb.services.management.ICommand;
 import com.tibco.ep.sb.services.management.IContext;
@@ -44,13 +47,17 @@ import com.tibco.ep.sb.services.management.IDestination;
 import com.tibco.ep.sb.services.management.IInstallNodeCommand;
 import com.tibco.ep.sb.services.management.INode;
 import com.tibco.ep.sb.services.management.INotifier;
+import com.tibco.ep.sb.services.management.IRuntimeAdminService;
 import org.junit.Test;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -64,9 +71,38 @@ public class RuntimeServiceTest {
      */
     @Test
     public void testStubbedServiceLoad() {
-        IRuntimeAdminService svc = RuntimeServices.getAdminService(getClass().getClassLoader());
-        assertThat(svc).isNotNull();
-        assertThat(svc).isInstanceOf(IRuntimeAdminService.class);
+        assertThat(RuntimeServices.getAdminService(getClass().getClassLoader())).isNotNull();
+        assertThat(RuntimeServices.getBuildService(getClass().getClassLoader())).isNotNull();
+    }
+
+    /**
+     * Tests for build service stubs
+     */
+    @Test
+    public void testStubbedBuildServiceImplementation() {
+
+        IRuntimeBuildService build = RuntimeServices.getBuildService(getClass().getClassLoader());
+        assertThat(build).isNotNull();
+
+        BuildParameters parameters = new BuildParameters();
+
+        Map<String, String> properties = new HashMap<>();
+        properties.put("MyProp", "MyVal");
+        parameters
+            .withBuildDirectory(Paths.get("buildDir"))
+            .withCompileClassPath(Arrays.asList(Paths.get("first.jar"),
+                Paths.get("path", "to", "classes")))
+            .withTestClassPath(Collections.singletonList(Paths.get("test.jar")))
+            .withCompilerProperties(properties)
+            .withSourcePaths(Collections.singletonList(Paths.get("src", "main")))
+            .withTestSourcePaths(Collections.singletonList(Paths.get("src", "test")));
+
+        BuildResultHandler handler = new BuildResultHandler();
+        build.build("MyBuild", BuildTarget.MAIN, parameters, handler);
+
+        assertThat(handler.getEntityName()).isNotEmpty();
+        assertThat(handler.getEntityPath()).isNotNull();
+        assertThat(handler.getException()).isEmpty();
     }
 
     /**
@@ -205,6 +241,31 @@ public class RuntimeServiceTest {
         @Override
         public void error(String source, String message) {
             //  Do nothing
+        }
+    }
+
+    private class BuildResultHandler implements IBuildResultHandler {
+        private String entityName;
+        private Path entityPath;
+        private Optional<Exception> exception;
+
+        @Override
+        public void onBuildResult(String entityName, Path entityPath, Optional<Exception> exception) {
+            this.entityName = entityName;
+            this.entityPath = entityPath;
+            this.exception = exception;
+        }
+
+        public String getEntityName() {
+            return entityName;
+        }
+
+        public Path getEntityPath() {
+            return entityPath;
+        }
+
+        public Optional<Exception> getException() {
+            return exception;
         }
     }
 }

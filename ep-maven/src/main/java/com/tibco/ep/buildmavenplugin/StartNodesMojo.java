@@ -201,7 +201,7 @@ public class StartNodesMojo extends BaseExecuteMojo {
             return;
         }
 
-        initializeAdministration(ErrorHandling.FAIL);
+        initializeService(PlatformService.ADMINISTRATION, ErrorHandling.FAIL);
 
         boolean staticDiscovery = false;
         Map<String, Integer> adminPorts = new HashMap<>();

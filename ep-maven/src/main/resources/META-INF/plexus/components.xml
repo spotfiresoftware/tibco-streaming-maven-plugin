@@ -127,6 +127,8 @@
                                 ${project.groupId}:${project.artifactId}:${project.version}:set-resources
                             </validate>
                             <generate-resources></generate-resources>
+                            <generate-sources>
+                            </generate-sources>
                             <process-resources>
                                 org.apache.maven.plugins:maven-resources-plugin:resources
                             </process-resources>
@@ -189,6 +191,8 @@
                                 ${project.groupId}:${project.artifactId}:${project.version}:set-resources
                             </validate>
                             <generate-resources></generate-resources>
+                            <generate-sources>
+                            </generate-sources>
                             <process-resources>
                                 org.apache.maven.plugins:maven-resources-plugin:resources
                             </process-resources>
@@ -250,6 +254,10 @@
                                 ${project.groupId}:${project.artifactId}:${project.version}:set-resources
                             </validate>
                             <generate-resources></generate-resources>
+                            <generate-sources>
+                                org.apache.maven.plugins:maven-compiler-plugin:compile,
+                                ${project.groupId}:${project.artifactId}:${project.version}:generate-main-eventflow
+                            </generate-sources>
                             <process-resources>
                                 org.apache.maven.plugins:maven-resources-plugin:resources
                             </process-resources>
@@ -314,6 +322,10 @@
                                 ${project.groupId}:${project.artifactId}:${project.version}:set-resources
                             </validate>
                             <generate-resources></generate-resources>
+                            <generate-sources>
+                                org.apache.maven.plugins:maven-compiler-plugin:compile,
+                                ${project.groupId}:${project.artifactId}:${project.version}:generate-main-eventflow
+                            </generate-sources>
                             <process-resources>
                                 org.apache.maven.plugins:maven-resources-plugin:resources
                             </process-resources>
@@ -368,8 +380,11 @@
                                 ${project.groupId}:${project.artifactId}:${project.version}:install-product,
                                 ${project.groupId}:${project.artifactId}:${project.version}:set-resources
                             </validate>
-                            <generate-resources>
-                            </generate-resources>
+                            <generate-resources></generate-resources>
+                            <generate-sources>
+                                org.apache.maven.plugins:maven-compiler-plugin:compile,
+                                ${project.groupId}:${project.artifactId}:${project.version}:generate-main-eventflow
+                            </generate-sources>
                             <process-resources>
                                 org.apache.maven.plugins:maven-resources-plugin:resources
                             </process-resources>
@@ -435,6 +450,10 @@
                                 ${project.groupId}:${project.artifactId}:${project.version}:set-resources
                             </validate>
                             <generate-resources></generate-resources>
+                            <generate-sources>
+                                org.apache.maven.plugins:maven-compiler-plugin:compile,
+                                ${project.groupId}:${project.artifactId}:${project.version}:generate-main-eventflow
+                            </generate-sources>
                             <process-resources>
                                 org.apache.maven.plugins:maven-resources-plugin:resources
                             </process-resources>

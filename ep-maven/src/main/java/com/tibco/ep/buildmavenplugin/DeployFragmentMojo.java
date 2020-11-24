@@ -151,7 +151,7 @@ public class DeployFragmentMojo extends BaseTestMojo {
 
         prechecks();
 
-        initializeAdministration(ErrorHandling.FAIL);
+        initializeService(PlatformService.ADMINISTRATION, ErrorHandling.FAIL);
 
         List<String> applicationArguments = new ArrayList<>();
 

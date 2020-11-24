@@ -28,57 +28,29 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.tibco.ep.sb.services;
+package com.tibco.ep.sb.services.stubs.build;
 
+import com.tibco.ep.sb.services.build.BuildParameters;
+import com.tibco.ep.sb.services.build.BuildTarget;
+import com.tibco.ep.sb.services.build.IBuildResultHandler;
 import com.tibco.ep.sb.services.build.IRuntimeBuildService;
-import com.tibco.ep.sb.services.management.IRuntimeAdminService;
 
-import java.util.ServiceLoader;
+import java.nio.file.Paths;
+import java.util.Optional;
 
 /**
- * Primary access point for runtime services
+ * A test {@link IRuntimeBuildService}
  */
-public class RuntimeServices {
-    private RuntimeServices() {
-        //  Never called.
-    }
+public class RuntimeBuildService implements IRuntimeBuildService {
 
-    private static <T> T getRuntimeService(Class<T> cls, ClassLoader classLoader) {
+    @Override
+    public void build(String name, BuildTarget buildTarget, BuildParameters parameters, IBuildResultHandler buildResultHandler) {
 
-        //  Get a service implementation. There should be only one.
-        //
-        T service = null;
+        System.out.println("[STUB] build: " + name + " " + buildTarget + " " + parameters);
 
-        for (T s : ServiceLoader.load(cls, classLoader)) {
-
-            if (service != null) {
-                throw new IllegalStateException("Cannot have multiple "
-                    + cls + " service implementations.");
-            }
-
-            service = s;
-        }
-
-        return service;
-    }
-
-    /**
-     * Get the administration service
-     *
-     * @param classLoader The class loader
-     * @return The administration service
-     */
-    public static IRuntimeAdminService getAdminService(ClassLoader classLoader) {
-        return getRuntimeService(IRuntimeAdminService.class, classLoader);
-    }
-
-    /**
-     * Get the build service
-     *
-     * @param classLoader The class loader
-     * @return The build service
-     */
-    public static IRuntimeBuildService getBuildService(ClassLoader classLoader) {
-        return getRuntimeService(IRuntimeBuildService.class, classLoader);
+        buildResultHandler.onBuildResult(
+            "com.tibco.Module",
+            Paths.get("com", "tibco", "Module.sbapp"),
+            Optional.empty());
     }
 }

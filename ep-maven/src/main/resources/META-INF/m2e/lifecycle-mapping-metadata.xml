@@ -49,6 +49,7 @@
 				<goals>
 					<goal>unpack-nar</goal>
 					<goal>set-resources</goal>
+					<goal>generate-main-eventflow</goal>
 					<goal>compile-eventflow-fragment</goal>
 					<goal>compile-liveview-fragment</goal>
 				</goals>

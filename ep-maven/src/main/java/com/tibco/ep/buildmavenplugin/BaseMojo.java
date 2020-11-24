@@ -31,9 +31,10 @@ package com.tibco.ep.buildmavenplugin;
 
 import com.tibco.ep.buildmavenplugin.admin.RuntimeCommandRunner;
 import com.tibco.ep.sb.services.RuntimeServices;
+import com.tibco.ep.sb.services.build.IRuntimeBuildService;
 import com.tibco.ep.sb.services.management.AbstractCommandBuilder;
-import com.tibco.ep.sb.services.management.IRuntimeAdminService;
 import com.tibco.ep.sb.services.management.IContext;
+import com.tibco.ep.sb.services.management.IRuntimeAdminService;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
@@ -80,6 +81,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
 
@@ -226,19 +228,11 @@ abstract class BaseMojo extends AbstractMojo {
 
     private PluginClassloader classLoader = null;
     private IRuntimeAdminService adminService;
+    private IRuntimeBuildService buildService;
 
     //  Runtime admin context.
     //
     private IContext context;
-
-    @Override
-    public void setLog(Log log) {
-        super.setLog(log);
-
-        //  Initialize the SLF4J - Maven binding, routing all logs to this Mojo's log handle.
-        //
-        SLF4JMavenLogger.setMavenLogger(log);
-    }
 
     /**
      * Determine if the given artifact belongs to an EP platform.
@@ -258,8 +252,27 @@ abstract class BaseMojo extends AbstractMojo {
             || artifactId.startsWith(SB_SUPPORT_ARTIFACT_PREFIX);
     }
 
+    @Override
+    public void setLog(Log log) {
+        super.setLog(log);
+
+        //  Initialize the SLF4J - Maven binding, routing all logs to this Mojo's log handle.
+        //
+        SLF4JMavenLogger.setMavenLogger(log);
+    }
+
+    /**
+     * @return The administration service
+     */
     public IRuntimeAdminService getAdminService() {
         return adminService;
+    }
+
+    /**
+     * @return The build service
+     */
+    public IRuntimeBuildService getBuildService() {
+        return buildService;
     }
 
     /**
@@ -270,14 +283,15 @@ abstract class BaseMojo extends AbstractMojo {
     }
 
     /**
-     * Initialize administration
+     * Initialize administration or build services
      * <p>
-     * Admin jars are loaded and classes discovered
+     * Admin & build jars are loaded
      *
+     * @param service       The service to initialize
      * @param errorHandling error handling
      * @throws MojoExecutionException if initialize fails
      */
-    void initializeAdministration(ErrorHandling errorHandling) throws MojoExecutionException {
+    void initializeService(PlatformService service, ErrorHandling errorHandling) throws MojoExecutionException {
 
         if (classLoader == null) {
             AccessController.doPrivileged(new PrivilegedAction<Void>() {
@@ -289,26 +303,51 @@ abstract class BaseMojo extends AbstractMojo {
             });
         }
 
+        if (adminService == null && service == PlatformService.ADMINISTRATION) {
 
-        if (adminService == null) {
-            loadAdministrationJars();
+            loadJarForService(PlatformService.ADMINISTRATION);
 
-            adminService = RuntimeServices.getAdminService(classLoader);
-            if (adminService == null) {
-                String message = "Cannot get service " + IRuntimeAdminService.class;
+            adminService = doGetService(
+                () -> RuntimeServices.getAdminService(classLoader),
+                IRuntimeAdminService.class,
+                errorHandling);
 
-                if (errorHandling == ErrorHandling.FAIL) {
-                    throw new MojoExecutionException(message);
-                } else {
-                    getLog().warn(message + " [ignored]");
+            if (adminService != null) {
+
+                //  Only create a context if we have a service.
+                //
+                context = adminService.newContext(productHome.toPath());
+                if (getLog().isDebugEnabled()) {
+                    context.withTracingEnabled();
                 }
             }
+        }
 
-            context = adminService.newContext(productHome.toPath());
-            if (getLog().isDebugEnabled()) {
-                context.withTracingEnabled();
+        if (buildService == null && service == PlatformService.CODE_GENERATION) {
+
+            loadJarForService(PlatformService.CODE_GENERATION);
+
+            buildService = doGetService(
+                () -> RuntimeServices.getBuildService(classLoader),
+                IRuntimeBuildService.class,
+                errorHandling);
+        }
+    }
+
+    private <T> T doGetService(Supplier<T> getter, Class<T> serviceClass, ErrorHandling errorHandling) throws MojoExecutionException {
+
+        T service = getter.get();
+        if (service == null) {
+            String message = "Cannot get service " + serviceClass;
+
+            if (errorHandling == ErrorHandling.FAIL) {
+                throw new MojoExecutionException(message);
+            } else {
+                getLog().warn(message + " [ignored]");
             }
         }
+
+        return service;
     }
 
     /**
@@ -317,7 +356,7 @@ abstract class BaseMojo extends AbstractMojo {
      *
      * @throws MojoExecutionException if jar loading fails
      */
-    private void loadAdministrationJars() throws MojoExecutionException {
+    private void loadJarForService(PlatformService service) throws MojoExecutionException {
 
         // Needed for testing, since test stub API version is different from production version.
         String productVersion = getProductVersion();
@@ -326,8 +365,12 @@ abstract class BaseMojo extends AbstractMojo {
             throw new MojoExecutionException("Unable to determine the product version - ensure that either the management or sdk jar is set as a dependency in your pom");
         }
 
-        loadArtifact(DTM_GROUP_IDENTIFIER, DTM_MANAGEMENT_ARTIFACT_IDENTIFIER, productVersion);
-        loadArtifact(SB_GROUP_IDENTIFIER, SB_SERVER_ARTIFACT_IDENTIFIER, productVersion);
+        if (service == PlatformService.ADMINISTRATION) {
+            loadArtifact(DTM_GROUP_IDENTIFIER, DTM_MANAGEMENT_ARTIFACT_IDENTIFIER, productVersion);
+        } else {
+            assert service == PlatformService.CODE_GENERATION;
+            loadArtifact(SB_GROUP_IDENTIFIER, SB_SERVER_ARTIFACT_IDENTIFIER, productVersion);
+        }
     }
 
     private void loadArtifact(String groupIdentifier, String artifactIdentifier, String productVersion) throws MojoExecutionException {
@@ -807,6 +850,20 @@ abstract class BaseMojo extends AbstractMojo {
     }
 
     /**
+     * The type of platform service to initialize
+     */
+    enum PlatformService {
+        /**
+         * Administration
+         */
+        ADMINISTRATION,
+        /**
+         * Build
+         */
+        CODE_GENERATION
+    }
+
+    /**
      * local classloader to be used to load admin jars
      */
     public static class PluginClassloader extends URLClassLoader {
@@ -873,5 +930,4 @@ abstract class BaseMojo extends AbstractMojo {
             }
         }
     }
-
 }
