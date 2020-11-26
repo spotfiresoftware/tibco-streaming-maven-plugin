@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<modify version="11.0.0-SNAPSHOT_bebebbfcccd2b8f3b67388e7bf84ba30caa0e2e4">
+    <add>
+        <annotations>
+            <annotation name="hygienic"/>
+        </annotations>
+        <type-metadata>
+            <param name="type" value="module"/>
+            <param name="fully-qualified-name" value="com.tibco.test.third.MyThirdModule"/>
+        </type-metadata>
+        <memory-model-settings/>
+        <dynamic-variables/>
+        <stream name="InputStream">
+            <schema/>
+        </stream>
+        <module-reference name="Module">
+            <input name="InputStream" port="1" stream="InputStream"/>
+            <output name="OutputStream" port="1" stream="OutputStream"/>
+            <param name="file" value="com.tibco.test.second.MySecondModule"/>
+        </module-reference>
+        <output-stream name="OutputStream"/>
+    </add>
+</modify>

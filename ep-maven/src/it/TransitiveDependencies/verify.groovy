@@ -28,33 +28,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.slf4j.impl;
-
-import org.slf4j.ILoggerFactory;
-import org.slf4j.Logger;
-
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
-/**
- * The SLF4J logger factory for the Maven bridge implementation
- */
-public class SLF4JMavenLoggerFactory implements ILoggerFactory {
-
-    private final ConcurrentMap<String, SLF4JMavenLogger> loggerMap = new ConcurrentHashMap<>();
-
-    @Override
-    public Logger getLogger(String name) {
-        SLF4JMavenLogger previous = loggerMap.get(name);
-        if (previous != null) {
-            return previous;
-        }
-
-        //  Create a new logger instance.
-        //
-        SLF4JMavenLogger slf4JMavenLogger = new SLF4JMavenLogger();
-        previous = loggerMap.putIfAbsent(name, slf4JMavenLogger);
-
-        return (previous == null ? slf4JMavenLogger : previous);
-    }
-}
+assert new File(basedir, "build.log")
+        .text.contains("TransitiveDependencies ............................. SUCCESS"):
+    "Text with SUCCESS not found"

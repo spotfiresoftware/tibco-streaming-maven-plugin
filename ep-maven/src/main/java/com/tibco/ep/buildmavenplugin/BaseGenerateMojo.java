@@ -32,50 +32,53 @@ package com.tibco.ep.buildmavenplugin;
 
 import com.tibco.ep.sb.services.build.BuildParameters;
 import com.tibco.ep.sb.services.build.BuildTarget;
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Base class for code generation MOJO
+ */
 public abstract class BaseGenerateMojo extends BaseMojo {
 
+    public static final Logger LOGGER = LoggerFactory.getLogger(BaseGenerateMojo.class);
     private final BuildTarget target;
 
     //  Maven parameters
-
+    private final List<String> failedBuilds = new ArrayList<>();
     @Parameter(defaultValue = "false")
     Boolean ignoreUnboundCaptures;
-
     @Parameter
     Map<String, String> compilerProperties;
-
     @Parameter(required = false, property = "eventflowDirectories")
     File[] eventflowDirectories;
-
     @Parameter(required = false, property = "testEventflowDirectories")
     File[] testEventflowDirectories;
 
-    private final List<String> failedBuilds = new ArrayList<>();
-
+    /**
+     * @param target The build target
+     */
     protected BaseGenerateMojo(BuildTarget target) {
         this.target = target;
     }
 
     private File[] initializeAndCheck(File[] originalValue, String defaultDir) {
 
-        if (originalValue == null ||originalValue.length == 0) {
+        if (originalValue == null || originalValue.length == 0) {
 
             //  Default value, if it exists.
             //
@@ -106,10 +109,10 @@ public abstract class BaseGenerateMojo extends BaseMojo {
             buildParameters
                 .withCompilerProperties(compilerProperties == null
                     ? new HashMap<>() : compilerProperties)
-                .withSourcePaths(toPaths(eventflowDirectories))
-                .withTestSourcePaths(toPaths(testEventflowDirectories))
-                .withCompileClassPath(toPaths(project.getCompileClasspathElements()))
-                .withTestClassPath(toPaths(project.getCompileClasspathElements()))
+                .withSourcePaths(toPathsCheckExist(eventflowDirectories))
+                .withTestSourcePaths(toPathsCheckExist(testEventflowDirectories))
+                .withCompileClassPath(getCompileClassPath())
+                .withTestClassPath(getTestClassPath())
                 .withBuildDirectory(toPath(project.getBuild().getDirectory()));
 
         } catch (DependencyResolutionRequiredException e) {
@@ -137,8 +140,8 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
                 //  We have a failure.
                 //
-                failedBuilds.add(entityName);
                 Exception error = optionalException.get();
+                failedBuilds.add(entityName + ": " + error.getMessage());
                 getLog().error(
                     "Module " + entityName + ": code generation FAILURE: " + error.getMessage());
 
@@ -155,10 +158,41 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
         //  Add the generated source directory
         //
-        addCompileSourceRoot();
+        addGeneratedSourceRoot();
     }
 
-    private void addCompileSourceRoot() {
+    private List<Path> getTestClassPath() throws MojoExecutionException, DependencyResolutionRequiredException {
+        return toPaths(project.getTestClasspathElements());
+    }
+
+    private List<Path> getCompileClassPath() throws MojoExecutionException, DependencyResolutionRequiredException {
+
+        //  Filter out compile class path elements that do not exist.
+        //
+        List<Path> classpath = toPaths(project.getCompileClasspathElements()).stream()
+            .filter(p -> p.toFile().exists())
+            .collect(Collectors.toList());
+
+        //  Now add all dependencies, recursively.
+        //
+        Function<Artifact, VisitorDecision> filter = artifact -> {
+            if (artifact.getScope().equals(Artifact.SCOPE_TEST)) {
+                return VisitorDecision.SKIP_STOP;
+            }
+
+            return VisitorDecision.KEEP;
+        };
+
+        for (Artifact dependency: getFilteredProjectDependencies(
+            filter, FragmentDependencyMode.INCLUDE_FULL_DEPENDENCIES)) {
+
+            classpath.add(dependency.getFile().toPath());
+        }
+
+        return classpath;
+    }
+
+    private void addGeneratedSourceRoot() {
 
         //  FIX THIS (FL) The generated source path is hardcoded here and sb-server.
         //  Should we make this configurable from the MOJO ?
@@ -183,15 +217,14 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         return list;
     }
 
-    private Path toPath(String uri) throws MojoExecutionException {
-        try {
-            assert !uri.startsWith("file://") : uri;
-            URI uriObject = new URI("file://" + uri);
+    private Path toPath(String file) throws MojoExecutionException {
+        return new File(file).toPath();
+    }
 
-            return Paths.get(uriObject);
-        } catch (URISyntaxException e) {
-            throw new MojoExecutionException("Cannot parse URI: " + uri, e);
-        }
+    private List<Path> toPathsCheckExist(File[] files) {
+        return Stream.of(files)
+            .filter(File::exists)
+            .map(File::toPath).collect(Collectors.toList());
     }
 
     private List<Path> toPaths(File[] files) {

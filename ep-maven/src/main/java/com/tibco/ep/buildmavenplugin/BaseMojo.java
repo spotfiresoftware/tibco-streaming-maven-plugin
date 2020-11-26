@@ -38,7 +38,6 @@ import com.tibco.ep.sb.services.management.IRuntimeAdminService;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.execution.MavenSession;
@@ -46,7 +45,6 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
@@ -58,16 +56,15 @@ import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
-import org.slf4j.impl.SLF4JMavenLogger;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
@@ -75,12 +72,15 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
@@ -252,15 +252,6 @@ abstract class BaseMojo extends AbstractMojo {
             || artifactId.startsWith(SB_SUPPORT_ARTIFACT_PREFIX);
     }
 
-    @Override
-    public void setLog(Log log) {
-        super.setLog(log);
-
-        //  Initialize the SLF4J - Maven binding, routing all logs to this Mojo's log handle.
-        //
-        SLF4JMavenLogger.setMavenLogger(log);
-    }
-
     /**
      * @return The administration service
      */
@@ -375,16 +366,13 @@ abstract class BaseMojo extends AbstractMojo {
 
     private void loadArtifact(String groupIdentifier, String artifactIdentifier, String productVersion) throws MojoExecutionException {
 
-        getLog().debug(
-            "Loading: " + groupIdentifier + ":" + artifactIdentifier + ":" + productVersion);
+        String jarCoordinates = groupIdentifier + ":" + artifactIdentifier + ":" + productVersion;
+        getLog().debug("Loading: " + jarCoordinates);
+
         Artifact managementAPIArtifact = repositorySystem
             .createArtifact(groupIdentifier, artifactIdentifier, productVersion, "", "jar");
-
-        Set<Artifact> baseArtifacts = new LinkedHashSet<>();
-
-        baseArtifacts.add(managementAPIArtifact);
-
-        Set<Artifact> managementAPIDependencies = getProjectDependencies(baseArtifacts);
+        Set<Artifact> managementAPIDependencies = getProjectDependencies(
+            new HashSet<>(Collections.singletonList(managementAPIArtifact)));
 
         for (final Artifact artifact : managementAPIDependencies) {
 
@@ -394,7 +382,23 @@ abstract class BaseMojo extends AbstractMojo {
             request.setLocalRepository(localRepository);
             repositorySystem.resolve(request);
 
-            if (!loadJar(getArtifactPath(artifact))) {
+            String artifactPath = getArtifactPath(artifact);
+            if (artifact.getGroupId().equals(groupIdentifier)
+                && artifact.getArtifactId().equals(artifactIdentifier)) {
+                getLog().debug("Loading: " + jarCoordinates
+                    + " from " + artifactPath + " (and dependencies)");
+            }
+
+            try {
+
+                File file = new File(artifactPath);
+                if (!file.exists()) {
+                    throw new FileNotFoundException("Failed to find:" + artifactPath);
+                }
+
+                classLoader.addURL(file.toURI().toURL());
+
+            } catch (Exception e) {
                 throw new MojoExecutionException(
                     "Unable to locate "
                         + artifact.getGroupId()
@@ -403,35 +407,11 @@ abstract class BaseMojo extends AbstractMojo {
                         + "-"
                         + artifact.getVersion()
                         + " (expected at "
-                        + getArtifactPath(artifact)
-                        + ") - ensure that repository is on-line");
+                        + artifactPath
+                        + ") - ensure that repository is on-line", e);
             }
         }
     }
-
-    /**
-     * Load a single jar and report success
-     *
-     * @param fileName file to load
-     * @return true if loaded successfully
-     */
-    private boolean loadJar(String fileName) {
-
-        File file = new File(fileName);
-        if (!file.exists()) {
-            getLog().debug("Failed to find " + fileName + " file doesn't exist");
-            return false;
-        }
-
-        try {
-            URL url = file.toURI().toURL();
-            classLoader.addURL(url);
-        } catch (MalformedURLException e) {
-            return false;
-        }
-        return true;
-    }
-
 
     /**
      * Return the absolute path to the given artifact.
@@ -522,125 +502,44 @@ abstract class BaseMojo extends AbstractMojo {
      * @throws MojoExecutionException on error
      */
     Set<Artifact> getCompileProjectDependencies() throws MojoExecutionException {
+        return getFilteredProjectDependencies(artifact -> {
+                String scope = artifact.getScope();
+                if (scope.equals(Artifact.SCOPE_COMPILE) || scope.equals(Artifact.SCOPE_RUNTIME)) {
+                    return VisitorDecision.KEEP;
+                } else if (scope.equals(Artifact.SCOPE_PROVIDED) || scope.equals(Artifact.SCOPE_TEST)) {
+                    return VisitorDecision.SKIP_STOP;
+                }
 
-        Set<Artifact> deps = new LinkedHashSet<Artifact>();
+                return VisitorDecision.SKIP_VISIT_DEPENDENCIES;
+            },
+            FragmentDependencyMode.SKIP_NESTED_FRAGMENT);
+    }
 
-        Map<String, String> fragmentDeps = new HashMap<>();
+    /**
+     * get the project dependencies as artifacts
+     *
+     * @param visitorFilter The visitor filter
+     * @param mode          The fragment nested dependency mode
+     * @return set of artifacts
+     * @throws MojoExecutionException on error
+     */
+    Set<Artifact> getFilteredProjectDependencies(Function<Artifact, VisitorDecision> visitorFilter, FragmentDependencyMode mode) throws MojoExecutionException {
+
+        DependencyVisitor dependencyVisitor = new DependencyVisitor(visitorFilter, mode);
 
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest(session
             .getProjectBuildingRequest());
         buildingRequest.setProject(project);
+
         try {
             DependencyNode rootNode = dependencyGraphBuilder
                 .buildDependencyGraph(buildingRequest, null, reactorProjects);
-
-            DependencyNodeVisitor visitor = new DependencyNodeVisitor() {
-                int depth = 0;
-
-                private String indent() {
-                    StringBuffer t = new StringBuffer();
-                    for (int i = 0; i < depth; i++) {
-                        t.append("  ");
-                    }
-                    return t.toString();
-                }
-
-                @Override
-                public boolean visit(DependencyNode node) {
-                    if (node.getParent() == null) {
-                        // root node - skip
-                        return true;
-                    }
-
-                    String indent = indent();
-                    depth = depth + 1;
-                    Artifact artifact = node.getArtifact();
-                    String scope = artifact.getScope();
-                    String type = artifact.getType();
-                    if (scope == null || scope.equals(Artifact.SCOPE_COMPILE) || scope
-                        .equals(Artifact.SCOPE_RUNTIME)) {
-                        // compile dependency - add to list
-                        //
-                        deps.add(artifact);
-
-                        // fragments don't descend into dependencies
-                        //
-                        if (type != null && (type.equals(JAVA_TYPE) || type
-                            .equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type
-                            .equals(LIVEVIEW_TYPE))) {
-                            getLog().debug(indent + node.getArtifact() + " [adding]");
-
-                            // Read manifest so we can later see if we have duplicates
-                            //
-                            JarInputStream jarStream;
-                            try {
-                                jarStream = new JarInputStream(new FileInputStream(getArtifactPath(artifact)));
-                                Manifest mf = jarStream.getManifest();
-                                String fragemntList = mf.getMainAttributes()
-                                    .getValue("TIBCO-EP-Fragment-List");
-                                if (fragemntList != null && !fragemntList.isEmpty()) {
-                                    for (String fragmentDep : fragemntList.split(" ")) {
-                                        fragmentDeps
-                                            .put(fragmentDep, node.getArtifact().toString());
-                                    }
-                                }
-                            } catch (IOException e) {
-                                // no manifest, ignore
-                            }
-
-                            return false;
-                        } else {
-                            getLog().debug(indent + node.getArtifact() + " [adding]");
-
-                            // keep going to check for dependencies of this artifact
-                            //
-                            return true;
-                        }
-                    } else if (scope.equals(Artifact.SCOPE_PROVIDED) || scope
-                        .equals(Artifact.SCOPE_TEST)) {
-                        // provided and test skip
-                        //
-                        getLog().debug(indent + node.getArtifact() + " [skipping]");
-                        return false;
-                    }
-
-                    getLog().debug(indent + node.getArtifact() + " [skipping]");
-
-                    return true;
-                }
-
-                @Override
-                public boolean endVisit(DependencyNode node) {
-                    if (node.getParent() != null) {
-                        depth = depth - 1;
-                    }
-
-                    return true;
-                }
-            };
-
-            rootNode.accept(visitor);
-
-
+            rootNode.accept(dependencyVisitor);
         } catch (DependencyGraphBuilderException e) {
-            throw new MojoExecutionException(e.getMessage());
+            throw new MojoExecutionException(e.getMessage(), e);
         }
 
-        // sort out any duplicates
-        //
-        for (Iterator<Artifact> iterator = deps.iterator(); iterator.hasNext(); ) {
-            Artifact artifact = iterator.next();
-            String destName = artifact.getGroupId() + "-" + artifact
-                .getArtifactId() + "-" + artifact.getBaseVersion() + "-" + artifact
-                .getType() + ".zip";
-            if (fragmentDeps.containsKey(destName)) {
-                getLog()
-                    .debug("Skipping " + artifact + " since it is already included by " + fragmentDeps
-                        .get(destName));
-                iterator.remove();
-            }
-        }
-        return deps;
+        return dependencyVisitor.getGatheredDependencies();
     }
 
     /**
@@ -655,7 +554,7 @@ abstract class BaseMojo extends AbstractMojo {
         //
         Set<Artifact> artifacts = new LinkedHashSet<>();
         if (project.getDependencies() != null) {
-            for (Dependency d : (List<Dependency>) project.getDependencies()) {
+            for (Dependency d : project.getDependencies()) {
                 artifacts.add(repositorySystem.createDependencyArtifact(d));
             }
         }
@@ -728,10 +627,8 @@ abstract class BaseMojo extends AbstractMojo {
         request.setServers(session.getRequest().getServers());
         request.setMirrors(session.getRequest().getMirrors());
         request.setProxies(session.getRequest().getProxies());
-        ArtifactResolutionResult r = artifactResolver.resolve(request);
-        artifacts = r.getArtifacts();
 
-        return artifacts;
+        return artifactResolver.resolve(request).getArtifacts();
     }
 
     /**
@@ -849,6 +746,18 @@ abstract class BaseMojo extends AbstractMojo {
         return Arrays.asList(array);
     }
 
+    private boolean isFragment(String type) {
+        return type != null && (type.equals(JAVA_TYPE) || type
+            .equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type
+            .equals(LIVEVIEW_TYPE));
+    }
+
+    enum VisitorDecision {
+        KEEP,
+        SKIP_STOP,
+        SKIP_VISIT_DEPENDENCIES;
+    }
+
     /**
      * The type of platform service to initialize
      */
@@ -861,6 +770,14 @@ abstract class BaseMojo extends AbstractMojo {
          * Build
          */
         CODE_GENERATION
+    }
+
+    /**
+     * Flag to indicate if nested dependency should be returend or not.
+     */
+    enum FragmentDependencyMode {
+        SKIP_NESTED_FRAGMENT,
+        INCLUDE_FULL_DEPENDENCIES
     }
 
     /**
@@ -928,6 +845,157 @@ abstract class BaseMojo extends AbstractMojo {
             } catch (Exception e) {
                 getLog().warn(e.getMessage());
             }
+        }
+    }
+
+    private class DependencyVisitor implements DependencyNodeVisitor {
+
+        private final Function<Artifact, VisitorDecision> visitorFilter;
+        private final FragmentDependencyMode mode;
+        private final Set<Artifact> gatheredDependencies = new LinkedHashSet<>();
+
+        //  Dependencies of type "fragment" and their artifact name.
+        //
+        private final Map<String, String> fragmentDependencies = new HashMap<>();
+        private int depth = 0;
+
+        private DependencyVisitor(Function<Artifact, VisitorDecision> visitorFilter, FragmentDependencyMode mode) {
+            this.visitorFilter = visitorFilter;
+            this.mode = mode;
+        }
+
+        /**
+         * @return The gathered dependencies after dependency computing/filtering
+         */
+        private Set<Artifact> getGatheredDependencies() {
+            LinkedHashSet<Artifact> artifacts = new LinkedHashSet<>(gatheredDependencies);
+
+            if (mode == FragmentDependencyMode.SKIP_NESTED_FRAGMENT) {
+
+                //  Remove fragments nested in other fragments.
+                //  FIX THIS (FL): remove nesting.
+                //
+                for (Iterator<Artifact> iterator = artifacts.iterator(); iterator.hasNext(); ) {
+
+                    Artifact artifact = iterator.next();
+                    String destName = artifact.getGroupId() + "-" + artifact
+                        .getArtifactId() + "-" + artifact.getBaseVersion() + "-" + artifact
+                        .getType() + ".zip";
+
+                    if (fragmentDependencies.containsKey(destName)) {
+                        getLog()
+                            .debug("Skipping " + artifact + " since it is already included by "
+                                + fragmentDependencies.get(destName));
+                        iterator.remove();
+                    }
+                }
+            }
+
+            return artifacts;
+        }
+
+        private String indent() {
+            StringBuilder t = new StringBuilder();
+            for (int i = 0; i < depth; i++) {
+                t.append("  ");
+            }
+            return t.toString();
+        }
+
+        @Override
+        public boolean visit(DependencyNode node) {
+            if (node.getParent() == null) {
+                // root node - skip
+                return true;
+            }
+
+            String indent = indent();
+            depth = depth + 1;
+            Artifact artifact = node.getArtifact();
+
+            VisitorDecision decision = visitorFilter.apply(artifact);
+            String scope = artifact.getScope();
+            String type = artifact.getType();
+
+            boolean visitDependencies;
+            switch (decision) {
+
+                case KEEP:
+
+                    // add to list
+                    //
+                    gatheredDependencies.add(artifact);
+
+                    if (isFragment(type) && mode == FragmentDependencyMode.SKIP_NESTED_FRAGMENT) {
+
+                        getLog().debug(indent + node.getArtifact()
+                            + " [adding (skip nested dependencies)]");
+
+                        // fragments don't descend into dependencies
+                        //
+                        updateFragmentDependencies(node, artifact);
+                        visitDependencies = false;
+
+                    } else {
+
+                        getLog().debug(indent + node.getArtifact() + " [adding]");
+
+                        // keep going to check for dependencies of this artifact
+                        //
+                        visitDependencies = true;
+                    }
+                    break;
+
+                case SKIP_STOP:
+
+                    getLog().debug(indent + node.getArtifact()
+                        + " [skipping (and skipping dependencies)]");
+                    visitDependencies = false;
+                    break;
+
+                case SKIP_VISIT_DEPENDENCIES:
+
+                    getLog().debug(indent + node.getArtifact()
+                        + "[skipping]");
+                    visitDependencies = true;
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Decision: " + decision);
+            }
+
+            return visitDependencies;
+        }
+
+        private void updateFragmentDependencies(DependencyNode node, Artifact artifact) {
+            // Read manifest so we can later see if we have duplicates
+            //
+            JarInputStream jarStream;
+            try {
+                jarStream = new JarInputStream(new FileInputStream(getArtifactPath(artifact)));
+                Manifest mf = jarStream.getManifest();
+                String fragmentList = mf.getMainAttributes()
+                    .getValue("TIBCO-EP-Fragment-List");
+                if (fragmentList != null && !fragmentList.isEmpty()) {
+                    for (String fragmentDep : fragmentList.split(" ")) {
+                        fragmentDependencies
+                            .put(fragmentDep, node.getArtifact().toString());
+                    }
+                }
+            } catch (IOException e) {
+                // no manifest, ignore
+                getLog().warn("No manifest could be read for: " + node.getArtifact()
+                    .getFile(), e);
+            }
+        }
+
+        @Override
+        public boolean endVisit(DependencyNode node) {
+            if (node.getParent() != null) {
+                depth = depth - 1;
+            }
+
+            return true;
         }
     }
 }

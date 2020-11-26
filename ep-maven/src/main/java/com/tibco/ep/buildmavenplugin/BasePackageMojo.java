@@ -228,6 +228,7 @@ abstract class BasePackageMojo extends BaseMojo {
 
         ConfigurationSource configSource = new ConfigurationSource(project, localRepository, session);
         try {
+            getLog().debug("Assembly: " + project.getVersion(), new RuntimeException(project.getVersion()));
             assemblyFile = assemblyArchiver.createArchive(assembly, project.getArtifactId()+"-"+project.getVersion()+"-"+project.getPackaging(), "zip", configSource, false, "merge");
         } catch (Exception e) {
             throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e.getCause());

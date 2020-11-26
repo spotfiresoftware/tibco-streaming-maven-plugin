@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Copyright (C) 2018, TIBCO Software Inc.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of the copyright holder nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -28,6 +28,14 @@
  * POSSIBILITY OF SUCH DAMAGE.
  ******************************************************************************/
 package com.tibco.ep.buildmavenplugin;
+
+import org.apache.maven.plugin.testing.MojoRule;
+import org.apache.maven.plugin.testing.resources.TestResources;
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -44,20 +52,11 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.HashMap;
 
-import org.apache.maven.plugin.testing.MojoRule;
-import org.apache.maven.plugin.testing.resources.TestResources;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * Unit tests
- *
  */
-public class UnitTest extends BetterAbstractMojoTestCase  {
-    private Logger logger = LoggerFactory.getLogger(UnitTest.class);
+public class UnitTest extends BetterAbstractMojoTestCase {
+    private static final Logger LOGGER = LoggerFactory.getLogger(UnitTest.class);
 
     /**
      * rule
@@ -73,21 +72,21 @@ public class UnitTest extends BetterAbstractMojoTestCase  {
 
     /**
      * Install product - do this first
-     * 
+     *
      * @throws Exception on error
      */
     @Test
-    public void testUnitTest() throws Exception  {    
-        logger.info("Install Product");
+    public void testUnitTest() throws Exception {
+        LOGGER.info("Install Product");
         SimulatedLog simulatedLog = new SimulatedLog(false);
 
-        File pom = new File( "target/projects", "pom.xml" );
-        Assert.assertNotNull( pom );
-        Assert.assertTrue( pom.exists());
+        File pom = new File("target/projects", "pom.xml");
+        Assert.assertNotNull(pom);
+        Assert.assertTrue(pom.exists());
 
         InstallProductMojo installProduct = (InstallProductMojo) lookupConfiguredMojo(pom, "install-product");
-        Assert.assertNotNull( installProduct );
-        installProduct.setLog(simulatedLog);     
+        Assert.assertNotNull(installProduct);
+        installProduct.setLog(simulatedLog);
         installProduct.execute();
         assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
         assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
@@ -96,9 +95,9 @@ public class UnitTest extends BetterAbstractMojoTestCase  {
         //
         File productHome = new File(Paths.get("").toAbsolutePath().toFile(), "producthome");
         File markerFile;
-        if (System.getProperty("os.name").toLowerCase().indexOf("mac") >=0) {
+        if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
             markerFile = new File(new File(productHome, "dependency-maven-plugin-markers"), "com.tibco.ep.dtm-platform_osxx86_64-zip-2.0.0-SNAPSHOT.marker");
-        } else if (System.getProperty("os.name").toLowerCase().indexOf("linux") >=0 ) {
+        } else if (System.getProperty("os.name").toLowerCase().indexOf("linux") >= 0) {
             if (System.getProperty("os.arch").equals("aarch64")) {
                 markerFile = new File(new File(productHome, "dependency-maven-plugin-markers"), "com.tibco.ep.dtm-platform_linuxaarch64-zip-2.0.0-SNAPSHOT.marker");
             } else {
@@ -108,7 +107,7 @@ public class UnitTest extends BetterAbstractMojoTestCase  {
             markerFile = new File(new File(productHome, "dependency-maven-plugin-markers"), "com.tibco.ep.dtm-platform_windowsx64-zip-2.0.0-SNAPSHOT.marker");
         }
         installProduct = (InstallProductMojo) lookupConfiguredMojo(pom, "install-product");
-        Assert.assertNotNull( installProduct );
+        Assert.assertNotNull(installProduct);
         installProduct.productHome = productHome;
         try {
             Files.walkFileTree(productHome.toPath(), new SimpleFileVisitor<Path>() {
@@ -128,11 +127,11 @@ public class UnitTest extends BetterAbstractMojoTestCase  {
         } catch (IOException e) {
             // ignore
         }
-        installProduct.setLog(simulatedLog);     
+        installProduct.setLog(simulatedLog);
         installProduct.execute();
         assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
         assertTrue(markerFile.toString(), markerFile.exists());
-        
+
         // save good md5
         //
         String goodmd5 = "good not read";
@@ -146,7 +145,7 @@ public class UnitTest extends BetterAbstractMojoTestCase  {
                 input.close();
             }
         }
-        
+
         // broken md5
         //
         BufferedWriter output = null;
@@ -163,9 +162,9 @@ public class UnitTest extends BetterAbstractMojoTestCase  {
             }
         }
         installProduct = (InstallProductMojo) lookupConfiguredMojo(pom, "install-product");
-        Assert.assertNotNull( installProduct );
+        Assert.assertNotNull(installProduct);
         installProduct.productHome = productHome;
-        installProduct.setLog(simulatedLog);     
+        installProduct.setLog(simulatedLog);
         installProduct.execute();
         assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
         assertTrue(markerFile.exists());
@@ -181,242 +180,256 @@ public class UnitTest extends BetterAbstractMojoTestCase  {
             }
         }
         assertEquals(reinstallmd5, goodmd5);
-        
-        logger.info("java unit test");
+
+        //  Java test.
+        //
+        LOGGER.info("java unit test");
         simulatedLog = new SimulatedLog(true);
 
-        File testPom = new File( "target/projects/java", "test.xml" );
+        File testPom = new File("target/projects/java", "test.xml");
         Assert.assertNotNull(testPom);
         Assert.assertTrue(testPom.exists());
 
-        File startPom = new File( "target/projects/java", "start.xml" );
+        File startPom = new File("target/projects/java", "start.xml");
         Assert.assertNotNull(startPom);
         Assert.assertTrue(startPom.exists());
 
-        File stopPom = new File( "target/projects/java", "stop.xml" );
+        File stopPom = new File("target/projects/java", "stop.xml");
         Assert.assertNotNull(stopPom);
         Assert.assertTrue(stopPom.exists());
 
-        File deployPom = new File( "target/projects/java", "deploy.xml" );
+        File deployPom = new File("target/projects/java", "deploy.xml");
         Assert.assertNotNull(deployPom);
         Assert.assertTrue(deployPom.exists());
 
-        try {
+        runJavaTest(simulatedLog, testPom, startPom, stopPom, deployPom);
 
-            // copy test file
-            //
-            try {
-                new File("target/projects/java/target/test-classes/com/tibco/ep/buildmavenplugin").mkdirs();
-                Files.copy(new File("target/test-classes/com/tibco/ep/buildmavenplugin/DummyTest.class").toPath(),
-                        new File("target/projects/java/target/test-classes/com/tibco/ep/buildmavenplugin/DummyTest.class").toPath());
-            } catch (FileAlreadyExistsException e) {
-                // ignore
-            }
-
-            new File("target/projects/java/target/cobertura").mkdirs();
-
-            logger.info("   Start nodes");
-            StartNodesMojo startNodes = (StartNodesMojo) lookupConfiguredMojo(startPom, "start-nodes");
-            Assert.assertNotNull(startNodes);
-            startNodes.environment = new String[] { "BUILD_ID="+System.getenv("BUILD_ID") };
-            simulatedLog.reset();
-            startNodes.setLog(simulatedLog);
-            startNodes.execute();
-            assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
-            assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
-            assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog().contains("Node started"));
-
-            logger.info("   Test nodes");
-            TestJavaFragmentMojo testMojo = (TestJavaFragmentMojo) lookupConfiguredMojo(testPom, "test-java-fragment");
-            Assert.assertNotNull(testMojo);
-            startNodes.environment = new String[] { "BUILD_ID="+System.getenv("BUILD_ID") };
-            simulatedLog.reset();
-            testMojo.setLog(simulatedLog);
-            testMojo.optionsProperty = new String[]{ "-verbose" };
-            testMojo.nodeOptionsProperty = new String[]{ "debug=true", "ignoreoptionsfile=cwxxx" };
-            testMojo.execute();
-            assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
-            assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
-            assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog().contains("Failures: 0, Errors: 0, Skipped: 0"));
-
-            logger.info("   Test nodes with junit port");
-            startNodes.environment = new String[] { "BUILD_ID="+System.getenv("BUILD_ID") };
-            simulatedLog.reset();
-            testMojo.setLog(simulatedLog);
-            testMojo.optionsProperty = new String[]{ "-verbose" };
-            testMojo.nodeOptionsProperty = new String[]{ "debug=true" };
-            testMojo.systemPropertyVariables = new HashMap<String, String>();
-            testMojo.systemPropertyVariables.put("com.tibco.junit.results.port", "2000");
-            testMojo.execute();
-            
-            logger.info("   Deploy nodes");
-            DeployFragmentMojo deployMojo = (DeployFragmentMojo) lookupConfiguredMojo(deployPom, "deploy-fragment");
-            Assert.assertNotNull(deployMojo);
-            startNodes.environment = new String[] { "BUILD_ID="+System.getenv("BUILD_ID") };
-            simulatedLog.reset();
-            deployMojo.setLog(simulatedLog);
-            deployMojo.execute();
-            assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
-            assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
-
-        } finally {
-            
-            logger.info("   Stop nodes");
-            StopNodesMojo stopNodes = (StopNodesMojo) lookupConfiguredMojo(stopPom, "stop-nodes");
-            Assert.assertNotNull(stopNodes);  
-            simulatedLog.reset();
-            stopNodes.setLog(simulatedLog);
-            stopNodes.execute();
-            assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
-            assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
-            assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog().contains("Node removed"));
-             
-        }
-
-        logger.info("EventFlow unit test");
+        //  Event Flow test.
+        //
+        LOGGER.info("EventFlow unit test");
         simulatedLog = new SimulatedLog(true);
 
-        testPom = new File( "target/projects/eventflow", "pom.xml" );
+        testPom = new File("target/projects/eventflow", "pom.xml");
         Assert.assertNotNull(testPom);
         Assert.assertTrue(testPom.exists());
+        runEventFlowTest(simulatedLog, testPom);
 
-        try {
-
-            logger.info("   Start nodes");
-            StartNodesMojo startNodes = (StartNodesMojo) lookupConfiguredMojo(testPom, "start-nodes");
-            Assert.assertNotNull(startNodes);
-            startNodes.environment = new String[] { "BUILD_ID="+System.getenv("BUILD_ID") };
-            simulatedLog.reset();
-            startNodes.setLog(simulatedLog);
-            startNodes.execute();
-            assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
-            assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
-            assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog().contains("Node started"));
-
-            logger.info("   Test nodes");
-            TestEventFlowFragmentMojo testMojo = (TestEventFlowFragmentMojo) lookupConfiguredMojo(testPom, "test-eventflow-fragment");
-            Assert.assertNotNull(testMojo);
-            testMojo.environment = new String[] { "BUILD_ID="+System.getenv("BUILD_ID") };
-            simulatedLog.reset();
-            testMojo.setLog(simulatedLog);
-            testMojo.execute();
-            assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
-            assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
-
-        } finally {
-
-            logger.info("   Stop nodes");
-            StopNodesMojo stopNodes = (StopNodesMojo) lookupConfiguredMojo(testPom, "stop-nodes");
-            stopNodes.environment = new String[] { "BUILD_ID="+System.getenv("BUILD_ID") };
-            Assert.assertNotNull(stopNodes);  
-            simulatedLog.reset();
-            stopNodes.setLog(simulatedLog);
-            stopNodes.execute();
-            assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
-            assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
-            assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog().contains("Node removed"));
-
-        }
-
-        logger.info("LiveView unit test");
+        //  LiveView test.
+        //
+        LOGGER.info("LiveView unit test");
         simulatedLog = new SimulatedLog(false);
 
-        testPom = new File( "target/projects/liveview", "pom.xml" );
+        testPom = new File("target/projects/liveview", "pom.xml");
         Assert.assertNotNull(testPom);
         Assert.assertTrue(testPom.exists());
 
-        try {
+        runLiveViewTest(simulatedLog, testPom);
 
-            logger.info("   Start nodes");
-            StartNodesMojo startNodes = (StartNodesMojo) lookupConfiguredMojo(testPom, "start-nodes");
-            Assert.assertNotNull(startNodes);
-            startNodes.environment = new String[] { "BUILD_ID="+System.getenv("BUILD_ID") };
-            simulatedLog.reset();
-            startNodes.setLog(simulatedLog);
-            startNodes.execute();
-            assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
-            assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
-            assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog().contains("Node started"));
-
-            logger.info("   Test nodes");
-            TestLiveViewFragmentMojo testMojo = (TestLiveViewFragmentMojo) lookupConfiguredMojo(testPom, "test-liveview-fragment");
-            Assert.assertNotNull(testMojo);
-            testMojo.environment = new String[] { "BUILD_ID="+System.getenv("BUILD_ID") };
-            simulatedLog.reset();
-            testMojo.setLog(simulatedLog);
-            testMojo.execute();
-            assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
-            assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
-
-        } finally {
-
-            logger.info("   Stop nodes");
-            StopNodesMojo stopNodes = (StopNodesMojo) lookupConfiguredMojo(testPom, "stop-nodes");
-            stopNodes.environment = new String[] { "BUILD_ID="+System.getenv("BUILD_ID") };
-            Assert.assertNotNull(stopNodes);  
-            simulatedLog.reset();
-            stopNodes.setLog(simulatedLog);
-            stopNodes.execute();
-            assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
-            assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
-            assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog().contains("Node removed"));
-
-        }
-
-        logger.info("application test");
+        LOGGER.info("application test");
         simulatedLog = new SimulatedLog(false);
 
-        testPom = new File( "target/projects/application", "pom.xml" );
+        testPom = new File("target/projects/application", "pom.xml");
         Assert.assertNotNull(testPom);
         Assert.assertTrue(testPom.exists());
 
-        deployPom = new File( "target/projects/application", "deploy.xml" );
+        deployPom = new File("target/projects/application", "deploy.xml");
         Assert.assertNotNull(testPom);
         Assert.assertTrue(testPom.exists());
-        
-//        try {
 
-            logger.info("   Start nodes");
-            StartNodesMojo startNodes = (StartNodesMojo) lookupConfiguredMojo(deployPom, "start-nodes");
-            Assert.assertNotNull(startNodes);  
-            startNodes.environment = new String[] { "BUILD_ID="+System.getenv("BUILD_ID") };
-            simulatedLog.reset();
-            startNodes.setLog(simulatedLog);
-            startNodes.execute();
-            assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
-            assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
-            assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog().contains("Node started"));
+        runApplicationTest(simulatedLog, testPom, deployPom);
+    }
 
-//        } finally {
+    private void runApplicationTest(SimulatedLog simulatedLog, File testPom, File deployPom) throws Exception {
+        LOGGER.info("   Start nodes");
+        StartNodesMojo startNodes = (StartNodesMojo) lookupConfiguredMojo(deployPom, "start-nodes");
+        Assert.assertNotNull(startNodes);
+        startNodes.environment = new String[]{"BUILD_ID=" + System.getenv("BUILD_ID")};
+        simulatedLog.reset();
+        startNodes.setLog(simulatedLog);
+        startNodes.execute();
+        assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
+        assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
+        assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog().contains("Node started"));
 
-            logger.info("   Stop nodes");
-            StopNodesMojo stopNodes = (StopNodesMojo) lookupConfiguredMojo(testPom, "stop-nodes");
-            Assert.assertNotNull(stopNodes);  
-            stopNodes.environment = new String[] { "BUILD_ID="+System.getenv("BUILD_ID") };
-            simulatedLog.reset();
-            stopNodes.setLog(simulatedLog);
-            stopNodes.execute();
-            assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
-            assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
-            assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog().contains("Node removed"));
 
-//        }
+        LOGGER.info("   Stop nodes");
+        StopNodesMojo stopNodes = (StopNodesMojo) lookupConfiguredMojo(testPom, "stop-nodes");
+        Assert.assertNotNull(stopNodes);
+        stopNodes.environment = new String[]{"BUILD_ID=" + System.getenv("BUILD_ID")};
+        simulatedLog.reset();
+        stopNodes.setLog(simulatedLog);
+        stopNodes.execute();
+        assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
+        assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
+        assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog().contains("Node removed"));
+    }
+
+    private void runLiveViewTest(SimulatedLog simulatedLog, File testPom) throws Exception {
+
+        LOGGER.info("   Start nodes");
+        StartNodesMojo startNodes = (StartNodesMojo) lookupConfiguredMojo(testPom, "start-nodes");
+        Assert.assertNotNull(startNodes);
+        startNodes.environment = new String[]{"BUILD_ID=" + System.getenv("BUILD_ID")};
+        simulatedLog.reset();
+        startNodes.setLog(simulatedLog);
+        startNodes.execute();
+        assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
+        assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
+        assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog()
+            .contains("Node started"));
+
+        LOGGER.info("   Test nodes");
+        TestLiveViewFragmentMojo testMojo = (TestLiveViewFragmentMojo) lookupConfiguredMojo(testPom, "test-liveview-fragment");
+        Assert.assertNotNull(testMojo);
+        testMojo.environment = new String[]{"BUILD_ID=" + System.getenv("BUILD_ID")};
+        simulatedLog.reset();
+        testMojo.setLog(simulatedLog);
+        testMojo.execute();
+        assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
+        assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
+
+
+        LOGGER.info("   Stop nodes");
+        StopNodesMojo stopNodes = (StopNodesMojo) lookupConfiguredMojo(testPom, "stop-nodes");
+        stopNodes.environment = new String[]{"BUILD_ID=" + System.getenv("BUILD_ID")};
+        Assert.assertNotNull(stopNodes);
+        simulatedLog.reset();
+        stopNodes.setLog(simulatedLog);
+        stopNodes.execute();
+        assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
+        assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
+        assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog()
+            .contains("Node removed"));
+    }
+
+    private void runEventFlowTest(SimulatedLog simulatedLog, File testPom) throws Exception {
+
+        LOGGER.info("   Start nodes");
+        StartNodesMojo startNodes = (StartNodesMojo) lookupConfiguredMojo(testPom, "start-nodes");
+        Assert.assertNotNull(startNodes);
+        startNodes.environment = new String[]{"BUILD_ID=" + System.getenv("BUILD_ID")};
+        simulatedLog.reset();
+        startNodes.setLog(simulatedLog);
+        startNodes.execute();
+
+        assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
+        assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
+        assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog()
+            .contains("Node started"));
+
+        LOGGER.info("   Test nodes");
+        TestEventFlowFragmentMojo testMojo = (TestEventFlowFragmentMojo) lookupConfiguredMojo(testPom, "test-eventflow-fragment");
+        Assert.assertNotNull(testMojo);
+        testMojo.environment = new String[]{"BUILD_ID=" + System.getenv("BUILD_ID")};
+        simulatedLog.reset();
+        testMojo.setLog(simulatedLog);
+        testMojo.execute();
+        assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
+        assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
+
+        LOGGER.info("   Stop nodes");
+        StopNodesMojo stopNodes = (StopNodesMojo) lookupConfiguredMojo(testPom, "stop-nodes");
+        stopNodes.environment = new String[]{"BUILD_ID=" + System.getenv("BUILD_ID")};
+        Assert.assertNotNull(stopNodes);
+        simulatedLog.reset();
+        stopNodes.setLog(simulatedLog);
+        stopNodes.execute();
+        assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
+        assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
+        assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog()
+            .contains("Node removed"));
+    }
+
+    private void runJavaTest(SimulatedLog simulatedLog, File testPom, File startPom, File stopPom, File deployPom) throws Exception {
+
+        // copy test file
+        //
+        try {
+            new File("target/projects/java/target/test-classes/com/tibco/ep/buildmavenplugin")
+                .mkdirs();
+            Files
+                .copy(new File("target/test-classes/com/tibco/ep/buildmavenplugin/DummyTest.class")
+                        .toPath(),
+                    new File("target/projects/java/target/test-classes/com/tibco/ep/buildmavenplugin/DummyTest.class")
+                        .toPath());
+        } catch (FileAlreadyExistsException e) {
+            // ignore
+        }
+
+        new File("target/projects/java/target/cobertura").mkdirs();
+
+        LOGGER.info("   Start nodes");
+        StartNodesMojo startNodes = (StartNodesMojo) lookupConfiguredMojo(startPom, "start-nodes");
+        Assert.assertNotNull(startNodes);
+        startNodes.environment = new String[]{"BUILD_ID=" + System.getenv("BUILD_ID")};
+        simulatedLog.reset();
+        startNodes.setLog(simulatedLog);
+        startNodes.execute();
+        assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
+        assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
+        assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog()
+            .contains("Node started"));
+
+        LOGGER.info("   Test nodes");
+        TestJavaFragmentMojo testMojo = (TestJavaFragmentMojo) lookupConfiguredMojo(testPom, "test-java-fragment");
+        Assert.assertNotNull(testMojo);
+        startNodes.environment = new String[]{"BUILD_ID=" + System.getenv("BUILD_ID")};
+        simulatedLog.reset();
+        testMojo.setLog(simulatedLog);
+        testMojo.optionsProperty = new String[]{"-verbose"};
+        testMojo.nodeOptionsProperty = new String[]{"debug=true", "ignoreoptionsfile=cwxxx"};
+        testMojo.execute();
+        assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
+        assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
+        assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog()
+            .contains("Failures: 0, Errors: 0, Skipped: 0"));
+
+        LOGGER.info("   Test nodes with junit port");
+        startNodes.environment = new String[]{"BUILD_ID=" + System.getenv("BUILD_ID")};
+        simulatedLog.reset();
+        testMojo.setLog(simulatedLog);
+        testMojo.optionsProperty = new String[]{"-verbose"};
+        testMojo.nodeOptionsProperty = new String[]{"debug=true"};
+        testMojo.systemPropertyVariables = new HashMap<String, String>();
+        testMojo.systemPropertyVariables.put("com.tibco.junit.results.port", "2000");
+        testMojo.execute();
+
+        LOGGER.info("   Deploy nodes");
+        DeployFragmentMojo deployMojo = (DeployFragmentMojo) lookupConfiguredMojo(deployPom, "deploy-fragment");
+        Assert.assertNotNull(deployMojo);
+        startNodes.environment = new String[]{"BUILD_ID=" + System.getenv("BUILD_ID")};
+        simulatedLog.reset();
+        deployMojo.setLog(simulatedLog);
+        deployMojo.execute();
+        assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
+        assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
+
+        LOGGER.info("   Stop nodes");
+        StopNodesMojo stopNodes = (StopNodesMojo) lookupConfiguredMojo(stopPom, "stop-nodes");
+        Assert.assertNotNull(stopNodes);
+        simulatedLog.reset();
+        stopNodes.setLog(simulatedLog);
+        stopNodes.execute();
+        assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
+        assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
+        assertTrue(simulatedLog.getInfoLog(), simulatedLog.getInfoLog()
+            .contains("Node removed"));
     }
 
     /**
      * Test correct exit when non-daemon threads are still running.
-     * 
+     *
      * @throws Exception on error
      */
     @Test
-    public void testExitWhenThreadsRunning() throws Exception  {    
+    public void testExitWhenThreadsRunning() throws Exception {
 
         new Thread() {
             public synchronized void run() {
                 try {
                     wait();
                 } catch (final InterruptedException e) {
-                    return;
+                    LOGGER.warn("Interrupted", e);
                 }
             }
         }.start();
