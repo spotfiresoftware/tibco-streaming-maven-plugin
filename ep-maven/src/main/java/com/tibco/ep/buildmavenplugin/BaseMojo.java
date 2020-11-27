@@ -100,7 +100,6 @@ abstract class BaseMojo extends AbstractMojo {
     private static final String SB_RT_GROUP_IDENTIFIER = "com.tibco.ep.sb.rt";
     private static final String SB_SERVER_ARTIFACT_IDENTIFIER = "server";
     private static final String SB_SUPPORT_ARTIFACT_PREFIX = "support_platform_";
-
     /**
      * maven property to use to skip start/stop/tests if no tests exist
      */
@@ -133,6 +132,11 @@ abstract class BaseMojo extends AbstractMojo {
      * Directory used to import other Eventflow fragments
      */
     protected static String IMPORT_DIRECTORY = "eventflow";
+
+    /**
+     * TIBCO EP Fragment List manifest entry name
+     */
+    static final String MANIFEST_TIBCO_EP_FRAGMENT_LIST = "TIBCO-EP-Fragment-List";
 
     /**
      * Maven resolver
@@ -251,6 +255,28 @@ abstract class BaseMojo extends AbstractMojo {
         return artifactId.startsWith(SB_PRODUCT_ARTIFACT_PREFIX)
             || artifactId.startsWith(SB_SUPPORT_ARTIFACT_PREFIX);
     }
+
+    /**
+     * @param currentValue The current value
+     * @param path         The path of the default directory
+     * @return The current value if it contains a value, or an array pointing to the default path
+     */
+    File[] getOrDefault(File[] currentValue, String path) {
+        if (currentValue != null && currentValue.length > 0) {
+            return currentValue;
+        }
+
+        return new File[]{new File(project.getBasedir(), path)};
+    }
+
+    /**
+     * @param eventFlowDirectories The current event flow directories value
+     * @return The current value or the default if needed
+     */
+    File[] getOrDefaultEventFlowDirectories(File[] eventFlowDirectories) {
+        return getOrDefault(eventFlowDirectories, "/src/main/eventflow");
+    }
+
 
     /**
      * @return The administration service
@@ -746,10 +772,17 @@ abstract class BaseMojo extends AbstractMojo {
         return Arrays.asList(array);
     }
 
-    private boolean isFragment(String type) {
-        return type != null && (type.equals(JAVA_TYPE) || type
-            .equals(EVENTFLOW_TYPE) || type.equals(TCS_TYPE) || type
-            .equals(LIVEVIEW_TYPE));
+    /**
+     * @param artifact The artifact
+     * @return True if the artifact is a fragment
+     */
+    boolean isFragment(Artifact artifact) {
+        String type = artifact.getType();
+        return type != null &&
+            (type.equals(JAVA_TYPE)
+                || type.equals(EVENTFLOW_TYPE)
+                || type.equals(TCS_TYPE)
+                || type.equals(LIVEVIEW_TYPE));
     }
 
     enum VisitorDecision {
@@ -914,8 +947,6 @@ abstract class BaseMojo extends AbstractMojo {
             Artifact artifact = node.getArtifact();
 
             VisitorDecision decision = visitorFilter.apply(artifact);
-            String scope = artifact.getScope();
-            String type = artifact.getType();
 
             boolean visitDependencies;
             switch (decision) {
@@ -926,7 +957,7 @@ abstract class BaseMojo extends AbstractMojo {
                     //
                     gatheredDependencies.add(artifact);
 
-                    if (isFragment(type) && mode == FragmentDependencyMode.SKIP_NESTED_FRAGMENT) {
+                    if (isFragment(artifact) && mode == FragmentDependencyMode.SKIP_NESTED_FRAGMENT) {
 
                         getLog().debug(indent + node.getArtifact()
                             + " [adding (skip nested dependencies)]");
@@ -975,7 +1006,7 @@ abstract class BaseMojo extends AbstractMojo {
                 jarStream = new JarInputStream(new FileInputStream(getArtifactPath(artifact)));
                 Manifest mf = jarStream.getManifest();
                 String fragmentList = mf.getMainAttributes()
-                    .getValue("TIBCO-EP-Fragment-List");
+                    .getValue(MANIFEST_TIBCO_EP_FRAGMENT_LIST);
                 if (fragmentList != null && !fragmentList.isEmpty()) {
                     for (String fragmentDep : fragmentList.split(" ")) {
                         fragmentDependencies

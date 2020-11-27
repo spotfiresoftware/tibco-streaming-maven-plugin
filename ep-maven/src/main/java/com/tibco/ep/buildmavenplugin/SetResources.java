@@ -111,10 +111,8 @@ public class SetResources extends BasePackageMojo {
 
         prechecks();
 
-        if (eventflowDirectories == null || eventflowDirectories.length == 0) {
-            eventflowDirectories = new File[] { new File(project.getBasedir(), "/src/main/eventflow") };
-        }
-        
+        eventflowDirectories = getOrDefaultEventFlowDirectories(eventflowDirectories);
+
         if (configurationDirectory.exists()) {
             Resource resource = new Resource();
             resource.setDirectory(configurationDirectory.getAbsolutePath());

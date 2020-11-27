@@ -117,9 +117,7 @@ public class TestEventFlowFragmentMojo extends BaseTestMojo {
 
     public void execute() throws MojoExecutionException {
 
-        if (eventflowDirectories == null || eventflowDirectories.length == 0) {
-            eventflowDirectories = new File[] { new File(project.getBasedir(), "/src/main/eventflow") };
-        }
+        eventflowDirectories = getOrDefaultEventFlowDirectories(eventflowDirectories);
 
         getLog().debug( "Testing eventflow fragment "+Arrays.toString(eventflowDirectories) );
 

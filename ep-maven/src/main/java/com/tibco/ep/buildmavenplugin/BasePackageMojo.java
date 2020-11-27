@@ -1,20 +1,20 @@
 /*******************************************************************************
  * Copyright (C) 2018, TIBCO Software Inc.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
- * 
+ *
  * 2. Redistributions in binary form must reproduce the above copyright notice,
  *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
- * 
+ *
  * 3. Neither the name of the copyright holder nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
@@ -29,35 +29,35 @@
  ******************************************************************************/
 package com.tibco.ep.buildmavenplugin;
 
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.assembly.archive.AssemblyArchiver;
+import org.apache.maven.plugins.assembly.model.Assembly;
+import org.apache.maven.plugins.assembly.model.FileItem;
+import org.apache.maven.plugins.assembly.model.FileSet;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Stream;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.assembly.archive.AssemblyArchiver;
-import org.apache.maven.plugins.assembly.model.Assembly;
-import org.apache.maven.plugins.assembly.model.FileItem;
-
 /**
- * Package base 
- *
+ * Package base
  */
 abstract class BasePackageMojo extends BaseMojo {
-
-    // maven components
-    //
 
     /**
      * Assembly archiver
@@ -65,204 +65,336 @@ abstract class BasePackageMojo extends BaseMojo {
     @Component
     AssemblyArchiver assemblyArchiver;
 
-    // maven read-only parameters
-    //
-
-    // maven user parameters
-    //
+    /**
+     * @return A new archive generator
+     */
+    ArchiveGenerator newArchiveGenerator() {
+        return new ArchiveGenerator();
+    }
 
     /**
-     * <p>List of artifact names to exclude from the zip archive.</p>  
-     * 
-     * <p>Format of each artifact is groupId:artifactId:type[:classifier]:version.  Wildcards are
-     * supported.</p>
-     * 
-     * <p>Example use in pom.xml:</p>
-     * <img src="uml/artifactExcludes.svg" alt="pom">
-     * 
-     * @since 1.0.0
+     * The archive generator class
      */
-    @Parameter
-    String[] artifactExcludes;
-    
-    /**
-     * Create a manifest, pom.xml and pom.properties files and add to assembly
-     * 
-     * @param assembly assembly to add manifest
-     * @param mainclass man java class, null if none
-     * @param extras map of any additional manifest entries
-     * @return manifest file
-     * @throws MojoExecutionException on error
-     */
-    File packageManifest(Assembly assembly, String mainclass, Map<String, String> extras) throws MojoExecutionException {
-        
-        // make sure the build directory is created
-        //
-        File dir = new File(project.getBuild().getDirectory());
-        if (!dir.exists()) {
-            if (!dir.mkdirs()) {
-                throw new MojoExecutionException("Unable to create: " + dir.getAbsolutePath());
-            }
+    class ArchiveGenerator {
+        private final Assembly assembly;
+        private final String productVersion;
+        private final List<Consumer<Assembly>> steps = new ArrayList<>();
+        private File temporaryManifestFile;
+        private String mainClass;
+
+        private ArchiveGenerator() {
+            assembly = new Assembly();
+            assembly.setId(project.getPackaging());
+            assembly.setIncludeBaseDirectory(false);
+            assembly.setBaseDirectory(project.getBasedir().getAbsolutePath());
+
+            productVersion = getProductVersion();
         }
-        
-        FileOutputStream os = null;
-        FileOutputStream pos = null;
-        
-        try {
 
-            File tempFile = File.createTempFile("MAN", "MF", new File(project.getBuild().getDirectory()));
-          
-            String tempManifestPath = tempFile.getAbsolutePath();
-            Manifest manifest = new Manifest();
-            Attributes atts = manifest.getMainAttributes();
-            atts.put(Attributes.Name.MANIFEST_VERSION, "1.0");
-            atts.put(new Attributes.Name("Archiver-Version"), "Plexus Archiver");
-            atts.put(new Attributes.Name("Built-By"), System.getProperty("user.name"));
-            atts.put(new Attributes.Name("Build-Jdk"), System.getProperty("java.version"));
-            atts.put(new Attributes.Name("Package-Title"), project.getName());
+        /**
+         * @param step The step to add in the assembly construction
+         * @return This
+         */
+        ArchiveGenerator withAssemblyStep(Consumer<Assembly> step) {
+            this.steps.add(step);
+            return this;
+        }
 
-            String buildNumber = (String) project.getProperties().get("buildNumber");
-            if (buildNumber != null) {
-                atts.put(new Attributes.Name("Package-Version"), project.getVersion()+" "+buildNumber);
-            } else {
-                atts.put(new Attributes.Name("Package-Version"), project.getVersion());
-            }
+        /**
+         * @param mainClass The main class
+         * @return This
+         */
+        public ArchiveGenerator withMainClass(String mainClass) {
+            this.mainClass = mainClass;
+            return this;
+        }
 
-            if (project.getOrganization() != null) {
-                atts.put(new Attributes.Name("Package-Vendor"), project.getOrganization().getName());
-            }
+        /**
+         * Write the archive
+         *
+         * @throws MojoExecutionException Something went wrong
+         */
+        public void generate() throws MojoExecutionException {
 
-            if (mainclass != null && mainclass.length() > 0) {
-                atts.put(Attributes.Name.MAIN_CLASS, mainclass);
-            }
+            Set<Artifact> artifacts = getCompileProjectDependencies();
 
-            atts.put(new Attributes.Name("TIBCO-EP-Fragment-Type"), project.getPackaging());
-            atts.put(new Attributes.Name("TIBCO-EP-Fragment-Identifier"), project.getGroupId()+"."+project.getArtifactId());
+            // add runtime dependencies
+            //
+            // we add them one-by-one instead of using a dependencyset so we can
+            // set the classpath in the manifest file
+            //
+            List<String> classPathItems = new ArrayList<>();
+            List<String> nativeClassPathItems = new ArrayList<>();
+            List<String> fragmentList = new ArrayList<>();
 
-            String productVersion = getProductVersion();
-            if (productVersion != null && productVersion.length() > 0) {
-                atts.put(new Attributes.Name("TIBCO-EP-Build-Product-Version"), productVersion);
-            }
-            
-            if (extras != null) {
-                for (Map.Entry<String, String> entry : extras.entrySet()) {
-                    atts.put(new Attributes.Name(entry.getKey()), entry.getValue());
+            List<FileItem> deps = new ArrayList<>();
+
+            for (Artifact dependency : artifacts) {
+                String type = dependency.getType();
+
+                String destName = dependency.getGroupId()
+                    + "-" + dependency.getArtifactId()
+                    + "-" + dependency.getBaseVersion();
+
+                if (isFragment(dependency)) {
+                    destName += "-" + type + ".zip";
+                } else {
+                    if (dependency.hasClassifier()) {
+                        destName += "-" + dependency.getClassifier();
+                    }
+                    destName += "." + dependency.getType();
+                }
+
+                String artifactPath = getArtifactPath(dependency);
+                if (!new File(artifactPath).exists()) {
+
+                    // normally maven dependency checks catch this, but m2e seems to bypass it
+                    //
+                    throw new MojoExecutionException("Artifact " + destName + " wasn't found at " + artifactPath);
+                }
+
+                FileItem dependencyFile = new FileItem();
+                dependencyFile.setOutputDirectory("");
+                dependencyFile.setSource(getArtifactPath(dependency));
+                dependencyFile.setDestName(destName);
+                deps.add(dependencyFile);
+
+                //  Based on dependency type, we add them to the corresponding section in the manifest.
+                //
+                if (dependency.getType().equals("nar")) {
+                    nativeClassPathItems.add(destName);
+                } else if (isFragment(dependency)) {
+                    fragmentList.add(destName);
+                } else {
+                    classPathItems.add(destName);
                 }
             }
-            os = new FileOutputStream(new File(tempManifestPath));
-            manifest.write(os);
-            FileItem manifestfile = new FileItem();
-            manifestfile.setSource(tempManifestPath);
-            manifestfile.setDestName("META-INF/MANIFEST.MF");
-            assembly.addFile(manifestfile);
 
-            // Add in pom.xml ( in the same way as maven archiver )
+            //  Build a manifest file and add as first file to the zip.
+            //
+            Map<String, String> extras = new HashMap<>();
+            extras.put("TIBCO-EP-Fragment-Format-Version", "2");
+            if (!classPathItems.isEmpty()) {
+                extras.put("Class-Path", String.join(" ", classPathItems));
+            }
+            if (!nativeClassPathItems.isEmpty()) {
+                extras.put("TIBCO-EP-Native-Class-Path", String.join(" ", nativeClassPathItems));
+            }
+            if (!fragmentList.isEmpty()) {
+                extras.put(MANIFEST_TIBCO_EP_FRAGMENT_LIST, String.join(" ", fragmentList));
+            }
+
+            packageArchive(assembly, extras);
+
+            //  Then, include the dependencies.
+            //
+            for (FileItem dependencyFile : deps) {
+                assembly.addFile(dependencyFile);
+            }
+
+            //  Additional steps.
+            //
+            steps.forEach(step -> step.accept(assembly));
+
+            //  Add the output directory.
+            //
+            File outputDirectory = new File(project.getBuild().getOutputDirectory());
+            if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
+                throw new MojoExecutionException("Output directory "
+                    + outputDirectory.getAbsolutePath() + " could not be created");
+            }
+
+            FileSet fileSet = new FileSet();
+            fileSet.setDirectory(project.getBuild().getOutputDirectory());
+            fileSet.setOutputDirectory("");
+            assembly.addFileSet(fileSet);
+
+            //  Write the assembly.
+            //
+            writeAssembly(assembly);
+            if (!temporaryManifestFile.delete()) {
+                getLog().debug("Unable to delete " + temporaryManifestFile.getAbsolutePath());
+            }
+        }
+
+        /**
+         * Create a manifest, pom.xml and pom.properties files and add to assembly
+         *
+         * @param assembly assembly to add manifest
+         * @param extras   map of any additional manifest entries
+         * @throws MojoExecutionException on error
+         */
+        void packageArchive(Assembly assembly, Map<String, String> extras) throws MojoExecutionException {
+
+            // make sure the build directory is created
+            //
+            File dir = new File(project.getBuild().getDirectory());
+            if (!dir.exists()) {
+                if (!dir.mkdirs()) {
+                    throw new MojoExecutionException("Unable to create: " + dir.getAbsolutePath());
+                }
+            }
+
+            try {
+
+                String productVersion = getProductVersion();
+                addManifestToAssembly(extras, productVersion);
+
+                addPomToAssembly();
+
+                addPropertiesToAssembly();
+
+            } catch (IOException e) {
+
+                throw new MojoExecutionException("Failed to create manifest: " + e.getMessage(), e);
+            }
+        }
+
+        private void addPropertiesToAssembly() throws IOException {
+
+            //  Add the pom.properties file.
+            //
+            File tempPropertiesFile = File
+                .createTempFile("pom", "properties", new File(project.getBuild()
+                    .getDirectory()));
+            tempPropertiesFile.deleteOnExit();
+            String tempPropertiesPath = tempPropertiesFile.getAbsolutePath();
+
+            try (FileOutputStream pos = new FileOutputStream(new File(tempPropertiesPath));
+                 OutputStreamWriter osw = new OutputStreamWriter(pos)) {
+
+                osw.write("# Created by TIBCO Streaming Maven Plugin\n");
+                osw.write("version=" + project.getVersion() + "\n");
+                osw.write("groupId=" + project.getGroupId() + "\n");
+                osw.write("artifactId=" + project.getArtifactId() + "\n");
+                if (productVersion != null && productVersion.length() > 0) {
+                    osw.write("productVersion=" + productVersion + "\n");
+                }
+            }
+
+            FileItem properties = new FileItem();
+            properties.setSource(tempPropertiesPath);
+            properties.setDestName("META-INF/maven/" + project.getGroupId() + "/" + project
+                .getArtifactId() + "/pom.properties");
+            assembly.addFile(properties);
+        }
+
+        private void addPomToAssembly() {
+            //  Add the pom.xml
             //
             FileItem pom = new FileItem();
             pom.setSource(project.getFile().getAbsolutePath());
-            pom.setDestName("META-INF/maven/" + project.getGroupId() + "/" + project.getArtifactId() + "/pom.xml");
+            pom.setDestName("META-INF/maven/" + project.getGroupId() + "/" + project
+                .getArtifactId() + "/pom.xml");
             assembly.addFile(pom);
+        }
 
-            // Add in pom.properties ( in the same was as maven archiver )
+        private Attributes.Name name(String name) {
+            return new Attributes.Name(name);
+        }
+
+        private void addManifestToAssembly(Map<String, String> extras, String productVersion) throws IOException {
+            //  Create a temporary manifest file.
+            //  Keep it as a class parameter for cleanup at the end of archive generation.
             //
-            File tempPropertiesFile = File.createTempFile("pom", "properties", new File(project.getBuild().getDirectory()));
-            tempPropertiesFile.deleteOnExit();
-            String tempPropertiesPath = tempPropertiesFile.getAbsolutePath();
-            pos = new FileOutputStream(new File(tempPropertiesPath));
-            OutputStreamWriter osw = new OutputStreamWriter(pos);
-            osw.write("# Created by TIBCO Streaming Maven Plugin\n");
-            osw.write("version="+project.getVersion()+"\n");
-            osw.write("groupId="+project.getGroupId()+"\n");
-            osw.write("artifactId="+project.getArtifactId()+"\n");
+            temporaryManifestFile = File.createTempFile("MAN", "MF",
+                new File(project.getBuild().getDirectory()));
+
+            String tempManifestPath = temporaryManifestFile.getAbsolutePath();
+            Manifest manifest = new Manifest();
+            Attributes attributes = manifest.getMainAttributes();
+            attributes.put(Attributes.Name.MANIFEST_VERSION, "1.0");
+            attributes.put(name("Archiver-Version"), "Plexus Archiver");
+            attributes.put(name("Built-By"), System.getProperty("user.name"));
+            attributes.put(name("Build-Jdk"), System.getProperty("java.version"));
+            attributes.put(name("Package-Title"), project.getName());
+
+            String buildNumber = (String) project.getProperties().get("buildNumber");
+            if (buildNumber != null) {
+                attributes.put(name("Package-Version"), project.getVersion() + " " + buildNumber);
+            } else {
+                attributes.put(name("Package-Version"), project.getVersion());
+            }
+
+            if (project.getOrganization() != null) {
+                attributes.put(name("Package-Vendor"), project.getOrganization()
+                    .getName());
+            }
+
+            if (mainClass != null && mainClass.length() > 0) {
+                attributes.put(Attributes.Name.MAIN_CLASS, mainClass);
+            }
+
+            attributes.put(name("TIBCO-EP-Fragment-Type"), project.getPackaging());
+            attributes.put(name("TIBCO-EP-Fragment-Identifier"),
+                project.getGroupId() + "." + project.getArtifactId());
+
             if (productVersion != null && productVersion.length() > 0) {
-                osw.write("productVersion="+productVersion+"\n");
+                attributes.put(name("TIBCO-EP-Build-Product-Version"), productVersion);
             }
-            osw.close();
-            FileItem properties = new FileItem();
-            properties.setSource(tempPropertiesPath);
-            properties.setDestName("META-INF/maven/" + project.getGroupId() + "/" + project.getArtifactId() + "/pom.properties");
-            assembly.addFile(properties);
-            
-            return tempFile;
-        } catch (FileNotFoundException e) {
-            throw new MojoExecutionException("Failed to create manifest: " + e.getMessage(), e);
-        } catch (IOException e) {
-            throw new MojoExecutionException("Failed to create manifest: " + e.getMessage(), e);
-        } finally {
-            if (os != null) {
-                try {
-                    os.close();
-                } catch (IOException e) {
+
+            if (extras != null) {
+                for (Map.Entry<String, String> entry : extras.entrySet()) {
+                    attributes.put(name(entry.getKey()), entry.getValue());
                 }
             }
-            if (pos != null) {
-                try {
-                    pos.close();
-                } catch (IOException e) {
-                }
+
+            try (FileOutputStream os = new FileOutputStream(new File(tempManifestPath))) {
+                manifest.write(os);
             }
-        }
-    }
 
-    /**
-     * Create an assembly
-     * 
-     * @return assembly
-     */
-    Assembly createAssembly() {
-        Assembly assembly = new Assembly();
-        assembly.setId(project.getPackaging());
-        assembly.setIncludeBaseDirectory(false);
-        assembly.setBaseDirectory(project.getBasedir().getAbsolutePath());
-        return assembly;
-    }
-
-    /**
-     * Write an assembly file and attach to build
-     * 
-     * @param assembly assembly
-     * @throws MojoExecutionException on error
-     */
-    void writeAssembly(Assembly assembly) throws MojoExecutionException {
-        File assemblyFile;
-
-        ConfigurationSource configSource = new ConfigurationSource(project, localRepository, session);
-        try {
-            getLog().debug("Assembly: " + project.getVersion(), new RuntimeException(project.getVersion()));
-            assemblyFile = assemblyArchiver.createArchive(assembly, project.getArtifactId()+"-"+project.getVersion()+"-"+project.getPackaging(), "zip", configSource, false, "merge");
-        } catch (Exception e) {
-            throw new MojoExecutionException("Failed to create plugin bundle: " + e.getMessage(), e.getCause());
-        } finally {
-            // clean temp directories
+            //  Declare the final manifest file, based on the generated temporary one.
             //
-            Stream<Path> s = null;
+            FileItem manifestFileItem = new FileItem();
+            manifestFileItem.setSource(tempManifestPath);
+            manifestFileItem.setDestName("META-INF/MANIFEST.MF");
+            assembly.addFile(manifestFileItem);
+        }
+
+        /**
+         * Write an assembly file and attach to build
+         *
+         * @param assembly assembly
+         * @throws MojoExecutionException on error
+         */
+        private void writeAssembly(Assembly assembly) throws MojoExecutionException {
+            File assemblyFile;
+
+            ConfigurationSource configSource = new ConfigurationSource(project, localRepository, session);
             try {
-                s = Files.walk(configSource.getWorkingDirectory().toPath());
-                s.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-            } catch (IOException e) {
+                getLog().debug("Assembly: " + project.getVersion(), new RuntimeException(project
+                    .getVersion()));
+                assemblyFile = assemblyArchiver
+                    .createArchive(assembly, project.getArtifactId() + "-" + project
+                        .getVersion() + "-" + project
+                        .getPackaging(), "zip", configSource, false, "merge");
+            } catch (Exception e) {
+
+                throw new MojoExecutionException(
+                    "Failed to create plugin bundle: " + e.getMessage(), e.getCause());
+
             } finally {
-                if (s != null) {
-                    s.close();
-                }
+
+                // clean temp directories
+                //
+                cleanup(configSource.getWorkingDirectory().toPath());
+                cleanup(configSource.getTemporaryRootDirectory().toPath());
             }
-            s = null;
-            try {
-                s = Files.walk(configSource.getTemporaryRootDirectory().toPath());
-                s.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+
+            // Attach bundle assembly to the project
+            project.getArtifact().setFile(assemblyFile);
+
+            // Notify m2e
+            //
+            buildContext.refresh(assemblyFile);
+        }
+
+        private void cleanup(Path path) {
+            try (Stream<Path> files = Files.walk(path)) {
+                files.sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
             } catch (IOException e) {
-            } finally {
-                if (s != null) {
-                    s.close();
-                }
+                getLog().debug("Could not cleanup", e);
             }
         }
-        
-
-        // Attach bundle assembly to the project
-        project.getArtifact().setFile( assemblyFile );
-
-        // Notify m2e
-        //
-        buildContext.refresh(assemblyFile);
     }
 }

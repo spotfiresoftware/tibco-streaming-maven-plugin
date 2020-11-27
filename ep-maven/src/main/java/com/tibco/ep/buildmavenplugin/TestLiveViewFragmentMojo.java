@@ -131,9 +131,7 @@ public class TestLiveViewFragmentMojo extends BaseTestMojo {
     public void execute() throws MojoExecutionException {
         getLog().debug( "Testing live data mart fragment" );
 
-        if (eventflowDirectories == null || eventflowDirectories.length == 0) {
-            eventflowDirectories = new File[] { new File(project.getBasedir(), "/src/main/eventflow") };
-        }
+        eventflowDirectories = getOrDefaultEventFlowDirectories(eventflowDirectories);
 
         Properties modelProperties = project.getModel().getProperties();
         boolean testCasesFound = true;

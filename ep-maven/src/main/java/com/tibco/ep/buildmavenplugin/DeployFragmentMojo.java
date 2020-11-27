@@ -124,11 +124,7 @@ public class DeployFragmentMojo extends BaseTestMojo {
     public void execute() throws MojoExecutionException {
         getLog().debug("Deploy");
 
-        if (eventflowDirectories == null) {
-            eventflowDirectories = new File[]{
-                new File(project.getBasedir(), "/src/main/eventflow")
-            };
-        }
+        eventflowDirectories = getOrDefaultEventFlowDirectories(eventflowDirectories);
 
         // determine if we have executions steps in the pom - if so we can skip id this
         // run is a default one

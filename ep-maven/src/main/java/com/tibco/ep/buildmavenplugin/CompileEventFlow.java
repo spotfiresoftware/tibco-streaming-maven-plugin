@@ -72,10 +72,8 @@ public class CompileEventFlow extends BaseMojo {
     public void execute() throws MojoExecutionException {       
         
         getLog().debug( "Compiling streambase fragment");
-        
-        if (eventflowDirectories == null) {
-            eventflowDirectories = new File[] { new File(project.getBasedir(), "/src/main/eventflow") };
-        }
+
+        eventflowDirectories = getOrDefaultEventFlowDirectories(eventflowDirectories);
 
         prechecks();
 
