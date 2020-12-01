@@ -40,6 +40,8 @@ public class MyOperator extends Operator implements Parameterizable {
 		setPortHints(inputPorts, outputPorts);
 		setDisplayName(this.getClass().getSimpleName());
 		setShortDisplayName(this.getClass().getSimpleName());
+
+		System.out.println("Cls: " + IMetric.class);
 		
 		new MyJavaClass();
 	}

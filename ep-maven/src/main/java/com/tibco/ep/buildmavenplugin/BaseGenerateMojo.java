@@ -34,6 +34,8 @@ import com.tibco.ep.sb.services.build.BuildParameters;
 import com.tibco.ep.sb.services.build.BuildTarget;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -43,9 +45,14 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -162,6 +169,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
     }
 
     private List<Path> getTestClassPath() throws MojoExecutionException, DependencyResolutionRequiredException {
+        //  FIX THIS (FL): not good, to be finalized when getCompileClassPath() is ok.
         return toPaths(project.getTestClasspathElements());
     }
 
@@ -169,27 +177,84 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
         //  Filter out compile class path elements that do not exist.
         //
-        List<Path> classpath = toPaths(project.getCompileClasspathElements()).stream()
-            .filter(p -> p.toFile().exists())
-            .collect(Collectors.toList());
+        LinkedHashSet<Path> classpath = toPaths(project.getCompileClasspathElements()).stream()
+            .filter(p -> p.toFile().exists()).collect(Collectors.toCollection(LinkedHashSet::new));
 
-        //  Now add all dependencies, recursively.
+        //  FIX THIS (FL): too fragile.
+        //  It would be better to add the whole platform to the class path, or store the
+        //  group/id/version of all provided dependencies in the fragment MANIFEST.
         //
-        Function<Artifact, VisitorDecision> filter = artifact -> {
-            if (artifact.getScope().equals(Artifact.SCOPE_TEST)) {
-                return VisitorDecision.SKIP_STOP;
+
+        //  Add transitive dependencies' provided dependency to classpath, so that we can load
+        //  classes for typechecking.
+        //
+        Set<String> classPathArtefacts = new HashSet<>();
+
+        Function<Artifact, String> artifactToString = artifact ->
+            artifact.getGroupId() + ":" + artifact.getArtifactId();
+
+        Function<Dependency, String> dependencyToString = dependency ->
+            dependency.getGroupId() + ":" + dependency.getArtifactId();
+
+        visitDependencies((currentProjectArtefactDependency, indent, context) -> {
+
+            if (target == BuildTarget.TEST
+                && currentProjectArtefactDependency.getScope().equals((Artifact.SCOPE_TEST))) {
+
+                getLog().debug(indent + currentProjectArtefactDependency
+                    + " [skipping (and skipping dependencies)]");
+                return false;
             }
 
-            return VisitorDecision.KEEP;
-        };
+            getLog().debug(indent + currentProjectArtefactDependency + " [adding]");
 
-        for (Artifact dependency: getFilteredProjectDependencies(
-            filter, FragmentDependencyMode.INCLUDE_FULL_DEPENDENCIES)) {
+            classpath.add(currentProjectArtefactDependency.getFile().toPath());
+            classPathArtefacts.add(artifactToString.apply(currentProjectArtefactDependency));
 
-            classpath.add(dependency.getFile().toPath());
-        }
+            //
+            //  If our dependencies have provided dependencies, add them here as well.
+            //
 
-        return classpath;
+            if (!isFragment(currentProjectArtefactDependency)) {
+
+                //  Restrict the search to fragments: a fragment needs all its provided to typecheck.
+                //  JARs will be used through fragments, and the fragments loading the JARs will need
+                //  their own dependency lists to be updated with the needed "provided".
+                //  If Fragment F needs a "provided", either because it uses a platform JAR directly
+                //  or if one of its Java dependency does, then the user will be forced to add the
+                //  relevant "provided" on F (since provided are not transitive, they must appear
+                //  when needed).
+                //
+                return true;
+            }
+
+            //  Get the manifest of the artefact, resolve provided, add to class path.
+            //
+            String artifactPath = getArtifactPath(currentProjectArtefactDependency);
+            Optional<String> manifestEntry = getManifestEntry(artifactPath,
+                BasePackageMojo.MANIFEST_TIBCO_EP_PROVIDED_DEPENDENCIES);
+            if (!manifestEntry.isPresent()) {
+                context.setException(
+                    new MojoExecutionException("Cannot find manifest for: " + artifactPath));
+                return false;
+            }
+
+            //  Now rebuild list of artifacts and add them.
+            //
+            Set<Artifact> artifacts = rebuildProvidedDependencies(manifestEntry.get());
+            artifacts.forEach(artifact -> {
+                if (classpath.add(artifact.getFile().toPath())) {
+                    getLog().debug(
+                        "Added transitive provided dependency to classpath: "
+                            + artifact.getFile().toPath());
+                    classPathArtefacts.add(artifactToString.apply(artifact));
+                }
+            });
+
+            return true;
+        });
+
+        return new ArrayList<>(classpath);
     }
 
     private void addGeneratedSourceRoot() {
