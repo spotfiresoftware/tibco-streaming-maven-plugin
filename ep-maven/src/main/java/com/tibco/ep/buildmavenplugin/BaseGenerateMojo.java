@@ -35,7 +35,6 @@ import com.tibco.ep.sb.services.build.BuildTarget;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Model;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -45,7 +44,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -75,6 +73,9 @@ public abstract class BaseGenerateMojo extends BaseMojo {
     File[] eventflowDirectories;
     @Parameter(required = false, property = "testEventflowDirectories")
     File[] testEventflowDirectories;
+    @Parameter(required = false, property = "failFast", defaultValue = "false")
+    Boolean failFast;
+
 
     /**
      * @param target The build target
@@ -137,26 +138,39 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
         //  Now trigger the build and report errors.
         //
-        getBuildService().build(project.getName(), target, buildParameters,
-            (entityName, entityPath, optionalException) -> {
+        try {
+            getBuildService().build(project.getName(), target, buildParameters,
+                (entityName, entityPath, optionalException) -> {
 
-                if (!optionalException.isPresent()) {
-                    getLog().info("Module " + entityName + ": code generation SUCCESS");
-                    return;
-                }
+                    if (!optionalException.isPresent()) {
+                        getLog().info("Module " + entityName + ": code generation SUCCESS");
+                        return;
+                    }
 
-                //  We have a failure.
-                //
-                Exception error = optionalException.get();
-                failedBuilds.add(entityName + ": " + error.getMessage());
-                getLog().error(
-                    "Module " + entityName + ": code generation FAILURE: " + error.getMessage());
+                    //  We have a failure.
+                    //
+                    Exception error = optionalException.get();
+                    failedBuilds.add(entityName + ": " + error.getMessage());
+                    getLog().error(
+                        "Module " + entityName + ": code generation FAILURE: " + error
+                            .getMessage());
 
-                //  We don't want Maven to display a stack trace just because a build fail, so
-                //  we push the log with the exception as "DEBUG". Users can still get it with -X.
-                //
-                getLog().debug("Exception for above failure", error);
-            });
+                    //  We don't want Maven to display a stack trace just because a build fail, so
+                    //  we push the log with the exception as "DEBUG". Users can still get it with -X.
+                    //
+                    getLog().debug("Exception for above failure", error);
+
+                    if (failFast) {
+                        throw new FailFastException();
+                    }
+                });
+
+        } catch (FailFastException ffe) {
+
+            //  This is just used to get to failures quicker.
+            //
+            assert !failedBuilds.isEmpty();
+        }
 
         if (!failedBuilds.isEmpty()) {
 
