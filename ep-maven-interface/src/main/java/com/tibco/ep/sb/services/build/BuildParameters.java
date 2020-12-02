@@ -48,6 +48,8 @@ public class BuildParameters {
     private final List<Path> testSourcePaths = new ArrayList<>();
     private final Map<String, String> compilerProperties = new HashMap<>();
     private Path buildDirectory = null;
+    private Path configurationDirectory = null;
+    private Path testConfigurationDirectory = null;
 
     /**
      * Construct a new set of parameters
@@ -119,6 +121,24 @@ public class BuildParameters {
     }
 
     /**
+     * @param configurationDirectory The configuration directory
+     * @return This
+     */
+    public BuildParameters withConfigurationDirectory(Path configurationDirectory) {
+        this.configurationDirectory = configurationDirectory;
+        return this;
+    }
+
+    /**
+     * @param testConfigurationDirectory The test configuration directory
+     * @return This
+     */
+    public BuildParameters withTestConfigurationDirectory(Path testConfigurationDirectory) {
+        this.testConfigurationDirectory = testConfigurationDirectory;
+        return this;
+    }
+
+    /**
      * @return The compile classpath
      */
     public List<Path> getCompileClassPath() {
@@ -160,16 +180,32 @@ public class BuildParameters {
         return buildDirectory;
     }
 
+    /**
+     * @return The configuration directory
+     */
+    public Path getConfigurationDirectory() {
+        return configurationDirectory;
+    }
+
+    /**
+     * @return The test configuration directory
+     */
+    public Path getTestConfigurationDirectory() {
+        return testConfigurationDirectory;
+    }
 
     @Override
     public String toString() {
         return "BuildParameters{" +
-            ", globalSBDConfParameters=" + globalSBDConfParameters +
-            ", classPath=" + compileClassPath +
+            "globalSBDConfParameters=" + globalSBDConfParameters +
+            ", compileClassPath=" + compileClassPath +
+            ", testClassPath=" + testClassPath +
             ", sourcePaths=" + sourcePaths +
             ", testSourcePaths=" + testSourcePaths +
             ", compilerProperties=" + compilerProperties +
             ", buildDirectory=" + buildDirectory +
+            ", configurationDirectory=" + configurationDirectory +
+            ", testConfigurationDirectory=" + testConfigurationDirectory +
             '}';
     }
 }

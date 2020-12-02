@@ -78,6 +78,33 @@ public abstract class BaseGenerateMojo extends BaseMojo {
     @Parameter(required = false, property = "skipGenerateSources", defaultValue = "false")
     Boolean skipGenerateSources;
 
+
+    /**
+     * <p>Additional resources directory for HOCON configurations</p>
+     *
+     * <p>This is added to the list of resource directories</p>
+     *
+     * <p>Example use in pom.xml:</p>
+     * <img src="uml/package-configurationDirectory.svg" alt="pom">
+     *
+     * @since 1.0.0
+     */
+    @Parameter( defaultValue = "${project.basedir}/src/main/configurations", required = true )
+    File configurationDirectory;
+
+    /**
+     * <p>Additional resources directory for test HOCON configurations</p>
+     *
+     * <p>This is added to the list of test resource directories</p>
+     *
+     * <p>Example use in pom.xml:</p>
+     * <img src="uml/package-testConfigurationDirectory.svg" alt="pom">
+     *
+     * @since 1.0.0
+     */
+    @Parameter( defaultValue = "${project.basedir}/src/test/configurations", required = true )
+    File testConfigurationDirectory;
+
     /**
      * @param target The build target
      */
@@ -127,6 +154,8 @@ public abstract class BaseGenerateMojo extends BaseMojo {
                 .withTestSourcePaths(toPathsCheckExist(testEventflowDirectories))
                 .withCompileClassPath(getCompileClassPath())
                 .withTestClassPath(getTestClassPath())
+                .withConfigurationDirectory(configurationDirectory.toPath())
+                .withTestConfigurationDirectory(testConfigurationDirectory.toPath())
                 .withBuildDirectory(toPath(project.getBuild().getDirectory()));
 
         } catch (DependencyResolutionRequiredException e) {

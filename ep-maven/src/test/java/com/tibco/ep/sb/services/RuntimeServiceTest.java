@@ -94,6 +94,8 @@ public class RuntimeServiceTest {
                 Paths.get("path", "to", "classes")))
             .withTestClassPath(Collections.singletonList(Paths.get("test.jar")))
             .withCompilerProperties(properties)
+            .withConfigurationDirectory(Paths.get("src", "main", "configurations"))
+            .withTestConfigurationDirectory(Paths.get("src", "test", "configurations"))
             .withSourcePaths(Collections.singletonList(Paths.get("src", "main")))
             .withTestSourcePaths(Collections.singletonList(Paths.get("src", "test")));
 
