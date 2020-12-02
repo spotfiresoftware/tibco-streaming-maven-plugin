@@ -75,7 +75,8 @@ public abstract class BaseGenerateMojo extends BaseMojo {
     File[] testEventflowDirectories;
     @Parameter(required = false, property = "failFast", defaultValue = "false")
     Boolean failFast;
-
+    @Parameter(required = false, property = "skipGenerateSources", defaultValue = "false")
+    Boolean skipGenerateSources;
 
     /**
      * @param target The build target
@@ -103,6 +104,11 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
+
+        if (skipGenerateSources) {
+            getLog().warn("Skipping code generation entirely");
+            return;
+        }
 
         initializeService(PlatformService.CODE_GENERATION, ErrorHandling.FAIL);
 
@@ -174,7 +180,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
         if (!failedBuilds.isEmpty()) {
 
-            throw new MojoExecutionException("Code generations failed: " + failedBuilds);
+            throw new MojoExecutionException("Code generation failed: " + failedBuilds);
         }
 
         //  Add the generated source directory

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><application-layout>
+    <component name="Control">
+        <param name="gui:x" value="-100"/>
+        <param name="gui:y" value="-12"/>
+    </component>
+    <component name="FileReader">
+        <param name="gui:x" value="5"/>
+        <param name="gui:y" value="-17"/>
+        <param name="gui:height" value="70"/>
+    </component>
+    <component name="Data">
+        <param name="gui:x" value="110"/>
+        <param name="gui:y" value="41"/>
+    </component>
+    <component name="Status">
+        <param name="gui:x" value="110"/>
+        <param name="gui:y" value="-53"/>
+    </component>
+</application-layout>
