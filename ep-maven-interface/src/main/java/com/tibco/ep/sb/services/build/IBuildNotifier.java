@@ -30,18 +30,18 @@
 
 package com.tibco.ep.sb.services.build;
 
-import java.nio.file.Path;
-import java.util.Optional;
-
 /**
  * Interface that is called back when a module/interface is built
  */
-public interface IBuildResultHandler {
+public interface IBuildNotifier {
 
     /**
-     * @param entityName The entity fully qualified name
-     * @param entityPath The entity path
-     * @param exception The exception, if any. (No exception indicates a successful build)
+     * @param entityName The entity name
      */
-    void onBuildResult(String entityName, Path entityPath, Optional<Exception> exception);
+    void onStarted(String entityName);
+
+    /**
+     * @param result The build result
+     */
+    void onCompleted(BuildResult result);
 }

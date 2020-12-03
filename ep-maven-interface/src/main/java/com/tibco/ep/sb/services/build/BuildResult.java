@@ -30,18 +30,80 @@
 
 package com.tibco.ep.sb.services.build;
 
+import java.nio.file.Path;
+import java.util.Optional;
+
 /**
- * The runtime build service
+ * A build result
  */
-public interface IRuntimeBuildService {
+public class BuildResult {
+
+    private String entityName;
+    private Path entityPath;
+    private Optional<Exception> exception = Optional.empty();
+    private long elapsedTimeMillis = 0;
 
     /**
-     * Trigger a build and collect results
-     *
-     * @param name        The build name (for logging)
-     * @param buildTarget The build target (main or test)
-     * @param parameters  The build parameters
-     * @param notifier    The build result handler
+     * @return The entity name
      */
-    void build(String name, BuildTarget buildTarget, BuildParameters parameters, IBuildNotifier notifier);
+    public String getEntityName() {
+        return entityName;
+    }
+
+    /**
+     * @param entityName The entity name
+     * @return This
+     */
+    public BuildResult withEntityName(String entityName) {
+        this.entityName = entityName;
+        return this;
+    }
+
+    /**
+     * @return The entity path
+     */
+    public Path getEntityPath() {
+        return entityPath;
+    }
+
+    /**
+     * @param entityPath The entity path
+     * @return This
+     */
+    public BuildResult withEntityPath(Path entityPath) {
+        this.entityPath = entityPath;
+        return this;
+    }
+
+    /**
+     * @return The exception if any
+     */
+    public Optional<Exception> getException() {
+        return exception;
+    }
+
+    /**
+     * @param exception The exception
+     * @return This
+     */
+    public BuildResult withException(Exception exception) {
+        this.exception = Optional.of(exception);
+        return this;
+    }
+
+    /**
+     * @return The elapsed time in milliseconds
+     */
+    public long getElapsedTimeMillis() {
+        return elapsedTimeMillis;
+    }
+
+    /**
+     * @param elapsedTimeMillis The elapsed time in milliseconds
+     * @return This
+     */
+    public BuildResult withElapsedTimeMillis(long elapsedTimeMillis) {
+        this.elapsedTimeMillis = elapsedTimeMillis;
+        return this;
+    }
 }

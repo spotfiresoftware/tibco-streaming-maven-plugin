@@ -31,8 +31,9 @@
 package com.tibco.ep.sb.services.stubs.build;
 
 import com.tibco.ep.sb.services.build.BuildParameters;
+import com.tibco.ep.sb.services.build.BuildResult;
 import com.tibco.ep.sb.services.build.BuildTarget;
-import com.tibco.ep.sb.services.build.IBuildResultHandler;
+import com.tibco.ep.sb.services.build.IBuildNotifier;
 import com.tibco.ep.sb.services.build.IRuntimeBuildService;
 
 import java.nio.file.Paths;
@@ -44,13 +45,16 @@ import java.util.Optional;
 public class RuntimeBuildService implements IRuntimeBuildService {
 
     @Override
-    public void build(String name, BuildTarget buildTarget, BuildParameters parameters, IBuildResultHandler buildResultHandler) {
+    public void build(String name, BuildTarget buildTarget, BuildParameters parameters, IBuildNotifier notifier) {
 
         System.out.println("[STUB] build: " + name + " " + buildTarget + " " + parameters);
 
-        buildResultHandler.onBuildResult(
-            "com.tibco.Module",
-            Paths.get("com", "tibco", "Module.sbapp"),
-            Optional.empty());
+        notifier.onStarted("MyModule.sbapp");
+
+        notifier.onCompleted(new BuildResult()
+            .withElapsedTimeMillis(1234)
+            .withEntityName("MyModule.sbapp")
+            .withEntityPath(Paths.get("com", "tibco", "Module.sbapp"))
+            .withException(new RuntimeException("here")));
     }
 }

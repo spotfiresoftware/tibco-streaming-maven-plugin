@@ -31,7 +31,9 @@
 package com.tibco.ep.buildmavenplugin;
 
 import com.tibco.ep.sb.services.build.BuildParameters;
+import com.tibco.ep.sb.services.build.BuildResult;
 import com.tibco.ep.sb.services.build.BuildTarget;
+import com.tibco.ep.sb.services.build.IBuildNotifier;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -50,6 +52,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -173,21 +176,33 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         //  Now trigger the build and report errors.
         //
         try {
-            getBuildService().build(project.getName(), target, buildParameters,
-                (entityName, entityPath, optionalException) -> {
 
-                    if (!optionalException.isPresent()) {
-                        getLog().info("Module " + entityName + ": code generation SUCCESS");
+            IBuildNotifier notifier = new IBuildNotifier() {
+                @Override
+                public void onStarted(String entityName) {
+                    getLog().info("Module " + entityName + ": code generation STARTED");
+                }
+
+                @Override
+                public void onCompleted(BuildResult result) {
+
+                    double seconds = result.getElapsedTimeMillis();
+                    seconds /= TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS);
+
+                    if (!result.getException().isPresent()) {
+                        getLog().info("Module " + result.getEntityName()
+                            + ": code generation SUCCESS"
+                            + " (in " + String.format("%.3f", seconds) + " seconds)");
                         return;
                     }
 
                     //  We have a failure.
                     //
-                    Exception error = optionalException.get();
-                    failedBuilds.add(entityName + ": " + error.getMessage());
-                    getLog().error(
-                        "Module " + entityName + ": code generation FAILURE: " + error
-                            .getMessage());
+                    Exception error = result.getException().get();
+                    failedBuilds.add(result.getEntityName() + ": " + error.getMessage());
+                    getLog().error("Module " + result.getEntityName()
+                        + ": code generation FAILURE: " + error.getMessage()
+                        + " (in " + String.format("%.3f", seconds) + " seconds)");
 
                     //  We don't want Maven to display a stack trace just because a build fail, so
                     //  we push the log with the exception as "DEBUG". Users can still get it with -X.
@@ -197,7 +212,10 @@ public abstract class BaseGenerateMojo extends BaseMojo {
                     if (failFast) {
                         throw new FailFastException();
                     }
-                });
+                }
+            };
+
+            getBuildService().build(project.getName(), target, buildParameters, notifier);
 
         } catch (FailFastException ffe) {
 

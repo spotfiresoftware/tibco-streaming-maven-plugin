@@ -31,7 +31,8 @@
 package com.tibco.ep.sb.services;
 
 import com.tibco.ep.sb.services.build.BuildParameters;
-import com.tibco.ep.sb.services.build.IBuildResultHandler;
+import com.tibco.ep.sb.services.build.BuildResult;
+import com.tibco.ep.sb.services.build.IBuildNotifier;
 import com.tibco.ep.sb.services.build.IRuntimeBuildService;
 import com.tibco.ep.sb.services.build.BuildTarget;
 import com.tibco.ep.sb.services.management.AbstractCommandBuilder;
@@ -99,12 +100,14 @@ public class RuntimeServiceTest {
             .withSourcePaths(Collections.singletonList(Paths.get("src", "main")))
             .withTestSourcePaths(Collections.singletonList(Paths.get("src", "test")));
 
-        BuildResultHandler handler = new BuildResultHandler();
+        BuildNotifier handler = new BuildNotifier();
         build.build("MyBuild", BuildTarget.MAIN, parameters, handler);
 
-        assertThat(handler.getEntityName()).isNotEmpty();
-        assertThat(handler.getEntityPath()).isNotNull();
-        assertThat(handler.getException()).isEmpty();
+        assertThat(handler.getStartedEntity()).isNotEmpty();
+        assertThat(handler.getResult().getElapsedTimeMillis()).isGreaterThan(0);
+        assertThat(handler.getResult().getEntityName()).isNotEmpty();
+        assertThat(handler.getResult().getEntityPath()).isNotNull();
+        assertThat(handler.getResult().getException()).isNotNull();
     }
 
     /**
@@ -246,28 +249,26 @@ public class RuntimeServiceTest {
         }
     }
 
-    private class BuildResultHandler implements IBuildResultHandler {
-        private String entityName;
-        private Path entityPath;
-        private Optional<Exception> exception;
+    private class BuildNotifier implements IBuildNotifier {
+        private String startedEntity;
+        private BuildResult result;
+
+        public String getStartedEntity() {
+            return startedEntity;
+        }
+
+        public BuildResult getResult() {
+            return result;
+        }
 
         @Override
-        public void onBuildResult(String entityName, Path entityPath, Optional<Exception> exception) {
-            this.entityName = entityName;
-            this.entityPath = entityPath;
-            this.exception = exception;
+        public void onStarted(String entityName) {
+            this.startedEntity = entityName;
         }
 
-        public String getEntityName() {
-            return entityName;
-        }
-
-        public Path getEntityPath() {
-            return entityPath;
-        }
-
-        public Optional<Exception> getException() {
-            return exception;
+        @Override
+        public void onCompleted(BuildResult result) {
+            this.result = result;
         }
     }
 }
