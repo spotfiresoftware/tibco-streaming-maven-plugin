@@ -34,24 +34,22 @@ import com.tibco.ep.sb.services.build.BuildParameters;
 import com.tibco.ep.sb.services.build.BuildTarget;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -89,7 +87,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
      *
      * @since 1.0.0
      */
-    @Parameter( defaultValue = "${project.basedir}/src/main/configurations", required = true )
+    @Parameter(defaultValue = "${project.basedir}/src/main/configurations", required = true)
     File configurationDirectory;
 
     /**
@@ -102,7 +100,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
      *
      * @since 1.0.0
      */
-    @Parameter( defaultValue = "${project.basedir}/src/test/configurations", required = true )
+    @Parameter(defaultValue = "${project.basedir}/src/test/configurations", required = true)
     File testConfigurationDirectory;
 
     /**
@@ -137,6 +135,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
             return;
         }
 
+        prechecks();
         initializeService(PlatformService.CODE_GENERATION, ErrorHandling.FAIL);
 
         eventflowDirectories = initializeAndCheck(eventflowDirectories, "/src/main/eventflow");
@@ -222,6 +221,47 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         return toPaths(project.getTestClasspathElements());
     }
 
+    private List<Path> getAllProvidedJARs() throws MojoExecutionException {
+
+        List<Path> paths = new ArrayList<>();
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getKDS()))) {
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+
+                line = line.trim();
+
+                if (line.startsWith("//") || line.startsWith("#")
+                    || !line.startsWith("\"$(SW_CLASSPATH_SEPARATOR)$(TIBCO_EP_HOME)/distrib/")
+                    || !line.endsWith(".jar\"")
+                ) {
+                    continue;
+                }
+
+                line = line
+                    .replace("\"$(SW_CLASSPATH_SEPARATOR)$(TIBCO_EP_HOME)/", "")
+                    .replace("\"", "")
+                    .replace("/", File.separator);
+
+                LOGGER.debug("Resolving: {} {}", productHome, line);
+                Path resolved = productHome.toPath().resolve(line);
+
+                if (!resolved.toFile().exists()) {
+                    throw new MojoExecutionException("Cannot find Platform JAR: " + resolved);
+                }
+
+                paths.add(resolved);
+            }
+
+            return paths;
+
+        } catch (IOException e) {
+            throw new MojoExecutionException("Could not read KDS", e);
+        }
+
+    }
+
     private List<Path> getCompileClassPath() throws MojoExecutionException, DependencyResolutionRequiredException {
 
         //  Filter out compile class path elements that do not exist.
@@ -229,22 +269,12 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         LinkedHashSet<Path> classpath = toPaths(project.getCompileClasspathElements()).stream()
             .filter(p -> p.toFile().exists()).collect(Collectors.toCollection(LinkedHashSet::new));
 
-        //  FIX THIS (FL): too fragile.
-        //  It would be better to add the whole platform to the class path, or store the
-        //  group/id/version of all provided dependencies in the fragment MANIFEST.
+        //  Platform JARs come first.
         //
+        classpath.addAll(getAllProvidedJARs());
 
-        //  Add transitive dependencies' provided dependency to classpath, so that we can load
-        //  classes for typechecking.
+        //  Then dependencies.
         //
-        Set<String> classPathArtefacts = new HashSet<>();
-
-        Function<Artifact, String> artifactToString = artifact ->
-            artifact.getGroupId() + ":" + artifact.getArtifactId();
-
-        Function<Dependency, String> dependencyToString = dependency ->
-            dependency.getGroupId() + ":" + dependency.getArtifactId();
-
         visitDependencies((currentProjectArtefactDependency, indent, context) -> {
 
             if (target == BuildTarget.TEST
@@ -258,47 +288,6 @@ public abstract class BaseGenerateMojo extends BaseMojo {
             getLog().debug(indent + currentProjectArtefactDependency + " [adding]");
 
             classpath.add(currentProjectArtefactDependency.getFile().toPath());
-            classPathArtefacts.add(artifactToString.apply(currentProjectArtefactDependency));
-
-            //
-            //  If our dependencies have provided dependencies, add them here as well.
-            //
-
-            if (!isFragment(currentProjectArtefactDependency)) {
-
-                //  Restrict the search to fragments: a fragment needs all its provided to typecheck.
-                //  JARs will be used through fragments, and the fragments loading the JARs will need
-                //  their own dependency lists to be updated with the needed "provided".
-                //  If Fragment F needs a "provided", either because it uses a platform JAR directly
-                //  or if one of its Java dependency does, then the user will be forced to add the
-                //  relevant "provided" on F (since provided are not transitive, they must appear
-                //  when needed).
-                //
-                return true;
-            }
-
-            //  Get the manifest of the artefact, resolve provided, add to class path.
-            //
-            String artifactPath = getArtifactPath(currentProjectArtefactDependency);
-            Optional<String> manifestEntry = getManifestEntry(artifactPath,
-                BasePackageMojo.MANIFEST_TIBCO_EP_PROVIDED_DEPENDENCIES);
-            if (!manifestEntry.isPresent()) {
-                context.setException(
-                    new MojoExecutionException("Cannot find manifest for: " + artifactPath));
-                return false;
-            }
-
-            //  Now rebuild list of artifacts and add them.
-            //
-            Set<Artifact> artifacts = rebuildProvidedDependencies(manifestEntry.get());
-            artifacts.forEach(artifact -> {
-                if (classpath.add(artifact.getFile().toPath())) {
-                    getLog().debug(
-                        "Added transitive provided dependency to classpath: "
-                            + artifact.getFile().toPath());
-                    classPathArtefacts.add(artifactToString.apply(artifact));
-                }
-            });
 
             return true;
         });

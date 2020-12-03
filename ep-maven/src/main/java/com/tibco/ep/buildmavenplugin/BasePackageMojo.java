@@ -44,18 +44,14 @@ import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -63,7 +59,6 @@ import java.util.stream.Stream;
  */
 abstract class BasePackageMojo extends BaseMojo {
 
-    public static final String MANIFEST_TIBCO_EP_PROVIDED_DEPENDENCIES = "TIBCO-EP-Provided-Dependencies";
     /**
      * Assembly archiver
      */
@@ -85,8 +80,6 @@ abstract class BasePackageMojo extends BaseMojo {
     ArchiveGenerator newArchiveGenerator() {
         return new ArchiveGenerator();
     }
-
-
 
 
     /**
@@ -201,12 +194,6 @@ abstract class BasePackageMojo extends BaseMojo {
                 extras.put(MANIFEST_TIBCO_EP_FRAGMENT_LIST, String.join(" ", fragmentList));
             }
 
-            List<String> providedDependencies = getProvidedDependenciesStringList();
-            if (!providedDependencies.isEmpty()) {
-                extras.put(MANIFEST_TIBCO_EP_PROVIDED_DEPENDENCIES,
-                    String.join(" ", providedDependencies));
-            }
-
             packageArchive(assembly, extras);
 
             //  Then, include the dependencies.
@@ -247,7 +234,7 @@ abstract class BasePackageMojo extends BaseMojo {
          * @param extras   map of any additional manifest entries
          * @throws MojoExecutionException on error
          */
-        void packageArchive(Assembly assembly, Map<String, String> extras) throws MojoExecutionException {
+        private void packageArchive(Assembly assembly, Map<String, String> extras) throws MojoExecutionException {
 
             // make sure the build directory is created
             //

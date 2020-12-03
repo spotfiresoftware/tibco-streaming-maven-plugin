@@ -42,8 +42,6 @@ import org.apache.maven.artifact.resolver.ArtifactResolver;
 import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -58,13 +56,13 @@ import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
-import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.AccessController;
@@ -84,8 +82,6 @@ import java.util.function.Supplier;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
 
 /**
  * Base type
@@ -104,8 +100,11 @@ abstract class BaseMojo extends AbstractMojo {
     private static final String DTM_SDK_ARTIFACT_IDENTIFIER = "sdk";
     private static final String SB_GROUP_IDENTIFIER = "com.tibco.ep.sb";
     private static final String SB_RT_GROUP_IDENTIFIER = "com.tibco.ep.sb.rt";
+    private static final String SB_CONTAINER_IDENTIFIER = "container";
     private static final String SB_SERVER_ARTIFACT_IDENTIFIER = "server";
     private static final String SB_SUPPORT_ARTIFACT_PREFIX = "support_platform_";
+    private static final String SB_KDS = "sb.kds";
+
     /**
      * maven property to use to skip start/stop/tests if no tests exist
      */
@@ -351,6 +350,18 @@ abstract class BaseMojo extends AbstractMojo {
         }
     }
 
+    /**
+     * @return The SB KDS input stream
+     * @throws MojoExecutionException The KDS could not be found
+     */
+    public InputStream getKDS() throws MojoExecutionException {
+        InputStream resourceAsStream = classLoader.getResourceAsStream(SB_KDS);
+        if (resourceAsStream == null) {
+            throw new MojoExecutionException("Could not load: " + SB_KDS);
+        }
+        return resourceAsStream;
+    }
+
     private <T> T doGetService(Supplier<T> getter, Class<T> serviceClass, ErrorHandling errorHandling) throws MojoExecutionException {
 
         T service = getter.get();
@@ -387,6 +398,7 @@ abstract class BaseMojo extends AbstractMojo {
         } else {
             assert service == PlatformService.CODE_GENERATION;
             loadArtifact(SB_GROUP_IDENTIFIER, SB_SERVER_ARTIFACT_IDENTIFIER, productVersion);
+            loadArtifact(SB_RT_GROUP_IDENTIFIER, SB_CONTAINER_IDENTIFIER, productVersion);
         }
     }
 
@@ -482,36 +494,6 @@ abstract class BaseMojo extends AbstractMojo {
         return path;
     }
 
-    Model getArtifactPOM(Artifact artifact) throws MojoExecutionException {
-        assert isFragment(artifact);
-
-        String artifactPath = getArtifactPath(artifact);
-        String pomPath = BasePackageMojo.getPOMPathInArchive(
-            artifact.getGroupId(), artifact.getArtifactId());
-
-        try (JarInputStream jarStream = new JarInputStream(new FileInputStream(artifactPath))) {
-
-            ZipEntry zipEntry;
-            while ((zipEntry = jarStream.getNextEntry()) != null) {
-
-                if (zipEntry.getName().equals(pomPath)) {
-                    //  We have it.
-                    //
-                    MavenXpp3Reader reader = new MavenXpp3Reader();
-                    Model model = reader.read(jarStream);
-                    getLog().debug("Read POM " + pomPath + " from " + artifactPath);
-                    return model;
-                }
-            }
-
-        } catch (IOException | XmlPullParserException e) {
-            getLog().warn("No manifest could be read for: " + artifactPath, e);
-        }
-
-        throw new MojoExecutionException(
-            "Could not find POM " + pomPath + " in artifact " + artifactPath);
-    }
-
     /**
      * Get the artifact name in the form of
      * <p>
@@ -532,6 +514,11 @@ abstract class BaseMojo extends AbstractMojo {
         return name;
     }
 
+    /**
+     * @param path  The path of a JAR
+     * @param entry The entry in the manifest to load
+     * @return The value from the manifest
+     */
     Optional<String> getManifestEntry(String path, String entry) {
 
         try (JarInputStream jarStream = new JarInputStream(new FileInputStream(path))) {
@@ -859,10 +846,23 @@ abstract class BaseMojo extends AbstractMojo {
         getLog().debug("Product home set to " + productHome);
     }
 
+    /**
+     * Create a new command runner
+     *
+     * @param builder       The builder for the command
+     * @param shortLocation The short location string for logs
+     * @param longLocation  The long location string
+     * @return A new command runner
+     */
     RuntimeCommandRunner newCommandRunner(AbstractCommandBuilder builder, String shortLocation, String longLocation) {
         return new RuntimeCommandRunner(getLog(), builder, shortLocation, longLocation);
     }
 
+    /**
+     * @param array The array (can be null)
+     * @param <T>   The type of array element
+     * @return An empty list (if array is empty or null) or a list filled with the elements
+     */
     <T> List<T> toNonNullList(T[] array) {
         if (array == null) {
             return new ArrayList<>();
@@ -881,38 +881,6 @@ abstract class BaseMojo extends AbstractMojo {
                 || type.equals(EVENTFLOW_TYPE)
                 || type.equals(TCS_TYPE)
                 || type.equals(LIVEVIEW_TYPE));
-    }
-
-    List<String> getProvidedDependenciesStringList() {
-        return project.getDependencies().stream()
-            .filter(dep -> dep.getScope().equals(Artifact.SCOPE_PROVIDED))
-            .peek(dep -> {
-                assert dep.getVersion() != null : dep;
-                assert dep.getType() != null : dep;
-            })
-            .map(dep -> dep.getGroupId() + ":"
-                + dep.getArtifactId() + ":"
-                + dep.getVersion() + ":"
-                + dep.getType())
-            .collect(Collectors.toList());
-    }
-
-    Set<Artifact> rebuildProvidedDependencies(String fragmentManifestEntry) {
-
-        String[] dependencyList = fragmentManifestEntry.split(" ");
-        Set<Artifact> toResolve = new LinkedHashSet<>();
-        for(String stringDep: dependencyList) {
-
-            String[] gavt = stringDep.split(":");
-            if (gavt.length != 4) {
-                throw new IllegalStateException("Badly encoded Group:Artifact:Version:Type: " + gavt);
-            }
-
-            toResolve.add(repositorySystem
-                .createArtifact(gavt[0], gavt[1], gavt[2], "", gavt[3]));
-        }
-
-        return getProjectDependencies(toResolve);
     }
 
     /**
