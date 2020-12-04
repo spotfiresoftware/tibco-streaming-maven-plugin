@@ -49,12 +49,17 @@ public class RuntimeBuildService implements IRuntimeBuildService {
 
         System.out.println("[STUB] build: " + name + " " + buildTarget + " " + parameters);
 
-        notifier.onStarted("MyModule.sbapp");
+        notifier.onBuildStarted(2);
 
+        notifier.onSkipped("Skipped.sbapp");
+
+        notifier.onStarted("MyModule.sbapp");
         notifier.onCompleted(new BuildResult()
             .withElapsedTimeMillis(1234)
             .withEntityName("MyModule.sbapp")
             .withEntityPath(Paths.get("com", "tibco", "Module.sbapp"))
             .withException(new RuntimeException("here")));
+
+        notifier.onBuildCompleted();
     }
 }

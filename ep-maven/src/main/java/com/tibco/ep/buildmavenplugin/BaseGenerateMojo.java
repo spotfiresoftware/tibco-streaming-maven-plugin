@@ -178,6 +178,22 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         try {
 
             IBuildNotifier notifier = new IBuildNotifier() {
+
+                @Override
+                public void onBuildStarted(int nbModules) {
+                    getLog().info("Found " + nbModules + " modules");
+                }
+
+                @Override
+                public void onBuildCompleted() {
+                    //  Do nothing
+                }
+
+                @Override
+                public void onSkipped(String entityName) {
+                    getLog().info("Module " + entityName + ": code generation SKIPPED");
+                }
+
                 @Override
                 public void onStarted(String entityName) {
                     getLog().info("Module " + entityName + ": code generation STARTED");

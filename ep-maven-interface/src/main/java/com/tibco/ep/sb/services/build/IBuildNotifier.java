@@ -36,11 +36,42 @@ package com.tibco.ep.sb.services.build;
 public interface IBuildNotifier {
 
     /**
-     * @param entityName The entity name
+     * Called first during the build
+     *
+     * @param nbModules number of modules
      */
-    void onStarted(String entityName);
+    default void onBuildStarted(int nbModules) {
+        //  Do nothing.
+    }
 
     /**
+     * Called last during the build.
+     */
+    default void onBuildCompleted() {
+        //  Do nothing
+    }
+
+    /**
+     * Called when a module/interface doesn't need a build
+     *
+     * @param entityName The entity name
+     */
+    default void onSkipped(String entityName) {
+        //  Do nothing
+    }
+
+    /**
+     * Called when a module/interface build is started
+     *
+     * @param entityName The entity name
+     */
+    default void onStarted(String entityName) {
+        //  Do nothing.
+    }
+
+    /**
+     * Called when a module/interface build is complete
+     *
      * @param result The build result
      */
     void onCompleted(BuildResult result);
