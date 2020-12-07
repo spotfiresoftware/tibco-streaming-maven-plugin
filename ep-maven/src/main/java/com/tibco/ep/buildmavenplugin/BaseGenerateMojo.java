@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -59,6 +60,7 @@ import java.util.stream.Stream;
 public abstract class BaseGenerateMojo extends BaseMojo {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(BaseGenerateMojo.class);
+    private static final String JAVA_IO_TMPDIR = "java.io.tmpdir";
     private final BuildTarget target;
 
     //  Maven parameters
@@ -140,6 +142,8 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
         eventflowDirectories = initializeAndCheck(eventflowDirectories, "/src/main/eventflow");
         testEventflowDirectories = initializeAndCheck(testEventflowDirectories, "/src/test/eventflow");
+
+        setupJavaTemporaryDirectory();
 
         //  Construct the build parameters and trigger the build.
         //
@@ -246,6 +250,21 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         //  Add the generated source directory
         //
         addGeneratedSourceRoot();
+    }
+
+    private void setupJavaTemporaryDirectory() throws MojoExecutionException {
+
+        Path tempDirectory = Paths.get(project.getBuild().getDirectory()).resolve("tmp");
+        String tempDirectoryString = tempDirectory.toAbsolutePath().toFile().toString();
+        System.setProperty(JAVA_IO_TMPDIR, tempDirectoryString);
+
+        //  Create the directory.
+        //
+        tempDirectory.toFile().mkdirs();
+        if (!tempDirectory.toFile().exists()) {
+            throw new MojoExecutionException("Could not create: " + tempDirectory);
+        }
+        getLog().debug(JAVA_IO_TMPDIR + " set to " + tempDirectoryString);
     }
 
     private List<Path> getTestClassPath() throws MojoExecutionException, DependencyResolutionRequiredException {
