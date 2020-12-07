@@ -42,10 +42,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -158,7 +155,8 @@ public abstract class BaseGenerateMojo extends BaseMojo {
                 .withTestClassPath(getTestClassPath())
                 .withConfigurationDirectory(configurationDirectory.toPath())
                 .withTestConfigurationDirectory(testConfigurationDirectory.toPath())
-                .withBuildDirectory(toPath(project.getBuild().getDirectory()));
+                .withBuildDirectory(toPath(project.getBuild().getDirectory()))
+                .withProductHome(productHome.toPath());
 
         } catch (DependencyResolutionRequiredException e) {
             throw new MojoExecutionException("Cannot resolve dependency", e);
@@ -255,57 +253,12 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         return toPaths(project.getTestClasspathElements());
     }
 
-    private List<Path> getAllProvidedJARs() throws MojoExecutionException {
-
-        List<Path> paths = new ArrayList<>();
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(getKDS()))) {
-
-            String line;
-            while ((line = reader.readLine()) != null) {
-
-                line = line.trim();
-
-                if (line.startsWith("//") || line.startsWith("#")
-                    || !line.startsWith("\"$(SW_CLASSPATH_SEPARATOR)$(TIBCO_EP_HOME)/distrib/")
-                    || !line.endsWith(".jar\"")
-                ) {
-                    continue;
-                }
-
-                line = line
-                    .replace("\"$(SW_CLASSPATH_SEPARATOR)$(TIBCO_EP_HOME)/", "")
-                    .replace("\"", "")
-                    .replace("/", File.separator);
-
-                LOGGER.debug("Resolving: {} {}", productHome, line);
-                Path resolved = productHome.toPath().resolve(line);
-
-                if (!resolved.toFile().exists()) {
-                    throw new MojoExecutionException("Cannot find Platform JAR: " + resolved);
-                }
-
-                paths.add(resolved);
-            }
-
-            return paths;
-
-        } catch (IOException e) {
-            throw new MojoExecutionException("Could not read KDS", e);
-        }
-
-    }
-
     private List<Path> getCompileClassPath() throws MojoExecutionException, DependencyResolutionRequiredException {
 
         //  Filter out compile class path elements that do not exist.
         //
         LinkedHashSet<Path> classpath = toPaths(project.getCompileClasspathElements()).stream()
             .filter(p -> p.toFile().exists()).collect(Collectors.toCollection(LinkedHashSet::new));
-
-        //  Platform JARs come first.
-        //
-        classpath.addAll(getAllProvidedJARs());
 
         //  Then dependencies.
         //

@@ -50,6 +50,7 @@ public class BuildParameters {
     private Path buildDirectory = null;
     private Path configurationDirectory = null;
     private Path testConfigurationDirectory = null;
+    private Path productHome = null;
 
     /**
      * Construct a new set of parameters
@@ -139,6 +140,15 @@ public class BuildParameters {
     }
 
     /**
+     * @param productHome The product home
+     * @return This
+     */
+    public BuildParameters withProductHome(Path productHome) {
+        this.productHome = productHome;
+        return this;
+    }
+
+    /**
      * @return The compile classpath
      */
     public List<Path> getCompileClassPath() {
@@ -192,6 +202,13 @@ public class BuildParameters {
      */
     public Path getTestConfigurationDirectory() {
         return testConfigurationDirectory;
+    }
+
+    /**
+     * @return The product home
+     */
+    public Path getProductHome() {
+        return productHome;
     }
 
     @Override
