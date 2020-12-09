@@ -61,6 +61,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(BaseGenerateMojo.class);
     private static final String JAVA_IO_TMPDIR = "java.io.tmpdir";
+    public static final String ENGINE_DATA_AREA = "com.tibco.ep.dtm.engine.data.area";
     private final BuildTarget target;
 
     //  Maven parameters
@@ -143,7 +144,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         eventflowDirectories = initializeAndCheck(eventflowDirectories, "/src/main/eventflow");
         testEventflowDirectories = initializeAndCheck(testEventflowDirectories, "/src/test/eventflow");
 
-        setupJavaTemporaryDirectory();
+        setupEngineDataArea();
 
         //  Construct the build parameters and trigger the build.
         //
@@ -252,11 +253,13 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         addGeneratedSourceRoot();
     }
 
-    private void setupJavaTemporaryDirectory() throws MojoExecutionException {
+    private void setupEngineDataArea() throws MojoExecutionException {
 
+        //  This is used by ResourcePathResolvers to copy data into.
+        //
         Path tempDirectory = Paths.get(project.getBuild().getDirectory()).resolve("tmp");
         String tempDirectoryString = tempDirectory.toAbsolutePath().toFile().toString();
-        System.setProperty(JAVA_IO_TMPDIR, tempDirectoryString);
+        System.setProperty(ENGINE_DATA_AREA, tempDirectoryString);
 
         //  Create the directory.
         //
@@ -264,7 +267,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         if (!tempDirectory.toFile().exists()) {
             throw new MojoExecutionException("Could not create: " + tempDirectory);
         }
-        getLog().debug(JAVA_IO_TMPDIR + " set to " + tempDirectoryString);
+        getLog().debug(ENGINE_DATA_AREA + " set to " + tempDirectoryString);
     }
 
     private List<Path> getTestClassPath() throws MojoExecutionException, DependencyResolutionRequiredException {
