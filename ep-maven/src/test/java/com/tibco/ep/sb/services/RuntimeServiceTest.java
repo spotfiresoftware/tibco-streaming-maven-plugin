@@ -51,14 +51,12 @@ import com.tibco.ep.sb.services.management.INotifier;
 import com.tibco.ep.sb.services.management.IRuntimeAdminService;
 import org.junit.Test;
 
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

@@ -30,6 +30,8 @@
 
 package com.tibco.ep.buildmavenplugin;
 
+import com.tibco.ep.sb.services.build.BuildErrorDetails;
+import com.tibco.ep.sb.services.build.BuildExceptionDetails;
 import com.tibco.ep.sb.services.build.BuildParameters;
 import com.tibco.ep.sb.services.build.BuildResult;
 import com.tibco.ep.sb.services.build.BuildTarget;
@@ -60,8 +62,8 @@ import java.util.stream.Stream;
 public abstract class BaseGenerateMojo extends BaseMojo {
 
     public static final Logger LOGGER = LoggerFactory.getLogger(BaseGenerateMojo.class);
-    private static final String JAVA_IO_TMPDIR = "java.io.tmpdir";
     public static final String ENGINE_DATA_AREA = "com.tibco.ep.dtm.engine.data.area";
+    private static final String JAVA_IO_TMPDIR = "java.io.tmpdir";
     private final BuildTarget target;
 
     //  Maven parameters
@@ -180,61 +182,8 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         //
         try {
 
-            IBuildNotifier notifier = new IBuildNotifier() {
-
-                @Override
-                public void onBuildStarted(int nbModules) {
-                    getLog().info("Found " + nbModules + " modules");
-                }
-
-                @Override
-                public void onBuildCompleted() {
-                    //  Do nothing
-                }
-
-                @Override
-                public void onSkipped(String entityName) {
-                    getLog().info("Module " + entityName + ": code generation SKIPPED");
-                }
-
-                @Override
-                public void onStarted(String entityName) {
-                    getLog().info("Module " + entityName + ": code generation STARTED");
-                }
-
-                @Override
-                public void onCompleted(BuildResult result) {
-
-                    double seconds = result.getElapsedTimeMillis();
-                    seconds /= TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS);
-
-                    if (!result.getException().isPresent()) {
-                        getLog().info("Module " + result.getEntityName()
-                            + ": code generation SUCCESS"
-                            + " (in " + String.format("%.3f", seconds) + " seconds)");
-                        return;
-                    }
-
-                    //  We have a failure.
-                    //
-                    Exception error = result.getException().get();
-                    failedBuilds.add(result.getEntityName() + ": " + error.getMessage());
-                    getLog().error("Module " + result.getEntityName()
-                        + ": code generation FAILURE: " + error.getMessage()
-                        + " (in " + String.format("%.3f", seconds) + " seconds)");
-
-                    //  We don't want Maven to display a stack trace just because a build fail, so
-                    //  we push the log with the exception as "DEBUG". Users can still get it with -X.
-                    //
-                    getLog().debug("Exception for above failure", error);
-
-                    if (failFast) {
-                        throw new FailFastException();
-                    }
-                }
-            };
-
-            getBuildService().build(project.getName(), target, buildParameters, notifier);
+            getBuildService()
+                .build(project.getName(), target, buildParameters, new BuildNotifier());
 
         } catch (FailFastException ffe) {
 
@@ -245,7 +194,8 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
         if (!failedBuilds.isEmpty()) {
 
-            throw new MojoExecutionException("Code generation failed: " + failedBuilds);
+            throw new MojoExecutionException("Code generation failed:\n" + String
+                .join("\n", failedBuilds));
         }
 
         //  Add the generated source directory
@@ -341,5 +291,92 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
     private List<Path> toPaths(File[] files) {
         return Stream.of(files).map(File::toPath).collect(Collectors.toList());
+    }
+
+    private class BuildNotifier implements IBuildNotifier {
+
+        @Override
+        public void onBuildStarted(int nbModules) {
+            getLog().info("Found " + nbModules + " modules");
+        }
+
+        @Override
+        public void onBuildCompleted() {
+            //  Do nothing
+        }
+
+        @Override
+        public void onSkipped(String entityName) {
+            getLog().info("Module " + entityName + ": code generation SKIPPED");
+        }
+
+        @Override
+        public void onStarted(String entityName) {
+            getLog().info("Module " + entityName + ": code generation STARTED");
+        }
+
+        @Override
+        public void onCompleted(BuildResult result) {
+
+            double seconds = result.getElapsedTimeMillis();
+            seconds /= TimeUnit.MILLISECONDS.convert(1, TimeUnit.SECONDS);
+
+            String entityName = result.getEntityName();
+
+            if (!result.getException().isPresent()) {
+                getLog().info("Module " + entityName
+                    + ": code generation SUCCESS"
+                    + " (in " + String.format("%.3f", seconds) + " seconds)");
+                return;
+            }
+
+            //  We have a failure.
+            //
+            getLog().error("Module " + entityName
+                + ": code generation FAILURE"
+                + " (in " + String.format("%.3f", seconds) + " seconds)");
+
+            Exception error = result.getException().get();
+            List<BuildExceptionDetails> detailList = getBuildService().getDetails(error);
+
+            assert !detailList.isEmpty() : entityName;
+            failedBuilds.add(entityName + ": " + detailList.get(0).getShortMessage());
+
+            int i = 0;
+            for (BuildExceptionDetails details : detailList) {
+
+                String header = "";
+                if (i > 0) {
+                    header += " [" + i + "] ";
+                }
+
+                if (details.getLocation() != null) {
+                    getLog().error(header + "Location: " + details.getLocation());
+                }
+
+                getLog().error(header + "Error: " +  details.getShortMessage());
+
+                if (details.getLongDescription() != null) {
+                    getLog().error(
+                        header + "Detailed error: " + details.getLongDescription());
+                }
+
+                if (i == 0 && detailList.size() > 1) {
+                    getLog().error("Nested causes:");
+                }
+                i++;
+            }
+
+            //  We don't want Maven to display a stack trace just because a build fail, so
+            //  we push the log with the exception as "DEBUG". Users can still get it with -X.
+            //
+            getLog().debug("Exception for above failure", error);
+
+            //  Stop on first error if needed.
+            //
+            if (failFast) {
+                throw new FailFastException();
+            }
+        }
     }
 }

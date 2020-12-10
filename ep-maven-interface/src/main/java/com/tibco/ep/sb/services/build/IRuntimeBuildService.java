@@ -30,6 +30,8 @@
 
 package com.tibco.ep.sb.services.build;
 
+import java.util.List;
+
 /**
  * The runtime build service
  */
@@ -44,4 +46,12 @@ public interface IRuntimeBuildService {
      * @param notifier    The build result handler
      */
     void build(String name, BuildTarget buildTarget, BuildParameters parameters, IBuildNotifier notifier);
+
+    /**
+     * Get details on an exception
+     *
+     * @param exception The exception
+     * @return Details about the exception
+     */
+    List<BuildExceptionDetails> getDetails(Exception exception);
 }

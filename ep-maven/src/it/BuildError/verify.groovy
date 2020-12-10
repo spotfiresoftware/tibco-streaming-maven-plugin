@@ -28,48 +28,38 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.tibco.ep.sb.services.stubs.build;
+checkSequence(new File(basedir, "build.log"),
+        "[INFO] Found 3 modules",
+        "[INFO] Module com.tibco.test.first.MyFirstModule: code generation SUCCESS",
+        "[ERROR] Module com.tibco.test.second.MySecondModule: code generation FAILURE",
+        "[ERROR]  [1] Error:",
+        "[ERROR]  [2] Location:",
+        "Detailed error:",
+        "[ERROR] Module com.tibco.test.third.MyThirdModule: code generation FAILURE",
+        "Detailed error:",
+        "[INFO] BUILD FAILURE"
+)
 
-import com.tibco.ep.sb.services.build.BuildErrorDetails;
-import com.tibco.ep.sb.services.build.BuildExceptionDetails;
-import com.tibco.ep.sb.services.build.BuildParameters;
-import com.tibco.ep.sb.services.build.BuildResult;
-import com.tibco.ep.sb.services.build.BuildTarget;
-import com.tibco.ep.sb.services.build.IBuildNotifier;
-import com.tibco.ep.sb.services.build.IRuntimeBuildService;
+static def checkSequence(File file, String... sequence) {
 
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
+    List<String> contents = new ArrayList<>(Arrays.asList(sequence))
+    List<String> lines = []
+    file.eachLine {lines.add(it) }
 
-/**
- * A test {@link IRuntimeBuildService}
- */
-public class RuntimeBuildService implements IRuntimeBuildService {
+    System.out.println("Scanning file: " + file)
 
-    @Override
-    public void build(String name, BuildTarget buildTarget, BuildParameters parameters, IBuildNotifier notifier) {
-
-        System.out.println("[STUB] build: " + name + " " + buildTarget + " " + parameters);
-
-        notifier.onBuildStarted(2);
-
-        notifier.onSkipped("Skipped.sbapp");
-
-        notifier.onStarted("MyModule.sbapp");
-        notifier.onCompleted(new BuildResult()
-            .withElapsedTimeMillis(1234)
-            .withEntityName("MyModule.sbapp")
-            .withEntityPath(Paths.get("com", "tibco", "Module.sbapp"))
-            .withException(new RuntimeException("here")));
-
-        notifier.onBuildCompleted();
+    for (int i = 0 ; i < lines.size() ; i++) {
+        if (contents.isEmpty()) {
+            return;
+        }
+        if (lines.get(i).contains(contents.get(0))) {
+            System.out.println("Line " + i + ": " + contents.get(0))
+            contents.remove(0);
+        }
     }
 
-    @Override
-    public List<BuildExceptionDetails> getDetails(Exception exception) {
-        return Collections.singletonList(new BuildExceptionDetails()
-            .withShortMessage(exception.getMessage())
-            .withLocation("location"));
+    if (!contents.isEmpty()) {
+        throw new AssertionError("Could not find " + contents.get(0))
     }
+    System.out.println("Scan OK.")
 }

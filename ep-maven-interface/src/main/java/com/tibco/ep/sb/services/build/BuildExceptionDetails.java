@@ -28,48 +28,79 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.tibco.ep.sb.services.stubs.build;
-
-import com.tibco.ep.sb.services.build.BuildErrorDetails;
-import com.tibco.ep.sb.services.build.BuildExceptionDetails;
-import com.tibco.ep.sb.services.build.BuildParameters;
-import com.tibco.ep.sb.services.build.BuildResult;
-import com.tibco.ep.sb.services.build.BuildTarget;
-import com.tibco.ep.sb.services.build.IBuildNotifier;
-import com.tibco.ep.sb.services.build.IRuntimeBuildService;
-
-import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.List;
+package com.tibco.ep.sb.services.build;
 
 /**
- * A test {@link IRuntimeBuildService}
+ * Details about a build exception
  */
-public class RuntimeBuildService implements IRuntimeBuildService {
+public class BuildExceptionDetails {
 
-    @Override
-    public void build(String name, BuildTarget buildTarget, BuildParameters parameters, IBuildNotifier notifier) {
+    private String shortMessage;
+    private String longDescription;
+    private String location;
+    private String fileLocation;
 
-        System.out.println("[STUB] build: " + name + " " + buildTarget + " " + parameters);
-
-        notifier.onBuildStarted(2);
-
-        notifier.onSkipped("Skipped.sbapp");
-
-        notifier.onStarted("MyModule.sbapp");
-        notifier.onCompleted(new BuildResult()
-            .withElapsedTimeMillis(1234)
-            .withEntityName("MyModule.sbapp")
-            .withEntityPath(Paths.get("com", "tibco", "Module.sbapp"))
-            .withException(new RuntimeException("here")));
-
-        notifier.onBuildCompleted();
+    /**
+     * @return Short message
+     */
+    public String getShortMessage() {
+        return shortMessage;
     }
 
-    @Override
-    public List<BuildExceptionDetails> getDetails(Exception exception) {
-        return Collections.singletonList(new BuildExceptionDetails()
-            .withShortMessage(exception.getMessage())
-            .withLocation("location"));
+    /**
+     * @param shortMessage Short message
+     * @return This
+     */
+    public BuildExceptionDetails withShortMessage(String shortMessage) {
+        this.shortMessage = shortMessage;
+        return this;
+    }
+
+    /**
+     * @return Long description
+     */
+    public String getLongDescription() {
+        return longDescription;
+    }
+
+    /**
+     * @param longDescription Long description
+     * @return This
+     */
+    public BuildExceptionDetails withLongDescription(String longDescription) {
+        this.longDescription = longDescription;
+        return this;
+    }
+
+    /**
+     * @return Location
+     */
+    public String getLocation() {
+        return location;
+    }
+
+    /**
+     * @param location Location
+     * @return This
+     */
+    public BuildExceptionDetails withLocation(String location) {
+        this.location = location;
+        return this;
+    }
+
+    /**
+     * @return File location
+     */
+    public String getFileLocation() {
+        return fileLocation;
+    }
+
+    /**
+     * @param fileLocation File location
+     * @return This
+     */
+    public BuildExceptionDetails withFileLocation(String fileLocation) {
+        this.fileLocation = fileLocation;
+        return this;
     }
 }
