@@ -1,5 +1,12 @@
 # Output directories
+producthome
 **/target
+*/bin
+*/tmp
+
+# Maven build intermediates
+# From the maven shade plugin.
+dependency-reduced-pom.xml
 
 # Eclipse project settings. Settings files not be needed because all our
 # projects are Maven plain old jar projects; m2e should be capable of
@@ -8,5 +15,20 @@
 **/.project
 **/.settings
 
+# IDEA project settings
+**/*.iml
+.idea
+
+# ViM backup / temp
+**/*~
+**/.*.swp
+
+# Backup files.
+**/*.bak
+
 # Desktop OS state
 .DS_Store
+
+# Other outputs.
+plan.png
+plan.svg
