@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<modify version="11.0.0-SNAPSHOT_8204358828304e10a3110a1ef405502ff7b95d6d">
+    <add>
+        <annotations>
+            <annotation name="hygienic"/>
+        </annotations>
+        <type-metadata>
+            <param name="type" value="module"/>
+            <param name="fully-qualified-name" value="com.tibco.test.caller.Caller"/>
+        </type-metadata>
+        <memory-model-settings/>
+        <dynamic-variables/>
+        <stream name="InputA">
+            <schema>
+                <field name="x" type="double"/>
+                <field name="y" type="double"/>
+            </schema>
+        </stream>
+        <stream name="InputB">
+            <schema>
+                <field name="needle" type="string"/>
+                <field name="haystack1" type="string"/>
+                <field name="haystack2" type="string"/>
+            </schema>
+        </stream>
+        <stream name="InputC">
+            <schema>
+                <field name="value1" type="double"/>
+                <field name="value2" type="double"/>
+                <field name="value3" type="double"/>
+            </schema>
+        </stream>
+        <module-reference name="Module">
+            <input name="TriangleSidesIn" port="1" stream="InputA"/>
+            <input name="VarArgsIsIn" port="2" stream="InputB"/>
+            <input name="VarArgsSums" port="3" stream="InputC"/>
+            <output name="NeedleInHaystackOut" port="1" stream="OutputA"/>
+            <output name="SumAllOut" port="2" stream="OutputB"/>
+            <output name="TriangleDimOut" port="3" stream="OutputC"/>
+            <param name="file" value="com.tibco.ep.sample.custom-functions"/>
+        </module-reference>
+        <output-stream name="OutputA"/>
+        <output-stream name="OutputB"/>
+        <output-stream name="OutputC"/>
+    </add>
+</modify>

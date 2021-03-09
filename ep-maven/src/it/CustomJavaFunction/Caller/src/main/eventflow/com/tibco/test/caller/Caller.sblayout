@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?><application-layout>
+    <component name="InputA">
+        <param name="gui:x" value="-397"/>
+        <param name="gui:y" value="-201"/>
+    </component>
+    <component name="InputB">
+        <param name="gui:x" value="-397"/>
+        <param name="gui:y" value="-106"/>
+    </component>
+    <component name="InputC">
+        <param name="gui:x" value="-397"/>
+        <param name="gui:y" value="-11"/>
+    </component>
+    <component name="Module">
+        <param name="gui:x" value="-235"/>
+        <param name="gui:y" value="-121"/>
+        <param name="gui:bends:1" value="-309,-171;-293,-101"/>
+        <param name="gui:bends:2" value="-302,-76;-300,-91"/>
+        <param name="gui:bends:3" value="-300,19;-276,-81"/>
+    </component>
+    <component name="OutputA">
+        <param name="gui:x" value="-64"/>
+        <param name="gui:y" value="-201"/>
+        <param name="gui:bends:1" value="-116,-101;-100,-171"/>
+    </component>
+    <component name="OutputB">
+        <param name="gui:x" value="-64"/>
+        <param name="gui:y" value="-106"/>
+        <param name="gui:bends:1" value="-109,-91;-107,-76"/>
+    </component>
+    <component name="OutputC">
+        <param name="gui:x" value="-64"/>
+        <param name="gui:y" value="-11"/>
+        <param name="gui:bends:1" value="-133,-81;-109,19"/>
+    </component>
+</application-layout>
