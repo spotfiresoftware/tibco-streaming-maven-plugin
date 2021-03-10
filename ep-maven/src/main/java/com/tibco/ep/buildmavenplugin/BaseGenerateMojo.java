@@ -68,8 +68,6 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
     //  Maven parameters
     private final List<String> failedBuilds = new ArrayList<>();
-    @Parameter(defaultValue = "false")
-    Boolean ignoreUnboundCaptures;
     @Parameter
     Map<String, String> compilerProperties;
     @Parameter(required = false, property = "eventflowDirectories")

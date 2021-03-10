@@ -41,7 +41,6 @@ import java.util.Map;
  */
 public class BuildParameters {
 
-    private final GlobalSBDConfParameters globalSBDConfParameters = new GlobalSBDConfParameters();
     private final List<Path> compileClassPath = new ArrayList<>();
     private final List<Path> testClassPath = new ArrayList<>();
     private final List<Path> sourcePaths = new ArrayList<>();
@@ -56,15 +55,6 @@ public class BuildParameters {
      * Construct a new set of parameters
      */
     public BuildParameters() {
-    }
-
-    /**
-     * Get the global SBDConf parameters
-     *
-     * @return This
-     */
-    public GlobalSBDConfParameters getGlobalSBDConfParameters() {
-        return globalSBDConfParameters;
     }
 
     /**
@@ -214,7 +204,6 @@ public class BuildParameters {
     @Override
     public String toString() {
         return "BuildParameters{" +
-            "globalSBDConfParameters=" + globalSBDConfParameters +
             ", compileClassPath=" + compileClassPath +
             ", testClassPath=" + testClassPath +
             ", sourcePaths=" + sourcePaths +
