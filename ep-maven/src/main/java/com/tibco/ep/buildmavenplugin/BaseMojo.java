@@ -304,10 +304,12 @@ abstract class BaseMojo extends AbstractMojo {
      * Admin & build jars are loaded
      *
      * @param service       The service to initialize
-     * @param errorHandling error handling
+     * @param errorHandling Error handling to indicate that errors must be reported not as exception
+     *                      but as a "false" return
+     * @return True if the initialization was successful. If errorHandling is {@code}
      * @throws MojoExecutionException if initialize fails
      */
-    void initializeService(PlatformService service, ErrorHandling errorHandling) throws MojoExecutionException {
+    boolean initializeService(PlatformService service, ErrorHandling errorHandling) throws MojoExecutionException {
 
         if (classLoader == null) {
             AccessController.doPrivileged(new PrivilegedAction<Void>() {
@@ -332,7 +334,15 @@ abstract class BaseMojo extends AbstractMojo {
 
                 //  Only create a context if we have a service.
                 //
-                context = adminService.newContext(productHome.toPath());
+                try {
+                    context = adminService.newContext(productHome.toPath());
+                } catch (IllegalArgumentException e) {
+
+                    if (errorHandling == ErrorHandling.IGNORE) {
+                        getLog().debug("Ignoring error", e);
+                        return false;
+                    }
+                }
                 if (getLog().isDebugEnabled()) {
                     context.withTracingEnabled();
                 }
@@ -348,6 +358,8 @@ abstract class BaseMojo extends AbstractMojo {
                 IRuntimeBuildService.class,
                 errorHandling);
         }
+
+        return true;
     }
 
     /**
