@@ -259,11 +259,11 @@
                             <process-resources>
                                 org.apache.maven.plugins:maven-resources-plugin:resources,
                                 org.apache.maven.plugins:maven-compiler-plugin:compile,
+                                ${project.groupId}:${project.artifactId}:${project.version}:unpack-nar,
                                 ${project.groupId}:${project.artifactId}:${project.version}:generate-main-eventflow
                             </process-resources>
                             <compile>
                                 ${project.groupId}:${project.artifactId}:${project.version}:unpack-fragment,
-                                ${project.groupId}:${project.artifactId}:${project.version}:unpack-nar,
                                 ${project.groupId}:${project.artifactId}:${project.version}:compile-eventflow-fragment,
                                 org.apache.maven.plugins:maven-compiler-plugin:compile
                             </compile>
@@ -327,6 +327,7 @@
                             <process-resources>
                                 org.apache.maven.plugins:maven-resources-plugin:resources,
                                 org.apache.maven.plugins:maven-compiler-plugin:compile,
+                                ${project.groupId}:${project.artifactId}:${project.version}:unpack-nar,
                                 ${project.groupId}:${project.artifactId}:${project.version}:generate-main-eventflow
                             </process-resources>
                             <compile>
@@ -386,6 +387,7 @@
                             <process-resources>
                                 org.apache.maven.plugins:maven-resources-plugin:resources,
                                 org.apache.maven.plugins:maven-compiler-plugin:compile,
+                                ${project.groupId}:${project.artifactId}:${project.version}:unpack-nar,
                                 ${project.groupId}:${project.artifactId}:${project.version}:generate-main-eventflow
                             </process-resources>
                             <compile>
