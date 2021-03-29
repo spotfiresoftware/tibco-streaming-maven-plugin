@@ -34,6 +34,7 @@
 				<goals>
 					<goal>install-product</goal>
 					<goal>unpack-fragment</goal>
+					<goal>generate-main-eventflow</goal>
 					<goal>package-liveview-fragment</goal>
 					<goal>package-eventflow-fragment</goal>
 					<goal>package-tcs-fragment</goal>
@@ -49,7 +50,6 @@
 				<goals>
 					<goal>unpack-nar</goal>
 					<goal>set-resources</goal>
-					<goal>generate-main-eventflow</goal>
 					<goal>compile-eventflow-fragment</goal>
 					<goal>compile-liveview-fragment</goal>
 				</goals>
