@@ -30,7 +30,6 @@
 
 package com.tibco.ep.buildmavenplugin;
 
-import com.tibco.ep.sb.services.build.BuildErrorDetails;
 import com.tibco.ep.sb.services.build.BuildExceptionDetails;
 import com.tibco.ep.sb.services.build.BuildParameters;
 import com.tibco.ep.sb.services.build.BuildResult;
@@ -61,14 +60,17 @@ import java.util.stream.Stream;
  */
 public abstract class BaseGenerateMojo extends BaseMojo {
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(BaseGenerateMojo.class);
-    public static final String ENGINE_DATA_AREA = "com.tibco.ep.dtm.engine.data.area";
-    private static final String JAVA_IO_TMPDIR = "java.io.tmpdir";
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseGenerateMojo.class);
+    private static final String COMPILER_PROPERTIES_EQUALS = "=";
+    private static final String ENGINE_DATA_AREA = "com.tibco.ep.dtm.engine.data.area";
+
     private final BuildTarget target;
+    private final List<String> failedBuilds = new ArrayList<>();
 
     //  Maven parameters
-    private final List<String> failedBuilds = new ArrayList<>();
-    @Parameter
+    //
+    @Parameter(property = "compilerProperties", required = false)
+    String[] compilerPropertiesEntries;
     Map<String, String> compilerProperties;
     @Parameter(required = false, property = "eventflowDirectories")
     File[] eventflowDirectories;
@@ -78,7 +80,6 @@ public abstract class BaseGenerateMojo extends BaseMojo {
     Boolean failFast;
     @Parameter(required = false, property = "skipGenerateSources", defaultValue = "false")
     Boolean skipGenerateSources;
-
 
     /**
      * <p>Additional resources directory for HOCON configurations</p>
@@ -136,6 +137,19 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         if (skipGenerateSources) {
             getLog().warn("Skipping code generation entirely");
             return;
+        }
+
+        //  Transform the compiler properties into a map.
+        //
+        compilerProperties = new HashMap<>();
+        for (String prop : compilerPropertiesEntries) {
+            String[] propSplit = prop.split(COMPILER_PROPERTIES_EQUALS);
+            if (propSplit.length != 2) {
+                throw new MojoExecutionException("Illegal compiler property (not 'key=value'): "
+                    + prop);
+            }
+
+            compilerProperties.put(propSplit[0], propSplit[1]);
         }
 
         prechecks();
@@ -219,7 +233,9 @@ public abstract class BaseGenerateMojo extends BaseMojo {
     }
 
     private List<Path> getTestClassPath() throws MojoExecutionException, DependencyResolutionRequiredException {
-        //  FIX THIS (FL): not good, to be finalized when getCompileClassPath() is ok.
+        //  FIX THIS (FL): not good since we need to add the CP of test dependencies.
+        //  To be finalized when getCompileClassPath() is ok.
+        //
         return toPaths(project.getTestClasspathElements());
     }
 
@@ -234,7 +250,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         //
         visitDependencies((currentProjectArtefactDependency, indent, context) -> {
 
-            if (target == BuildTarget.TEST
+            if (target == BuildTarget.MAIN
                 && currentProjectArtefactDependency.getScope().equals((Artifact.SCOPE_TEST))) {
 
                 getLog().debug(indent + currentProjectArtefactDependency
@@ -255,7 +271,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
     private void addGeneratedSourceRoot() {
 
         //  FIX THIS (FL) The generated source path is hardcoded here and sb-server.
-        //  Should we make this configurable from the MOJO ?
+        //  We should get this out of the build, possibly through the notifier.
         //
         String directory = project.getBuild().getDirectory() + "/generated-"
             + (target == BuildTarget.MAIN ? "" : "test-")
@@ -352,7 +368,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
                     getLog().error(header + "Location: " + details.getLocation());
                 }
 
-                getLog().error(header + "Error: " +  details.getShortMessage());
+                getLog().error(header + "Error: " + details.getShortMessage());
 
                 if (details.getLongDescription() != null) {
                     getLog().error(
