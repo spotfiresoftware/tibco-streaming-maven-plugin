@@ -38,6 +38,7 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.PROCESS_RESOURCES;
 
 import java.io.File;
 
@@ -58,7 +59,7 @@ import org.apache.maven.artifact.Artifact;
  * Files are not overwritten.
  * </p>
  */
-@Mojo(name = "unpack-fragment", defaultPhase = COMPILE, threadSafe = true)
+@Mojo(name = "unpack-fragment", defaultPhase = PROCESS_RESOURCES, threadSafe = true)
 public class UnpackFragmentMojo extends BaseMojo {
 
     /**

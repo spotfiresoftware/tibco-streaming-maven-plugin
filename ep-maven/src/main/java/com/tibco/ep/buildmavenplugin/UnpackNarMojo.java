@@ -38,6 +38,7 @@ import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.PROCESS_RESOURCES;
 
 import java.io.File;
 
@@ -50,7 +51,7 @@ import org.apache.maven.artifact.Artifact;
  * on the java library path when running unit tests and native libraries are
  * included in the fragment.</p>
  */
-@Mojo(name = "unpack-nar", defaultPhase = COMPILE, threadSafe = true)
+@Mojo(name = "unpack-nar", defaultPhase = PROCESS_RESOURCES, threadSafe = true)
 public class UnpackNarMojo extends BaseMojo {
     
     /**
