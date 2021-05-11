@@ -1,5 +1,7 @@
+package com.tibco.sample.b;
+
 /*
- * Copyright (C) 2020, TIBCO Software Inc.
+ * Copyright (C) 2021, TIBCO Software Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -27,16 +29,12 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-package com.tibco.ep.sample;
 
-/**
- * Simple Java Custom function example
- */
+import com.tibco.sample.c.Hello;
 
-public class Hypotenuse {
+public class SayItB {
 
-    public static double calculate(double a, double b) {
-        return Math.sqrt(a*a + b*b);
+    public String sayIt() {
+        return Hello.WELCOME;
     }
 }
-

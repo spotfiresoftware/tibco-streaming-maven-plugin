@@ -40,7 +40,7 @@
                 <type>ep-java-fragment</type>
                 <extension>zip</extension>
                 <language>java</language>
-                <addedToClasspath>false</addedToClasspath>
+                <addedToClasspath>true</addedToClasspath>
             </configuration>
         </component>
 
@@ -54,7 +54,7 @@
                 <type>ep-eventflow-fragment</type>
                 <extension>zip</extension>
                 <language>java</language>
-                <addedToClasspath>false</addedToClasspath>
+                <addedToClasspath>true</addedToClasspath>
             </configuration>
         </component>
 
@@ -68,7 +68,7 @@
                 <type>ep-tcs-fragment</type>
                 <extension>zip</extension>
                 <language>java</language>
-                <addedToClasspath>false</addedToClasspath>
+                <addedToClasspath>true</addedToClasspath>
             </configuration>
         </component>
 
@@ -82,7 +82,7 @@
                 <type>ep-liveview-fragment</type>
                 <extension>zip</extension>
                 <language>java</language>
-                <addedToClasspath>false</addedToClasspath>
+                <addedToClasspath>true</addedToClasspath>
             </configuration>
         </component>
 

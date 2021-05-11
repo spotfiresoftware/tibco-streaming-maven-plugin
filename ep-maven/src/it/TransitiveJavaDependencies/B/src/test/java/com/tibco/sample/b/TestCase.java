@@ -1,7 +1,7 @@
-package com.tibco.ep.sample;
+package com.tibco.sample.b;
 
 /*
- * Copyright (C) 2020, TIBCO Software Inc.
+ * Copyright (C) 2021, TIBCO Software Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -42,8 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.streambase.sb.StreamBaseException;
-import com.streambase.sb.unittest.Expecter;
-import com.streambase.sb.unittest.JSONSingleQuotesTupleMaker;
 import com.streambase.sb.unittest.SBServerManager;
 import com.streambase.sb.unittest.ServerManagerFactory;
 
@@ -72,12 +70,12 @@ public class TestCase extends UnitTest {
     @BeforeClass
     public static void setupServer() throws StreamBaseException, ConfigurationException, InterruptedException {
         // Example configuration load
-        Configuration.forFile("sbengine.conf").load().activate();
+        // Configuration.forFile("engine.conf").load().activate();
 
         // create a StreamBase server and load modules once for all tests in this class
         server = ServerManagerFactory.getEmbeddedServer();
         server.startServer();
-        server.loadApp("com.tibco.ep.sample.custom-functions");
+        server.loadApp("com.tibco.sample.b.B");
     }
 
     /**
@@ -108,40 +106,15 @@ public class TestCase extends UnitTest {
         server.startContainers();
 
         // Setup test framework before running tests
-        this.initialize();
+        initialize();
     }
 
     /**
-     * Test cases
+     * test case
      */
     @Test
-    public void testCase1() throws Exception {
-        LOGGER.info("\n\nRunning Test Case 1...\n");
-        server.getEnqueuer("TriangleSidesIn").enqueue(JSONSingleQuotesTupleMaker.MAKER, "{'x':24.0,'y':36.0}");
-        new Expecter(server.getDequeuer("TriangleDimOut")).expect(JSONSingleQuotesTupleMaker.MAKER,
-            "{'x':24.0,'y':36.0,'customHypot':43.266615305567875,'customCalchyp':43.266615305567875,"
-            + "'directMathHypot':43.266615305567875,'aliasedMathHypot':43.266615305567875,'aliasedMax':36.0}"
-            );
-    }
-
-    @Test
-    public void testCase2() throws Exception {
-        LOGGER.info("\n\nRunning Test Case 2...\n");
-        server.getEnqueuer("VarArgsIsIn").enqueue(JSONSingleQuotesTupleMaker.MAKER,
-            "{'needle':'blue','haystack1':'red','haystack2':'purple'}",
-            "{'needle':'red','haystack1':'blue','haystack2':'reddish'}");
-        new Expecter(server.getDequeuer("NeedleInHaystackOut")).expect(JSONSingleQuotesTupleMaker.MAKER,
-            "{'needle':'blue','haystack1':'red','haystack2':'purple','IsNeedleInHaystack':false}",
-            "{'needle':'red','haystack1':'blue','haystack2':'reddish','IsNeedleInHaystack':true}");
-    }
-
-    @Test
-    public void testCase3() throws Exception {
-        LOGGER.info("\n\nRunning Test Case 3...\n");
-        server.getEnqueuer("VarArgsSums").enqueue(JSONSingleQuotesTupleMaker.MAKER,
-            "{'value1':12.0,'value2':36.0,'value3':92.0}");
-        new Expecter(server.getDequeuer("SumAllOut")).expect(JSONSingleQuotesTupleMaker.MAKER,
-            "{'value1':12.0,'value2':36.0,'value3':92.0,'sum':140.0}");
+    public void test1() {
+        LOGGER.info("Test Case 1");
     }
 
     /**
@@ -154,7 +127,7 @@ public class TestCase extends UnitTest {
     @After
     public void stopContainers() throws StreamBaseException, TransactionalMemoryLeakException, TransactionalDeadlockDetectedException {
         // Complete test framework and check for any errors
-        this.complete();
+        complete();
 
         // after each test, dispose of the container instances
         server.stopContainers();
