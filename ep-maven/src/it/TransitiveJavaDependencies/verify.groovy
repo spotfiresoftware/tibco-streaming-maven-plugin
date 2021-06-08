@@ -28,6 +28,31 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.Path
+import java.util.zip.ZipFile
+
 assert new File(basedir, "build.log")
         .text.contains("TransitiveJavaDependencies ......................... SUCCESS"):
-    "Text with SUCCESS not found"
+        "Text with SUCCESS not found"
+
+def extractFromZip(File zFile, String toExtract) {
+    def zipFile = new ZipFile(zFile)
+    Path extracted = basedir.toPath().resolve(toExtract + ".extracted");
+    zipFile.entries().each { it ->
+
+        if (!it.getName().contains(toExtract)) {
+            return;
+        }
+
+        Files.copy(zipFile.getInputStream(it), extracted)
+    }
+
+    return extracted.toFile();
+}
+
+File extracted = extractFromZip(basedir.toPath().resolve(Paths.get("B", "target", "B-2.0.0-SNAPSHOT-ep-eventflow-fragment.zip")).toFile(),
+        "MANIFEST")
+
+assert extracted.text.contains("TIBCO-EP-Event-Modules: com.tibco.sample.b.B");

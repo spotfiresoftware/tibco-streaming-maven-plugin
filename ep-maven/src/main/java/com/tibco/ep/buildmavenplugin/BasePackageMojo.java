@@ -89,6 +89,7 @@ abstract class BasePackageMojo extends BaseMojo {
         private final Assembly assembly;
         private final String productVersion;
         private final List<Consumer<Assembly>> steps = new ArrayList<>();
+        private final Map<String, String> additionalManifestEntries = new HashMap<>();
         private File temporaryManifestFile;
         private String mainClass;
 
@@ -107,6 +108,16 @@ abstract class BasePackageMojo extends BaseMojo {
          */
         ArchiveGenerator withAssemblyStep(Consumer<Assembly> step) {
             this.steps.add(step);
+            return this;
+        }
+
+        /**
+         * @param name The name of the additional MANIFEST entry
+         * @param value The value of the additional MANIFEST entry
+         * @return This
+         */
+        ArchiveGenerator withManifestEntry(String name, String value) {
+            additionalManifestEntries.put(name, value);
             return this;
         }
 
@@ -347,6 +358,10 @@ abstract class BasePackageMojo extends BaseMojo {
                     attributes.put(name(entry.getKey()), entry.getValue());
                 }
             }
+
+            //  Add the additional manifest entries, if any.
+            //
+            additionalManifestEntries.forEach((name, value) -> attributes.put(name(name), value));
 
             try (FileOutputStream os = new FileOutputStream(new File(tempManifestPath))) {
                 manifest.write(os);

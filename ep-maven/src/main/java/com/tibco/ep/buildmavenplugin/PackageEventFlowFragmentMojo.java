@@ -73,6 +73,8 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
 @Mojo(name = "package-eventflow-fragment", defaultPhase = PACKAGE, threadSafe = true)
 public class PackageEventFlowFragmentMojo extends BasePackageMojo {
 
+    private static final String TIBCO_EP_EVENT_MODULES = "TIBCO-EP-Event-Modules";
+
     /**
      * <p>Eventflow source directories</p>
      *
@@ -110,6 +112,7 @@ public class PackageEventFlowFragmentMojo extends BasePackageMojo {
                     assembly.addFileSet(fileSet);
                 }
             })
+            .withManifestEntry(TIBCO_EP_EVENT_MODULES, readModulesFile())
             .generate();
     }
 

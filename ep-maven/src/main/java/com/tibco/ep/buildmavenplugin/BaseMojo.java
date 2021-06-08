@@ -58,13 +58,17 @@ import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -103,7 +107,10 @@ abstract class BaseMojo extends AbstractMojo {
     private static final String SB_CONTAINER_IDENTIFIER = "container";
     private static final String SB_SERVER_ARTIFACT_IDENTIFIER = "server";
     private static final String SB_SUPPORT_ARTIFACT_PREFIX = "support_platform_";
-    private static final String SB_KDS = "sb.kds";
+
+    //  The file containing the list of modules.
+    //
+    private static final String MODULES_FILE = "modules";
 
     /**
      * maven property to use to skip start/stop/tests if no tests exist
@@ -360,18 +367,6 @@ abstract class BaseMojo extends AbstractMojo {
         }
 
         return true;
-    }
-
-    /**
-     * @return The SB KDS input stream
-     * @throws MojoExecutionException The KDS could not be found
-     */
-    public InputStream getKDS() throws MojoExecutionException {
-        InputStream resourceAsStream = classLoader.getResourceAsStream(SB_KDS);
-        if (resourceAsStream == null) {
-            throw new MojoExecutionException("Could not load: " + SB_KDS);
-        }
-        return resourceAsStream;
     }
 
     private <T> T doGetService(Supplier<T> getter, Class<T> serviceClass, ErrorHandling errorHandling) throws MojoExecutionException {
@@ -894,6 +889,38 @@ abstract class BaseMojo extends AbstractMojo {
                 || type.equals(TCS_TYPE)
                 || type.equals(LIVEVIEW_TYPE));
     }
+
+    /**
+     * @param modules The modules to save
+     * @throws MojoExecutionException The file could not be written
+     */
+    void saveModulesFile(List<String> modules) throws MojoExecutionException {
+        File modulesFile = Paths.get(project.getBuild().getDirectory(), MODULES_FILE).toFile();
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(modulesFile))){
+
+            writer.write(String.join(" ", modules));
+
+        } catch (IOException exception) {
+            throw new MojoExecutionException("Couldn't write to file: " + modulesFile, exception);
+        }
+    }
+
+    /**
+     * @return The modules string
+     * @throws MojoExecutionException The file could not be read
+     */
+    String readModulesFile() throws MojoExecutionException {
+        File modulesFile = Paths.get(project.getBuild().getDirectory(), MODULES_FILE).toFile();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(modulesFile))) {
+            return reader.readLine();
+
+        } catch (IOException exception) {
+            throw new MojoExecutionException("Couldn't read from file: " + modulesFile, exception);
+        }
+    }
+
 
     /**
      * The type of platform service to initialize

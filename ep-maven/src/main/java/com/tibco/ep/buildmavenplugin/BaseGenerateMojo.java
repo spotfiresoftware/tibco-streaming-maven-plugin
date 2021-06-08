@@ -192,10 +192,11 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
         //  Now trigger the build and report errors.
         //
+        BuildNotifier notifier = new BuildNotifier();
         try {
 
             getBuildService()
-                .build(project.getName(), target, buildParameters, new BuildNotifier());
+                .build(project.getName(), target, buildParameters, notifier);
 
         } catch (FailFastException ffe) {
 
@@ -209,6 +210,11 @@ public abstract class BaseGenerateMojo extends BaseMojo {
             throw new MojoExecutionException("Code generation failed:\n" + String
                 .join("\n", failedBuilds));
         }
+
+        //  Now update the list of generated modules.
+        //  This list will be used to construct the manifest.
+        //
+        saveModulesFile(notifier.modules);
 
         //  Add the generated source directory
         //
@@ -309,6 +315,8 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
     private class BuildNotifier implements IBuildNotifier {
 
+        private final List<String> modules = new ArrayList<>();
+
         @Override
         public void onBuildStarted(int nbModules) {
             getLog().info("Found " + nbModules + " modules");
@@ -322,11 +330,13 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         @Override
         public void onSkipped(String entityName) {
             getLog().info("Module " + entityName + ": code generation SKIPPED");
+            modules.add(entityName);
         }
 
         @Override
         public void onStarted(String entityName) {
             getLog().info("Module " + entityName + ": code generation STARTED");
+            modules.add(entityName);
         }
 
         @Override
