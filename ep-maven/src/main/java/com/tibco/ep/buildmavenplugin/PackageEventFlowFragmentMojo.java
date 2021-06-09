@@ -92,6 +92,9 @@ public class PackageEventFlowFragmentMojo extends BasePackageMojo {
     @Parameter(required = false, property = "eventflowDirectories")
     File[] eventflowDirectories;
 
+    @Parameter(required = false, property = "skipGenerateSources", defaultValue = "false")
+    Boolean skipGenerateSources;
+
     @Override
     public void execute() throws MojoExecutionException {
         getLog().debug("Creating eventflow fragment");
@@ -99,6 +102,8 @@ public class PackageEventFlowFragmentMojo extends BasePackageMojo {
         eventflowDirectories = getOrDefaultEventFlowDirectories(eventflowDirectories);
 
         prechecks();
+
+        String moduleFiles = (skipGenerateSources ? "" : readModulesFile());
 
         newArchiveGenerator()
             .withAssemblyStep(assembly -> {
@@ -112,7 +117,7 @@ public class PackageEventFlowFragmentMojo extends BasePackageMojo {
                     assembly.addFileSet(fileSet);
                 }
             })
-            .withManifestEntry(TIBCO_EP_EVENT_MODULES, readModulesFile())
+            .withManifestEntry(TIBCO_EP_EVENT_MODULES, moduleFiles)
             .generate();
     }
 

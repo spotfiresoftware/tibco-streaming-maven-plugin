@@ -188,6 +188,7 @@ public class PackageTest extends BetterAbstractMojoTestCase {
         pomVersion = packageStreambase.project.getVersion();
         simulatedLog.reset();
         packageStreambase.setLog(simulatedLog);
+        packageStreambase.skipGenerateSources = true;
         packageStreambase.execute();
         assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
         assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
@@ -229,6 +230,7 @@ public class PackageTest extends BetterAbstractMojoTestCase {
         pomVersion = packageStreambase.project.getVersion();
         simulatedLog.reset();
         packageStreambase.setLog(simulatedLog);
+        packageStreambase.skipGenerateSources = true;
         packageStreambase.execute();
         assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
         assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
