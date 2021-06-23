@@ -212,9 +212,9 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         }
 
         //  Now update the list of generated modules.
-        //  This list will be used to construct the manifest.
+        //  This lists will be used to construct the manifest.
         //
-        saveModulesFile(notifier.modules);
+        notifier.moduleData.write(project);
 
         //  Add the generated source directory
         //
@@ -315,7 +315,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
     private class BuildNotifier implements IBuildNotifier {
 
-        private final List<String> modules = new ArrayList<>();
+        private final ProjectModuleData moduleData = new ProjectModuleData();
 
         @Override
         public void onBuildStarted(int nbModules) {
@@ -328,15 +328,15 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         }
 
         @Override
-        public void onSkipped(String entityName) {
+        public void onSkipped(String entityName, String extension) {
             getLog().info("Module " + entityName + ": code generation SKIPPED");
-            modules.add(entityName);
+            moduleData.addModule(entityName, extension);
         }
 
         @Override
-        public void onStarted(String entityName) {
+        public void onStarted(String entityName, String extension) {
             getLog().info("Module " + entityName + ": code generation STARTED");
-            modules.add(entityName);
+            moduleData.addModule(entityName, extension);
         }
 
         @Override

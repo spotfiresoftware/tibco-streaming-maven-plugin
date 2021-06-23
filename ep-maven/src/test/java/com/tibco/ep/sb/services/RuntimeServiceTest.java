@@ -260,7 +260,7 @@ public class RuntimeServiceTest {
         }
 
         @Override
-        public void onStarted(String entityName) {
+        public void onStarted(String entityName, String entityExtension) {
             this.startedEntity = entityName;
         }
 

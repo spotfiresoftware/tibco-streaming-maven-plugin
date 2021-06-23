@@ -891,38 +891,6 @@ abstract class BaseMojo extends AbstractMojo {
     }
 
     /**
-     * @param modules The modules to save
-     * @throws MojoExecutionException The file could not be written
-     */
-    void saveModulesFile(List<String> modules) throws MojoExecutionException {
-        File modulesFile = Paths.get(project.getBuild().getDirectory(), MODULES_FILE).toFile();
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(modulesFile))){
-
-            writer.write(String.join(" ", modules));
-
-        } catch (IOException exception) {
-            throw new MojoExecutionException("Couldn't write to file: " + modulesFile, exception);
-        }
-    }
-
-    /**
-     * @return The modules string
-     * @throws MojoExecutionException The file could not be read
-     */
-    String readModulesFile() throws MojoExecutionException {
-        File modulesFile = Paths.get(project.getBuild().getDirectory(), MODULES_FILE).toFile();
-
-        try (BufferedReader reader = new BufferedReader(new FileReader(modulesFile))) {
-            return reader.readLine();
-
-        } catch (IOException exception) {
-            throw new MojoExecutionException("Couldn't read from file: " + modulesFile, exception);
-        }
-    }
-
-
-    /**
      * The type of platform service to initialize
      */
     enum PlatformService {

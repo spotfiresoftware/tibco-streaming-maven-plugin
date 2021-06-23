@@ -54,9 +54,9 @@ public class RuntimeBuildService implements IRuntimeBuildService {
 
         notifier.onBuildStarted(2);
 
-        notifier.onSkipped("Skipped.sbapp");
+        notifier.onSkipped("Skipped", ".sbapp");
 
-        notifier.onStarted("MyModule.sbapp");
+        notifier.onStarted("MyModule", ".sbapp");
         notifier.onCompleted(new BuildResult()
             .withElapsedTimeMillis(1234)
             .withEntityName("MyModule.sbapp")

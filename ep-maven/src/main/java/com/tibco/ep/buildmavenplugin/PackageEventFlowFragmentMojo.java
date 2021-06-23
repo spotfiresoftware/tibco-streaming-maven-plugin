@@ -74,6 +74,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
 public class PackageEventFlowFragmentMojo extends BasePackageMojo {
 
     private static final String TIBCO_EP_EVENT_MODULES = "TIBCO-EP-Event-Modules";
+    private static final String TIBCO_EP_EVENT_INTERFACES = "TIBCO-EP-Event-Interfaces";
 
     /**
      * <p>Eventflow source directories</p>
@@ -103,7 +104,9 @@ public class PackageEventFlowFragmentMojo extends BasePackageMojo {
 
         prechecks();
 
-        String moduleFiles = (skipGenerateSources ? "" : readModulesFile());
+        ProjectModuleData projectModuleData = (skipGenerateSources
+            ? new ProjectModuleData()
+            : ProjectModuleData.read(project));
 
         newArchiveGenerator()
             .withAssemblyStep(assembly -> {
@@ -117,7 +120,8 @@ public class PackageEventFlowFragmentMojo extends BasePackageMojo {
                     assembly.addFileSet(fileSet);
                 }
             })
-            .withManifestEntry(TIBCO_EP_EVENT_MODULES, moduleFiles)
+            .withManifestEntry(TIBCO_EP_EVENT_MODULES, projectModuleData.getModules())
+            .withManifestEntry(TIBCO_EP_EVENT_INTERFACES, projectModuleData.getInterfaces())
             .generate();
     }
 

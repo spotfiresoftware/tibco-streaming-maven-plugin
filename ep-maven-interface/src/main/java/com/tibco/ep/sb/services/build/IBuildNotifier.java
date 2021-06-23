@@ -61,12 +61,32 @@ public interface IBuildNotifier {
     }
 
     /**
+     * Called when a module/interface doesn't need a build
+     *
+     * @param entityName      The entity name
+     * @param entityExtension The entity extension (.sbint or .sbapp)
+     */
+    default void onSkipped(String entityName, String entityExtension) {
+        //  Do nothing
+    }
+
+    /**
      * Called when a module/interface build is started
      *
      * @param entityName The entity name
      */
     default void onStarted(String entityName) {
         //  Do nothing.
+    }
+
+    /**
+     * Called when a module/interface build is started
+     *
+     * @param entityName      The entity name
+     * @param entityExtension The entity extension (.sbint or .sbapp)
+     */
+    default void onStarted(String entityName, String entityExtension) {
+        //  Do nothing
     }
 
     /**
