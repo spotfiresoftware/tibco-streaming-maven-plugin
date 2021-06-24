@@ -47,6 +47,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -206,9 +207,9 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         }
 
         if (!failedBuilds.isEmpty()) {
-
-            throw new MojoExecutionException("Code generation failed:\n" + String
-                .join("\n", failedBuilds));
+            throw new MojoExecutionException(
+                "Code generation failed:\n(See above for stacks)\n"
+                    + String.join("\n", failedBuilds));
         }
 
         //  Now update the list of generated modules.
@@ -390,6 +391,18 @@ public abstract class BaseGenerateMojo extends BaseMojo {
                 }
                 i++;
             }
+
+            getLog().error("Exception stack:");
+            List<String> causes = new ArrayList<>();
+            Throwable current = error;
+            while (current != null) {
+                causes.add("   At " + current.getStackTrace()[0].toString() + ": " + current
+                    .toString());
+                current = current.getCause();
+            }
+
+            Collections.reverse(causes);
+            causes.forEach(c -> getLog().error(c));
 
             //  We don't want Maven to display a stack trace just because a build fail, so
             //  we push the log with the exception as "DEBUG". Users can still get it with -X.

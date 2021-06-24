@@ -58,17 +58,12 @@ import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -107,10 +102,6 @@ abstract class BaseMojo extends AbstractMojo {
     private static final String SB_CONTAINER_IDENTIFIER = "container";
     private static final String SB_SERVER_ARTIFACT_IDENTIFIER = "server";
     private static final String SB_SUPPORT_ARTIFACT_PREFIX = "support_platform_";
-
-    //  The file containing the list of modules.
-    //
-    private static final String MODULES_FILE = "modules";
 
     /**
      * maven property to use to skip start/stop/tests if no tests exist
