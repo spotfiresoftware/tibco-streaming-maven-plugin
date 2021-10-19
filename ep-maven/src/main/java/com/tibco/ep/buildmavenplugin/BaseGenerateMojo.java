@@ -330,13 +330,13 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
         @Override
         public void onSkipped(String entityName, String extension) {
-            getLog().info("Module " + entityName + ": code generation SKIPPED");
+            getLog().debug("Module " + entityName + ": code generation SKIPPED");
             moduleData.addModule(entityName, extension);
         }
 
         @Override
         public void onStarted(String entityName, String extension) {
-            getLog().info("Module " + entityName + ": code generation STARTED");
+            getLog().debug("Module " + entityName + ": code generation STARTED");
             moduleData.addModule(entityName, extension);
         }
 
@@ -349,7 +349,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
             String entityName = result.getEntityName();
 
             if (!result.getException().isPresent()) {
-                getLog().info("Module " + entityName
+                getLog().debug("Module " + entityName
                     + ": code generation SUCCESS"
                     + " (in " + String.format("%.3f", seconds) + " seconds)");
                 return;
