@@ -52,6 +52,7 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -115,6 +116,26 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         this.target = target;
     }
 
+    private static List<Path> toUniqueAndExistingPaths(List<String> pathElements) throws MojoExecutionException {
+        LinkedHashSet<Path> paths = new LinkedHashSet<>(toPaths(pathElements));
+        return paths.stream()
+            .filter(p -> p.toFile().exists())
+            .collect(Collectors.toList());
+
+    }
+
+    private static List<Path> toPaths(List<String> stringPaths) throws MojoExecutionException {
+        List<Path> list = new ArrayList<>();
+        for (String p : stringPaths) {
+            list.add(toPath(p));
+        }
+        return list;
+    }
+
+    private static Path toPath(String file) throws MojoExecutionException {
+        return new File(file).toPath();
+    }
+
     private File[] initializeAndCheck(File[] originalValue, String defaultDir) {
 
         if (originalValue == null || originalValue.length == 0) {
@@ -170,9 +191,25 @@ public abstract class BaseGenerateMojo extends BaseMojo {
                 .withCompilerProperties(compilerProperties == null
                     ? new HashMap<>() : compilerProperties)
                 .withSourcePaths(toPathsCheckExist(eventflowDirectories))
-                .withTestSourcePaths(toPathsCheckExist(testEventflowDirectories))
+                .withTestSourcePaths(toPathsCheckExist(testEventflowDirectories));
+
+            buildParameters
+                .withProjectCompileClassPath(
+                    toUniqueAndExistingPaths(project.getCompileClasspathElements()))
+                .withProjectTestCompileClassPath(
+                    toUniqueAndExistingPaths(project.getTestClasspathElements()));
+
+            buildParameters
+                .withDependenciesCompileClassPath(getDependencyClassPaths(BuildTarget.MAIN))
+                .withDependenciesTestCompileClassPath(getDependencyClassPaths(BuildTarget.TEST));
+
+            //  FIX THIS (FL): remove when SBRT has all parameters.
+            //
+            buildParameters
                 .withCompileClassPath(getCompileClassPath())
-                .withTestClassPath(getTestClassPath())
+                .withTestClassPath(getTestClassPath());
+
+            buildParameters
                 .withConfigurationDirectory(configurationDirectory.toPath())
                 .withTestConfigurationDirectory(testConfigurationDirectory.toPath())
                 .withBuildDirectory(toPath(project.getBuild().getDirectory()))
@@ -182,14 +219,13 @@ public abstract class BaseGenerateMojo extends BaseMojo {
             throw new MojoExecutionException("Cannot resolve dependency", e);
         }
 
-        buildParameters.getCompileClassPath().stream()
-            .map(Path::toString)
-            .sorted()
-            .forEach(p -> getLog().debug("Compile ClassPath: " + p));
-        buildParameters.getTestClassPath().stream()
-            .map(Path::toString)
-            .sorted()
-            .forEach(p -> getLog().debug("Test ClassPath: " + p));
+        logPaths("Compile ClassPath", buildParameters.getCompileClassPath());
+        logPaths("Test ClassPath", buildParameters.getTestClassPath());
+
+        logPaths("Project Compile ClassPath", buildParameters.getProjectCompileClassPath());
+        logPaths("Dependencies Compile ClassPath", buildParameters.getDependenciesCompileClassPath());
+        logPaths("Project Test Compile ClassPath", buildParameters.getProjectTestCompileClassPath());
+        logPaths("Dependencies Test Compile ClassPath", buildParameters.getDependenciesTestCompileClassPath());
 
         //  Now trigger the build and report errors.
         //
@@ -220,6 +256,20 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         //  Add the generated source directory
         //
         addGeneratedSourceRoot();
+    }
+
+    private void logPaths(String header, List<Path> paths) {
+
+        if (paths.isEmpty()) {
+            getLog().debug(header + ": (none)");
+            return;
+        }
+
+        getLog().debug(header + ":");
+        paths.stream()
+            .map(Path::toString)
+            .sorted()
+            .forEach(p -> getLog().debug("  " + p));
     }
 
     private void setupEngineDataArea() throws MojoExecutionException {
@@ -275,6 +325,38 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         return new ArrayList<>(classpath);
     }
 
+    private List<Path> getDependencyClassPaths(BuildTarget target) throws MojoExecutionException {
+        Set<Path> classpath = new LinkedHashSet<>();
+
+        getLog().debug("Visiting dependencies for target: " + target);
+        visitDependencies((currentProjectArtefactDependency, indent, context) -> {
+
+            if (this.target == BuildTarget.MAIN) {
+                if (currentProjectArtefactDependency.getScope().equals((Artifact.SCOPE_TEST))) {
+
+                    getLog().debug(indent + currentProjectArtefactDependency
+                        + " [skipping (and skipping dependencies): TEST scope]");
+                    return false;
+                }
+            } else {
+                if (!currentProjectArtefactDependency.getScope().equals((Artifact.SCOPE_TEST))) {
+
+                    getLog().debug(indent + currentProjectArtefactDependency
+                        + " [skipping (and skipping dependencies): NON TEST scope]");
+                    return false;
+                }
+            }
+
+            getLog().debug(indent + currentProjectArtefactDependency + " [adding]");
+
+            classpath.add(currentProjectArtefactDependency.getFile().toPath());
+
+            return true;
+        });
+
+        return new ArrayList<>(classpath);
+    }
+
     private void addGeneratedSourceRoot() {
 
         //  FIX THIS (FL) The generated source path is hardcoded here and sb-server.
@@ -290,18 +372,6 @@ public abstract class BaseGenerateMojo extends BaseMojo {
             assert target == BuildTarget.TEST : target;
             project.addTestCompileSourceRoot(directory);
         }
-    }
-
-    private List<Path> toPaths(List<String> stringPaths) throws MojoExecutionException {
-        List<Path> list = new ArrayList<>();
-        for (String p : stringPaths) {
-            list.add(toPath(p));
-        }
-        return list;
-    }
-
-    private Path toPath(String file) throws MojoExecutionException {
-        return new File(file).toPath();
     }
 
     private List<Path> toPathsCheckExist(File[] files) {

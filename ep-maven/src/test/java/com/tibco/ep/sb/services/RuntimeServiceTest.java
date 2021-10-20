@@ -89,9 +89,10 @@ public class RuntimeServiceTest {
         properties.put("MyProp", "MyVal");
         parameters
             .withBuildDirectory(Paths.get("buildDir"))
-            .withCompileClassPath(Arrays.asList(Paths.get("first.jar"),
+            .withProjectCompileClassPath(Arrays.asList(
+                Paths.get("first.jar"),
                 Paths.get("path", "to", "classes")))
-            .withTestClassPath(Collections.singletonList(Paths.get("test.jar")))
+            .withProjectTestCompileClassPath(Collections.singletonList(Paths.get("test.jar")))
             .withCompilerProperties(properties)
             .withConfigurationDirectory(Paths.get("src", "main", "configurations"))
             .withTestConfigurationDirectory(Paths.get("src", "test", "configurations"))

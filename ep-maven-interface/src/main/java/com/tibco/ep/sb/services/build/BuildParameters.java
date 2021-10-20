@@ -43,6 +43,12 @@ public class BuildParameters {
 
     private final List<Path> compileClassPath = new ArrayList<>();
     private final List<Path> testClassPath = new ArrayList<>();
+
+    private final List<Path> projectCompileClassPath = new ArrayList<>();
+    private final List<Path> dependenciesCompileClassPath = new ArrayList<>();
+    private final List<Path> projectTestCompileClassPath = new ArrayList<>();
+    private final List<Path> dependenciesTestCompileClassPath = new ArrayList<>();
+
     private final List<Path> sourcePaths = new ArrayList<>();
     private final List<Path> testSourcePaths = new ArrayList<>();
     private final Map<String, String> compilerProperties = new HashMap<>();
@@ -61,6 +67,7 @@ public class BuildParameters {
      * @param classPath The compile classpath
      * @return This
      */
+    @Deprecated
     public BuildParameters withCompileClassPath(List<Path> classPath) {
         this.compileClassPath.addAll(classPath);
         return this;
@@ -70,8 +77,78 @@ public class BuildParameters {
      * @param classPath The test classpath
      * @return This
      */
+    @Deprecated
     public BuildParameters withTestClassPath(List<Path> classPath) {
         this.testClassPath.addAll(classPath);
+        return this;
+    }
+
+
+    /**
+     * @return The class path added by the project (typically target/classes)
+     */
+    public List<Path> getProjectCompileClassPath() {
+        return projectCompileClassPath;
+    }
+
+    /**
+     * @return The class path added by dependencies (from Maven dependency JARs,
+     * or other projects target/classes in Studio)
+     */
+    public List<Path> getDependenciesCompileClassPath() {
+        return dependenciesCompileClassPath;
+    }
+
+    /**
+     * @return The class path for tests added by the project (typically target/test-classes)
+     */
+    public List<Path> getProjectTestCompileClassPath() {
+        return projectTestCompileClassPath;
+    }
+
+    /**
+     * @return The class path for tests from dependencies (from Maven test dependency JARs, ...)
+     */
+    public List<Path> getDependenciesTestCompileClassPath() {
+        return dependenciesTestCompileClassPath;
+    }
+
+    /**
+     * @param classPath The class path added by the project (typically target/classes)
+     * @return This
+     */
+    public BuildParameters withProjectCompileClassPath(List<Path> classPath) {
+        return updateCPList(projectCompileClassPath, classPath);
+    }
+
+    /**
+     * @param classPath The class path added by dependencies (from Maven dependency JARs,
+     *                  or other projects target/classes in Studio)
+     * @return This
+     */
+    public BuildParameters withDependenciesCompileClassPath(List<Path> classPath) {
+        return updateCPList(dependenciesCompileClassPath, classPath);
+    }
+
+    /**
+     * @param classPath The class path for tests added by the project (typically target/test-classes)
+     * @return This
+     */
+    public BuildParameters withProjectTestCompileClassPath(List<Path> classPath) {
+        return updateCPList(projectTestCompileClassPath, classPath);
+    }
+
+    /**
+     * @param classPath The class path for tests from dependencies (from Maven test dependency JARs, ...)
+     * @return This
+     */
+    public BuildParameters withDependenciesTestCompileClassPath(List<Path> classPath) {
+        return updateCPList(dependenciesCompileClassPath, classPath);
+    }
+
+    private BuildParameters updateCPList(List<Path> field, List<Path> source) {
+        field.clear();
+        field.addAll(source);
         return this;
     }
 
@@ -141,6 +218,7 @@ public class BuildParameters {
     /**
      * @return The compile classpath
      */
+    @Deprecated
     public List<Path> getCompileClassPath() {
         return compileClassPath;
     }
@@ -148,6 +226,7 @@ public class BuildParameters {
     /**
      * @return The test classpath
      */
+    @Deprecated
     public List<Path> getTestClassPath() {
         return testClassPath;
     }
