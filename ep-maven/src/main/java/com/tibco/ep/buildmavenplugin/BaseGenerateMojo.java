@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020, TIBCO Software Inc.
+ * Copyright (C) 2020-2021, TIBCO Software Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -249,13 +249,16 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         }
 
         //  Now update the list of generated modules.
-        //  This lists will be used to construct the manifest.
+        //  This list will be used to construct the manifest (so, we only do that for MAIN).
         //
-        notifier.moduleData.write(project);
+        if (target == BuildTarget.MAIN) {
+            notifier.moduleData.write(project);
+        }
 
         //  Add the generated source directory
         //
         addGeneratedSourceRoot();
+
     }
 
     private void logPaths(String header, List<Path> paths) {
@@ -332,17 +335,13 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         visitDependencies((currentProjectArtefactDependency, indent, context) -> {
 
             if (this.target == BuildTarget.MAIN) {
+                //  If we're building MAIN, we don't want TEST scope dependencies.
+                //  But if we're building TEST, we want them all (no filtering).
+                //
                 if (currentProjectArtefactDependency.getScope().equals((Artifact.SCOPE_TEST))) {
 
                     getLog().debug(indent + currentProjectArtefactDependency
                         + " [skipping (and skipping dependencies): TEST scope]");
-                    return false;
-                }
-            } else {
-                if (!currentProjectArtefactDependency.getScope().equals((Artifact.SCOPE_TEST))) {
-
-                    getLog().debug(indent + currentProjectArtefactDependency
-                        + " [skipping (and skipping dependencies): NON TEST scope]");
                     return false;
                 }
             }
@@ -390,7 +389,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
         @Override
         public void onBuildStarted(int nbModules) {
-            getLog().info("Found " + nbModules + " modules");
+            getLog().info("Found " + nbModules + " module" + (nbModules > 1 ? "s" : ""));
         }
 
         @Override
