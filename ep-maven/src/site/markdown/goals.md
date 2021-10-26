@@ -103,7 +103,7 @@ Default lifecycle :
   
 | phase                | goals |
 |----------------------|-------|
-| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/install-set-resources.html)</br>
+| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/set-resources-mojo.html)</br>
 | process-resources    | [org.apache.maven.plugins:maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/)
 | compile              | <br>[com.tibco.ep:ep-maven-plugin:unpack-fragment](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/unpack-fragment-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:unpack-nar](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/unpack-nar-mojo.html),</br><br>[org.apache.maven.plugins:maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)</br>
 | process-test-resources | [org.apache.maven.plugins:maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/)
@@ -126,7 +126,7 @@ Default lifecycle :
   
 | phase                | goals |
 |----------------------|-------|
-| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/install-set-resources.html)</br>
+| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/set-resources-mojo.html)</br>
 | process-resources    | [org.apache.maven.plugins:maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/)
 | compile              | [org.apache.maven.plugins:maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)
 | process-test-resources | [org.apache.maven.plugins:maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/)
@@ -148,7 +148,7 @@ Default lifecycle :
   
 | phase                | goals |
 |----------------------|-------|
-| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/install-set-resources.html)</br>
+| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/set-resources-mojo.html)</br>
 | process-resources    | [org.apache.maven.plugins:maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/)
 | compile              | <br>[com.tibco.ep:ep-maven-plugin:unpack-fragment](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/unpack-fragment-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:unpack-nar](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/unpack-nar-mojo.html),</br><br>[org.apache.maven.plugins:maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)</br>
 | process-test-resources | [org.apache.maven.plugins:maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/)
@@ -171,7 +171,7 @@ Default lifecycle :
   
 | phase                | goals |
 |----------------------|-------|
-| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/install-set-resources.html)</br>
+| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/set-resources-mojo.html)</br>
 | process-resources    | [org.apache.maven.plugins:maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/)
 | compile              | [org.apache.maven.plugins:maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)
 | process-test-resources | [org.apache.maven.plugins:maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/)
