@@ -55,7 +55,7 @@ Default lifecycle :
   
 | phase                | goals |
 |----------------------|-------|
-| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.6.0/ep-maven-plugin/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.6.0/ep-maven-plugin//set-resources.html)</br>
+| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.6.0/ep-maven-plugin/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.6.0/ep-maven-plugin//set-resources-mojo.html)</br>
 | process-resources    | [org.apache.maven.plugins:maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/)
 | compile              | [org.apache.maven.plugins:maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)
 | process-test-resources | [org.apache.maven.plugins:maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/)
@@ -80,7 +80,7 @@ Default lifecycle :
   
 | phase                | goals |
 |----------------------|-------|
-| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.6.0/ep-maven-plugin/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.6.0/ep-maven-plugin/set-resources.html)</br>
+| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.6.0/ep-maven-plugin/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/1.6.0/ep-maven-plugin/set-resources-mojo.html)</br>
 | process-resources    | [org.apache.maven.plugins:maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/)
 | compile              | [org.apache.maven.plugins:maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)
 | process-test-resources | [org.apache.maven.plugins:maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/)
