@@ -260,20 +260,6 @@
                 </executions>
             </plugin>
 
-            <!--  deploy site documentation to github pages -->
-            <!--  in CI use mvn site com.github.github:site-maven-plugin:site -->
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <configuration>
-                    <server>github</server>
-                    <message>Updated site documentation from jenkins</message>
-                    <merge>true</merge>
-                    <skip>false</skip>
-                    <path>${project.version}/${project.artifactId}</path>
-                </configuration>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
@@ -359,6 +345,10 @@
             <id>ossrh</id>
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <site>
+            <id>www.tibco.com</id>
+            <url>https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</url>
+        </site>
     </distributionManagement>
 
 </project>

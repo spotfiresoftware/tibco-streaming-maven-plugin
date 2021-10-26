@@ -181,7 +181,24 @@
             </dependencies>
         </profile>
 
-        <!-- use mvn site -Puml to re-generate svg from source ( then commit ) -->
+        <!-- 
+            use mvn site -Puml to re-generate svg from source ( then commit )
+
+            to create html docs in github pages :
+
+            cd /tmp
+            git clone https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin.git
+            cd tibco-streaming-maven-plugin
+            git checkout gh-page
+            
+            cd <plugin source/ep-maven
+            mvn site:stage -DstagingDirectory=/tmp/<version>/ep-maven-plugin
+
+            cd /tmp/tibco-streaming-maven-plugin
+            git add <version>
+            git commit <version>
+            git push
+        -->
         <profile>
             <id>uml</id>
             <build>
@@ -666,12 +683,6 @@
                 </plugin>
 
                 <plugin>
-                    <groupId>com.github.github</groupId>
-                    <artifactId>site-maven-plugin</artifactId>
-                    <version>0.12</version>
-                </plugin>
-
-                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
                     <version>3.0.0-M2</version>
@@ -749,16 +760,6 @@
         </testResources>
 
         <plugins>
-
-            <!-- skip site docs in this aggregator -->
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <configuration>
-                    <message>Updated site documentation from jenkins</message>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
 
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
