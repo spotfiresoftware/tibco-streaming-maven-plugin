@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.1.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>70</x>
+      <y>150</y>
+      <w>60</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>layer=3
+bg=#D1E231
+maven
+plugin</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>130</x>
+      <y>150</y>
+      <w>60</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>layer=3
+bg=#D1E231
+admin
+API</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>300</x>
+      <y>130</y>
+      <w>140</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>layer=3
+bg=#FF6961
+*sbunit JVM*
+--
+sbunit + junit
+sbapp application
+test cases
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>180</x>
+      <y>160</y>
+      <w>100</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>80.0;10.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>50</x>
+      <y>110</y>
+      <w>160</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>bg=#FDFD96
+layer=1
+*Maven*
+fontsize=18
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLGeneric</id>
+    <coordinates>
+      <x>290</x>
+      <y>100</y>
+      <w>160</w>
+      <h>130</h>
+    </coordinates>
+    <panel_attributes>layer=2
+bg=#FFD1DC
+*A.helloworld node*
+--
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>260</x>
+      <y>60</y>
+      <w>220</w>
+      <h>190</h>
+    </coordinates>
+    <panel_attributes>bg=#FDFD96
+layer=1
+*helloworld cluster*
+fontsize=18
+--
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

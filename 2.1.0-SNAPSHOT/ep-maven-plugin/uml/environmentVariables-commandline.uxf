@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>0</x>
+      <y>0</y>
+      <w>420</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>halign=left
+bg=light_gray
+$ mvn install -DenvironmentVariables=var1=val1,var2=val2</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
