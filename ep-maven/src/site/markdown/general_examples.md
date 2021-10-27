@@ -575,7 +575,7 @@ If this isn't the case, then the discovery port can be fixed with :
 Or on the command line :
 
 ``` shell
-  $ mvn -DiscoveryPort=4000 ...
+  $ mvn -DdiscoveryPort=4000 ...
 ```
 
 <a name="creating-additional-artifacts"></a>
