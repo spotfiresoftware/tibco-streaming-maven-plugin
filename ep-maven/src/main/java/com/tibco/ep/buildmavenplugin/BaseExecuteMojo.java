@@ -140,8 +140,8 @@ abstract class BaseExecuteMojo extends BaseMojo {
     String clusterName;
 
     /**
-     * <p>Directory to install test nodes.</p>
-     * 
+     * <p>Base directory of test nodes.</p>
+     *
      * <p>Example use in pom.xml:</p>
      * <img src="uml/nodeDirectory.svg" alt="pom">
      * 
