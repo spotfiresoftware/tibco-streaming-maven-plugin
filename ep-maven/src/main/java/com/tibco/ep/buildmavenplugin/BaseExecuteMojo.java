@@ -146,7 +146,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
     @Parameter(defaultValue = "${project.artifactId}")
     String clusterName;
     /**
-     * <p>Directory to install test nodes.</p>
+     * <p>Base directory of test nodes.</p>
      *
      * <p>Example use in pom.xml:</p>
      * <img src="uml/nodeDirectory.svg" alt="pom">
