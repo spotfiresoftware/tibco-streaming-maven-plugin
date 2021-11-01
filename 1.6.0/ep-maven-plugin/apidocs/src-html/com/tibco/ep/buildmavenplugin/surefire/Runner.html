@@ -1,176 +1,177 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html lang="en">
 <head>
 <title>Source code</title>
 <link rel="stylesheet" type="text/css" href="../../../../../../stylesheet.css" title="Style">
 </head>
 <body>
+<main role="main">
 <div class="sourceContainer">
-<pre><span class="sourceLineNo">001</span>/*******************************************************************************<a name="line.1"></a>
-<span class="sourceLineNo">002</span> * Copyright (C) 2018, TIBCO Software Inc.<a name="line.2"></a>
-<span class="sourceLineNo">003</span> * <a name="line.3"></a>
-<span class="sourceLineNo">004</span> * Redistribution and use in source and binary forms, with or without<a name="line.4"></a>
-<span class="sourceLineNo">005</span> * modification, are permitted provided that the following conditions are met:<a name="line.5"></a>
-<span class="sourceLineNo">006</span> * <a name="line.6"></a>
-<span class="sourceLineNo">007</span> * 1. Redistributions of source code must retain the above copyright notice,<a name="line.7"></a>
-<span class="sourceLineNo">008</span> *    this list of conditions and the following disclaimer.<a name="line.8"></a>
-<span class="sourceLineNo">009</span> * <a name="line.9"></a>
-<span class="sourceLineNo">010</span> * 2. Redistributions in binary form must reproduce the above copyright notice,<a name="line.10"></a>
-<span class="sourceLineNo">011</span> *    this list of conditions and the following disclaimer in the documentation<a name="line.11"></a>
-<span class="sourceLineNo">012</span> *    and/or other materials provided with the distribution.<a name="line.12"></a>
-<span class="sourceLineNo">013</span> * <a name="line.13"></a>
-<span class="sourceLineNo">014</span> * 3. Neither the name of the copyright holder nor the names of its contributors<a name="line.14"></a>
-<span class="sourceLineNo">015</span> *    may be used to endorse or promote products derived from this software<a name="line.15"></a>
-<span class="sourceLineNo">016</span> *    without specific prior written permission.<a name="line.16"></a>
-<span class="sourceLineNo">017</span> * <a name="line.17"></a>
-<span class="sourceLineNo">018</span> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"<a name="line.18"></a>
-<span class="sourceLineNo">019</span> * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE<a name="line.19"></a>
-<span class="sourceLineNo">020</span> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE<a name="line.20"></a>
-<span class="sourceLineNo">021</span> * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE<a name="line.21"></a>
-<span class="sourceLineNo">022</span> * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR<a name="line.22"></a>
-<span class="sourceLineNo">023</span> * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF<a name="line.23"></a>
-<span class="sourceLineNo">024</span> * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS<a name="line.24"></a>
-<span class="sourceLineNo">025</span> * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN<a name="line.25"></a>
-<span class="sourceLineNo">026</span> * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)<a name="line.26"></a>
-<span class="sourceLineNo">027</span> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE<a name="line.27"></a>
-<span class="sourceLineNo">028</span> * POSSIBILITY OF SUCH DAMAGE.<a name="line.28"></a>
-<span class="sourceLineNo">029</span> ******************************************************************************/<a name="line.29"></a>
-<span class="sourceLineNo">030</span>package com.tibco.ep.buildmavenplugin.surefire;<a name="line.30"></a>
-<span class="sourceLineNo">031</span><a name="line.31"></a>
-<span class="sourceLineNo">032</span>import java.io.File;<a name="line.32"></a>
-<span class="sourceLineNo">033</span>import java.util.ArrayList;<a name="line.33"></a>
-<span class="sourceLineNo">034</span>import java.util.Arrays;<a name="line.34"></a>
-<span class="sourceLineNo">035</span>import java.util.List;<a name="line.35"></a>
-<span class="sourceLineNo">036</span><a name="line.36"></a>
-<span class="sourceLineNo">037</span>import org.apache.maven.surefire.Surefire;<a name="line.37"></a>
-<span class="sourceLineNo">038</span>import org.apache.maven.surefire.report.BriefConsoleReporter;<a name="line.38"></a>
-<span class="sourceLineNo">039</span>import org.apache.maven.surefire.report.BriefFileReporter;<a name="line.39"></a>
-<span class="sourceLineNo">040</span>import org.apache.maven.surefire.report.ReporterException;<a name="line.40"></a>
-<span class="sourceLineNo">041</span>import org.apache.maven.surefire.report.XMLReporter;<a name="line.41"></a>
-<span class="sourceLineNo">042</span>import org.apache.maven.surefire.testset.TestSetFailedException;<a name="line.42"></a>
-<span class="sourceLineNo">043</span><a name="line.43"></a>
-<span class="sourceLineNo">044</span>/**<a name="line.44"></a>
-<span class="sourceLineNo">045</span> * Test runner invoked on the server by the Deployment plugin.<a name="line.45"></a>
-<span class="sourceLineNo">046</span> */<a name="line.46"></a>
-<span class="sourceLineNo">047</span>public class Runner<a name="line.47"></a>
-<span class="sourceLineNo">048</span>{<a name="line.48"></a>
-<span class="sourceLineNo">049</span>    <a name="line.49"></a>
-<span class="sourceLineNo">050</span>    protected final static String SYS_PROP_PREFIX = "com.tibco.";<a name="line.50"></a>
-<span class="sourceLineNo">051</span>    protected final static String SYS_PROP_PREFIX_JUNIT_RESULTS_REPORTER = SYS_PROP_PREFIX + "junit.results.";<a name="line.51"></a>
-<span class="sourceLineNo">052</span>    <a name="line.52"></a>
-<span class="sourceLineNo">053</span>    /**<a name="line.53"></a>
-<span class="sourceLineNo">054</span>     * system property for reports<a name="line.54"></a>
-<span class="sourceLineNo">055</span>     */<a name="line.55"></a>
-<span class="sourceLineNo">056</span>    protected final static String REPORTS_DIRECTORY = "com.tibco.reportsdirectory";<a name="line.56"></a>
-<span class="sourceLineNo">057</span>    <a name="line.57"></a>
-<span class="sourceLineNo">058</span>    /**<a name="line.58"></a>
-<span class="sourceLineNo">059</span>     * system property for node name - defined in the runtime but this would be an adanced definition<a name="line.59"></a>
-<span class="sourceLineNo">060</span>     */<a name="line.60"></a>
-<span class="sourceLineNo">061</span>    protected final static String NODE_NAME = "com.kabira.platform.node.name";<a name="line.61"></a>
-<span class="sourceLineNo">062</span>    <a name="line.62"></a>
-<span class="sourceLineNo">063</span>    /**<a name="line.63"></a>
-<span class="sourceLineNo">064</span>     * cobertura sub directory<a name="line.64"></a>
-<span class="sourceLineNo">065</span>     */<a name="line.65"></a>
-<span class="sourceLineNo">066</span>    protected final static String COBERTURA_DIR = "cobertura";<a name="line.66"></a>
-<span class="sourceLineNo">067</span>    <a name="line.67"></a>
-<span class="sourceLineNo">068</span>    /**<a name="line.68"></a>
-<span class="sourceLineNo">069</span>     * cobertura results file<a name="line.69"></a>
-<span class="sourceLineNo">070</span>     */<a name="line.70"></a>
-<span class="sourceLineNo">071</span>    protected final static String COBERTURA_RESULTS = "cobertura.ser";<a name="line.71"></a>
-<span class="sourceLineNo">072</span>    <a name="line.72"></a>
-<span class="sourceLineNo">073</span>    /**<a name="line.73"></a>
-<span class="sourceLineNo">074</span>     * Main method to run a set of unit tests on the node.<a name="line.74"></a>
-<span class="sourceLineNo">075</span>     * <a name="line.75"></a>
-<span class="sourceLineNo">076</span>     * @param args<a name="line.76"></a>
-<span class="sourceLineNo">077</span>     *            a series of unit test class names<a name="line.77"></a>
-<span class="sourceLineNo">078</span>     * @throws ReporterException Reporting error<a name="line.78"></a>
-<span class="sourceLineNo">079</span>     * @throws TestSetFailedException  Test failure<a name="line.79"></a>
-<span class="sourceLineNo">080</span>     */<a name="line.80"></a>
-<span class="sourceLineNo">081</span>    public static void main(String[] args) throws ReporterException, TestSetFailedException {<a name="line.81"></a>
-<span class="sourceLineNo">082</span><a name="line.82"></a>
-<span class="sourceLineNo">083</span>        // parse argumnets<a name="line.83"></a>
-<span class="sourceLineNo">084</span>        //<a name="line.84"></a>
-<span class="sourceLineNo">085</span>        // arg[0] "true" to use system exit on success, false otherwise<a name="line.85"></a>
-<span class="sourceLineNo">086</span>        // args[1]+ contains junit test cases<a name="line.86"></a>
-<span class="sourceLineNo">087</span>        //<a name="line.87"></a>
-<span class="sourceLineNo">088</span>        boolean useSystemExit = Boolean.parseBoolean(args[0]);<a name="line.88"></a>
-<span class="sourceLineNo">089</span><a name="line.89"></a>
-<span class="sourceLineNo">090</span>        List&lt;Object[]&gt; reportDefinition = new ArrayList&lt;Object[]&gt;();<a name="line.90"></a>
-<span class="sourceLineNo">091</span>        List&lt;Object&gt; testSuites = new ArrayList&lt;&gt;();<a name="line.91"></a>
-<span class="sourceLineNo">092</span>        Surefire surefire = new Surefire();<a name="line.92"></a>
-<span class="sourceLineNo">093</span><a name="line.93"></a>
-<span class="sourceLineNo">094</span>        reportDefinition.add(new Object[] { BriefConsoleReporter.class.getName(), new Object[] { Boolean.TRUE } });<a name="line.94"></a>
-<span class="sourceLineNo">095</span>        reportDefinition.add(new Object[] { XMLReporter.class.getName(), new Object[] { new File(System.getProperty(REPORTS_DIRECTORY)+File.separator+System.getProperty(NODE_NAME)), false } });<a name="line.95"></a>
-<span class="sourceLineNo">096</span>        reportDefinition.add(new Object[] { BriefFileReporter.class.getName(), new Object[] { new File(System.getProperty(REPORTS_DIRECTORY)+File.separator+System.getProperty(NODE_NAME)), false } });<a name="line.96"></a>
-<span class="sourceLineNo">097</span><a name="line.97"></a>
-<span class="sourceLineNo">098</span>        String[] testFileNames = null;<a name="line.98"></a>
-<span class="sourceLineNo">099</span>        if (args.length &gt; 1) {<a name="line.99"></a>
-<span class="sourceLineNo">100</span>            testFileNames = Arrays.copyOfRange(args, 1, args.length);<a name="line.100"></a>
-<span class="sourceLineNo">101</span>        }<a name="line.101"></a>
-<span class="sourceLineNo">102</span><a name="line.102"></a>
-<span class="sourceLineNo">103</span>        // ================ (Optionally) Set up the Reporter that sends test results to the Studio-side JUnit view ================<a name="line.103"></a>
-<span class="sourceLineNo">104</span>        //<a name="line.104"></a>
-<span class="sourceLineNo">105</span>        // If the "SYS_PROP_PREFIX_JUNIT_RESULTS_REPORTER + port" System property is assigned a valid port number,<a name="line.105"></a>
-<span class="sourceLineNo">106</span>        // then that means an EclipseJUnitViewSocketReporter instance should be created,<a name="line.106"></a>
-<span class="sourceLineNo">107</span>        // for the sake of sending Surefire test results to the JUnit view in Studio.<a name="line.107"></a>
-<span class="sourceLineNo">108</span>        //<a name="line.108"></a>
-<span class="sourceLineNo">109</span>        // For the sake of development-level testing, the constructor accepts two debug-output System property booleans.<a name="line.109"></a>
-<span class="sourceLineNo">110</span>        // When true, "SYS_PROP_PREFIX_JUNIT_RESULTS_REPORTER + tracecalls" prints to stdout whenever a Reporter interface call is made.<a name="line.110"></a>
-<span class="sourceLineNo">111</span>        // When true, "SYS_PROP_PREFIX_JUNIT_RESULTS_REPORTER + tracesocketmessages" prints to stdout a copy of the messages sent to the<a name="line.111"></a>
-<span class="sourceLineNo">112</span>        // JUnit client via the Socket connection.<a name="line.112"></a>
-<span class="sourceLineNo">113</span>        //<a name="line.113"></a>
-<span class="sourceLineNo">114</span>        Integer testResultsPort = 0;<a name="line.114"></a>
-<span class="sourceLineNo">115</span>        String testResultsPortString = System.getProperty(SYS_PROP_PREFIX_JUNIT_RESULTS_REPORTER + "port");<a name="line.115"></a>
-<span class="sourceLineNo">116</span>        if (testResultsPortString != null) {<a name="line.116"></a>
-<span class="sourceLineNo">117</span>            try {<a name="line.117"></a>
-<span class="sourceLineNo">118</span>                testResultsPort = Integer.parseInt(testResultsPortString);<a name="line.118"></a>
-<span class="sourceLineNo">119</span>            } catch (NumberFormatException e) {<a name="line.119"></a>
-<span class="sourceLineNo">120</span>                // fall-through<a name="line.120"></a>
-<span class="sourceLineNo">121</span>            }<a name="line.121"></a>
-<span class="sourceLineNo">122</span>        }<a name="line.122"></a>
-<span class="sourceLineNo">123</span>        if (testResultsPort.intValue() != 0) {<a name="line.123"></a>
-<span class="sourceLineNo">124</span>            Boolean traceCalls = Boolean<a name="line.124"></a>
-<span class="sourceLineNo">125</span>                    .parseBoolean(System.getProperty(SYS_PROP_PREFIX_JUNIT_RESULTS_REPORTER + "tracecalls"));<a name="line.125"></a>
-<span class="sourceLineNo">126</span>            Boolean traceSocketMessages = Boolean<a name="line.126"></a>
-<span class="sourceLineNo">127</span>                    .parseBoolean(System.getProperty(SYS_PROP_PREFIX_JUNIT_RESULTS_REPORTER + "tracesocketmessages"));<a name="line.127"></a>
-<span class="sourceLineNo">128</span>            reportDefinition.add(new Object[] { EclipseJUnitViewSocketReporter.class.getName(),<a name="line.128"></a>
-<span class="sourceLineNo">129</span>                    new Object[] { testResultsPort, traceCalls, traceSocketMessages, testFileNames } });<a name="line.129"></a>
-<span class="sourceLineNo">130</span>        }<a name="line.130"></a>
-<span class="sourceLineNo">131</span>        // ========================================================================================================================<a name="line.131"></a>
-<span class="sourceLineNo">132</span><a name="line.132"></a>
-<span class="sourceLineNo">133</span><a name="line.133"></a>
-<span class="sourceLineNo">134</span>        // force coverage to a node-specific file<a name="line.134"></a>
-<span class="sourceLineNo">135</span>        //<a name="line.135"></a>
-<span class="sourceLineNo">136</span>        System.setProperty("net.sourceforge.cobertura.datafile", System.getProperty(REPORTS_DIRECTORY)+File.separator+COBERTURA_DIR+File.separator+System.getProperty(NODE_NAME)+"."+COBERTURA_RESULTS);<a name="line.136"></a>
-<span class="sourceLineNo">137</span>        File reportDirectory = new File(System.getProperty(REPORTS_DIRECTORY)+File.separator+COBERTURA_DIR);<a name="line.137"></a>
-<span class="sourceLineNo">138</span>        if (!reportDirectory.exists()) {<a name="line.138"></a>
-<span class="sourceLineNo">139</span>            // we could run this in locker but it seems safe to just ignore mkdirs if already created<a name="line.139"></a>
-<span class="sourceLineNo">140</span>            reportDirectory.mkdirs();<a name="line.140"></a>
-<span class="sourceLineNo">141</span>        }<a name="line.141"></a>
-<span class="sourceLineNo">142</span><a name="line.142"></a>
-<span class="sourceLineNo">143</span>        if (args.length == 1) {<a name="line.143"></a>
-<span class="sourceLineNo">144</span>            // FIX THIS - this shouldn't happen if called correctly from maven<a name="line.144"></a>
-<span class="sourceLineNo">145</span>            //<a name="line.145"></a>
-<span class="sourceLineNo">146</span>            String[] tclasses = new String[1];<a name="line.146"></a>
-<span class="sourceLineNo">147</span>            testSuites.add(new Object[] { TestSuite.class.getName(), new Object[] { tclasses } });<a name="line.147"></a>
-<span class="sourceLineNo">148</span>        } else {<a name="line.148"></a>
-<span class="sourceLineNo">149</span>            testSuites.add(new Object[] { TestSuite.class.getName(), new Object[] { Arrays.copyOfRange(args, 1, args.length) } });<a name="line.149"></a>
-<span class="sourceLineNo">150</span>        }<a name="line.150"></a>
-<span class="sourceLineNo">151</span><a name="line.151"></a>
-<span class="sourceLineNo">152</span>        // FIX THIS: does not respect "failIfNoTests" parameter<a name="line.152"></a>
-<span class="sourceLineNo">153</span><a name="line.153"></a>
-<span class="sourceLineNo">154</span>        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);<a name="line.154"></a>
-<span class="sourceLineNo">155</span><a name="line.155"></a>
-<span class="sourceLineNo">156</span>        // Surefire....sigh. The run() method is not documented, but zero<a name="line.156"></a>
-<span class="sourceLineNo">157</span>        // indicates SUCCESS. (The const is private so you'll have to trust me)<a name="line.157"></a>
-<span class="sourceLineNo">158</span>        int retval = surefire.run(reportDefinition, testSuites, ClassLoader.getSystemClassLoader(),<a name="line.158"></a>
-<span class="sourceLineNo">159</span>                ClassLoader.getSystemClassLoader(), Boolean.TRUE);<a name="line.159"></a>
-<span class="sourceLineNo">160</span><a name="line.160"></a>
-<span class="sourceLineNo">161</span>        if (useSystemExit || retval != 0) {<a name="line.161"></a>
-<span class="sourceLineNo">162</span>            System.exit(retval);<a name="line.162"></a>
-<span class="sourceLineNo">163</span>        }<a name="line.163"></a>
-<span class="sourceLineNo">164</span>    }<a name="line.164"></a>
-<span class="sourceLineNo">165</span>}<a name="line.165"></a>
+<pre><span class="sourceLineNo">001</span><a id="line.1">/*******************************************************************************</a>
+<span class="sourceLineNo">002</span><a id="line.2"> * Copyright (C) 2018, TIBCO Software Inc.</a>
+<span class="sourceLineNo">003</span><a id="line.3"> * </a>
+<span class="sourceLineNo">004</span><a id="line.4"> * Redistribution and use in source and binary forms, with or without</a>
+<span class="sourceLineNo">005</span><a id="line.5"> * modification, are permitted provided that the following conditions are met:</a>
+<span class="sourceLineNo">006</span><a id="line.6"> * </a>
+<span class="sourceLineNo">007</span><a id="line.7"> * 1. Redistributions of source code must retain the above copyright notice,</a>
+<span class="sourceLineNo">008</span><a id="line.8"> *    this list of conditions and the following disclaimer.</a>
+<span class="sourceLineNo">009</span><a id="line.9"> * </a>
+<span class="sourceLineNo">010</span><a id="line.10"> * 2. Redistributions in binary form must reproduce the above copyright notice,</a>
+<span class="sourceLineNo">011</span><a id="line.11"> *    this list of conditions and the following disclaimer in the documentation</a>
+<span class="sourceLineNo">012</span><a id="line.12"> *    and/or other materials provided with the distribution.</a>
+<span class="sourceLineNo">013</span><a id="line.13"> * </a>
+<span class="sourceLineNo">014</span><a id="line.14"> * 3. Neither the name of the copyright holder nor the names of its contributors</a>
+<span class="sourceLineNo">015</span><a id="line.15"> *    may be used to endorse or promote products derived from this software</a>
+<span class="sourceLineNo">016</span><a id="line.16"> *    without specific prior written permission.</a>
+<span class="sourceLineNo">017</span><a id="line.17"> * </a>
+<span class="sourceLineNo">018</span><a id="line.18"> * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"</a>
+<span class="sourceLineNo">019</span><a id="line.19"> * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE</a>
+<span class="sourceLineNo">020</span><a id="line.20"> * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE</a>
+<span class="sourceLineNo">021</span><a id="line.21"> * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE</a>
+<span class="sourceLineNo">022</span><a id="line.22"> * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR</a>
+<span class="sourceLineNo">023</span><a id="line.23"> * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF</a>
+<span class="sourceLineNo">024</span><a id="line.24"> * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS</a>
+<span class="sourceLineNo">025</span><a id="line.25"> * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN</a>
+<span class="sourceLineNo">026</span><a id="line.26"> * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)</a>
+<span class="sourceLineNo">027</span><a id="line.27"> * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE</a>
+<span class="sourceLineNo">028</span><a id="line.28"> * POSSIBILITY OF SUCH DAMAGE.</a>
+<span class="sourceLineNo">029</span><a id="line.29"> ******************************************************************************/</a>
+<span class="sourceLineNo">030</span><a id="line.30">package com.tibco.ep.buildmavenplugin.surefire;</a>
+<span class="sourceLineNo">031</span><a id="line.31"></a>
+<span class="sourceLineNo">032</span><a id="line.32">import java.io.File;</a>
+<span class="sourceLineNo">033</span><a id="line.33">import java.util.ArrayList;</a>
+<span class="sourceLineNo">034</span><a id="line.34">import java.util.Arrays;</a>
+<span class="sourceLineNo">035</span><a id="line.35">import java.util.List;</a>
+<span class="sourceLineNo">036</span><a id="line.36"></a>
+<span class="sourceLineNo">037</span><a id="line.37">import org.apache.maven.surefire.Surefire;</a>
+<span class="sourceLineNo">038</span><a id="line.38">import org.apache.maven.surefire.report.BriefConsoleReporter;</a>
+<span class="sourceLineNo">039</span><a id="line.39">import org.apache.maven.surefire.report.BriefFileReporter;</a>
+<span class="sourceLineNo">040</span><a id="line.40">import org.apache.maven.surefire.report.ReporterException;</a>
+<span class="sourceLineNo">041</span><a id="line.41">import org.apache.maven.surefire.report.XMLReporter;</a>
+<span class="sourceLineNo">042</span><a id="line.42">import org.apache.maven.surefire.testset.TestSetFailedException;</a>
+<span class="sourceLineNo">043</span><a id="line.43"></a>
+<span class="sourceLineNo">044</span><a id="line.44">/**</a>
+<span class="sourceLineNo">045</span><a id="line.45"> * Test runner invoked on the server by the Deployment plugin.</a>
+<span class="sourceLineNo">046</span><a id="line.46"> */</a>
+<span class="sourceLineNo">047</span><a id="line.47">public class Runner</a>
+<span class="sourceLineNo">048</span><a id="line.48">{</a>
+<span class="sourceLineNo">049</span><a id="line.49">    </a>
+<span class="sourceLineNo">050</span><a id="line.50">    protected final static String SYS_PROP_PREFIX = "com.tibco.";</a>
+<span class="sourceLineNo">051</span><a id="line.51">    protected final static String SYS_PROP_PREFIX_JUNIT_RESULTS_REPORTER = SYS_PROP_PREFIX + "junit.results.";</a>
+<span class="sourceLineNo">052</span><a id="line.52">    </a>
+<span class="sourceLineNo">053</span><a id="line.53">    /**</a>
+<span class="sourceLineNo">054</span><a id="line.54">     * system property for reports</a>
+<span class="sourceLineNo">055</span><a id="line.55">     */</a>
+<span class="sourceLineNo">056</span><a id="line.56">    protected final static String REPORTS_DIRECTORY = "com.tibco.reportsdirectory";</a>
+<span class="sourceLineNo">057</span><a id="line.57">    </a>
+<span class="sourceLineNo">058</span><a id="line.58">    /**</a>
+<span class="sourceLineNo">059</span><a id="line.59">     * system property for node name - defined in the runtime but this would be an adanced definition</a>
+<span class="sourceLineNo">060</span><a id="line.60">     */</a>
+<span class="sourceLineNo">061</span><a id="line.61">    protected final static String NODE_NAME = "com.kabira.platform.node.name";</a>
+<span class="sourceLineNo">062</span><a id="line.62">    </a>
+<span class="sourceLineNo">063</span><a id="line.63">    /**</a>
+<span class="sourceLineNo">064</span><a id="line.64">     * cobertura sub directory</a>
+<span class="sourceLineNo">065</span><a id="line.65">     */</a>
+<span class="sourceLineNo">066</span><a id="line.66">    protected final static String COBERTURA_DIR = "cobertura";</a>
+<span class="sourceLineNo">067</span><a id="line.67">    </a>
+<span class="sourceLineNo">068</span><a id="line.68">    /**</a>
+<span class="sourceLineNo">069</span><a id="line.69">     * cobertura results file</a>
+<span class="sourceLineNo">070</span><a id="line.70">     */</a>
+<span class="sourceLineNo">071</span><a id="line.71">    protected final static String COBERTURA_RESULTS = "cobertura.ser";</a>
+<span class="sourceLineNo">072</span><a id="line.72">    </a>
+<span class="sourceLineNo">073</span><a id="line.73">    /**</a>
+<span class="sourceLineNo">074</span><a id="line.74">     * Main method to run a set of unit tests on the node.</a>
+<span class="sourceLineNo">075</span><a id="line.75">     * </a>
+<span class="sourceLineNo">076</span><a id="line.76">     * @param args</a>
+<span class="sourceLineNo">077</span><a id="line.77">     *            a series of unit test class names</a>
+<span class="sourceLineNo">078</span><a id="line.78">     * @throws ReporterException Reporting error</a>
+<span class="sourceLineNo">079</span><a id="line.79">     * @throws TestSetFailedException  Test failure</a>
+<span class="sourceLineNo">080</span><a id="line.80">     */</a>
+<span class="sourceLineNo">081</span><a id="line.81">    public static void main(String[] args) throws ReporterException, TestSetFailedException {</a>
+<span class="sourceLineNo">082</span><a id="line.82"></a>
+<span class="sourceLineNo">083</span><a id="line.83">        // parse argumnets</a>
+<span class="sourceLineNo">084</span><a id="line.84">        //</a>
+<span class="sourceLineNo">085</span><a id="line.85">        // arg[0] "true" to use system exit on success, false otherwise</a>
+<span class="sourceLineNo">086</span><a id="line.86">        // args[1]+ contains junit test cases</a>
+<span class="sourceLineNo">087</span><a id="line.87">        //</a>
+<span class="sourceLineNo">088</span><a id="line.88">        boolean useSystemExit = Boolean.parseBoolean(args[0]);</a>
+<span class="sourceLineNo">089</span><a id="line.89"></a>
+<span class="sourceLineNo">090</span><a id="line.90">        List&lt;Object[]&gt; reportDefinition = new ArrayList&lt;Object[]&gt;();</a>
+<span class="sourceLineNo">091</span><a id="line.91">        List&lt;Object&gt; testSuites = new ArrayList&lt;&gt;();</a>
+<span class="sourceLineNo">092</span><a id="line.92">        Surefire surefire = new Surefire();</a>
+<span class="sourceLineNo">093</span><a id="line.93"></a>
+<span class="sourceLineNo">094</span><a id="line.94">        reportDefinition.add(new Object[] { BriefConsoleReporter.class.getName(), new Object[] { Boolean.TRUE } });</a>
+<span class="sourceLineNo">095</span><a id="line.95">        reportDefinition.add(new Object[] { XMLReporter.class.getName(), new Object[] { new File(System.getProperty(REPORTS_DIRECTORY)+File.separator+System.getProperty(NODE_NAME)), false } });</a>
+<span class="sourceLineNo">096</span><a id="line.96">        reportDefinition.add(new Object[] { BriefFileReporter.class.getName(), new Object[] { new File(System.getProperty(REPORTS_DIRECTORY)+File.separator+System.getProperty(NODE_NAME)), false } });</a>
+<span class="sourceLineNo">097</span><a id="line.97"></a>
+<span class="sourceLineNo">098</span><a id="line.98">        String[] testFileNames = null;</a>
+<span class="sourceLineNo">099</span><a id="line.99">        if (args.length &gt; 1) {</a>
+<span class="sourceLineNo">100</span><a id="line.100">            testFileNames = Arrays.copyOfRange(args, 1, args.length);</a>
+<span class="sourceLineNo">101</span><a id="line.101">        }</a>
+<span class="sourceLineNo">102</span><a id="line.102"></a>
+<span class="sourceLineNo">103</span><a id="line.103">        // ================ (Optionally) Set up the Reporter that sends test results to the Studio-side JUnit view ================</a>
+<span class="sourceLineNo">104</span><a id="line.104">        //</a>
+<span class="sourceLineNo">105</span><a id="line.105">        // If the "SYS_PROP_PREFIX_JUNIT_RESULTS_REPORTER + port" System property is assigned a valid port number,</a>
+<span class="sourceLineNo">106</span><a id="line.106">        // then that means an EclipseJUnitViewSocketReporter instance should be created,</a>
+<span class="sourceLineNo">107</span><a id="line.107">        // for the sake of sending Surefire test results to the JUnit view in Studio.</a>
+<span class="sourceLineNo">108</span><a id="line.108">        //</a>
+<span class="sourceLineNo">109</span><a id="line.109">        // For the sake of development-level testing, the constructor accepts two debug-output System property booleans.</a>
+<span class="sourceLineNo">110</span><a id="line.110">        // When true, "SYS_PROP_PREFIX_JUNIT_RESULTS_REPORTER + tracecalls" prints to stdout whenever a Reporter interface call is made.</a>
+<span class="sourceLineNo">111</span><a id="line.111">        // When true, "SYS_PROP_PREFIX_JUNIT_RESULTS_REPORTER + tracesocketmessages" prints to stdout a copy of the messages sent to the</a>
+<span class="sourceLineNo">112</span><a id="line.112">        // JUnit client via the Socket connection.</a>
+<span class="sourceLineNo">113</span><a id="line.113">        //</a>
+<span class="sourceLineNo">114</span><a id="line.114">        Integer testResultsPort = 0;</a>
+<span class="sourceLineNo">115</span><a id="line.115">        String testResultsPortString = System.getProperty(SYS_PROP_PREFIX_JUNIT_RESULTS_REPORTER + "port");</a>
+<span class="sourceLineNo">116</span><a id="line.116">        if (testResultsPortString != null) {</a>
+<span class="sourceLineNo">117</span><a id="line.117">            try {</a>
+<span class="sourceLineNo">118</span><a id="line.118">                testResultsPort = Integer.parseInt(testResultsPortString);</a>
+<span class="sourceLineNo">119</span><a id="line.119">            } catch (NumberFormatException e) {</a>
+<span class="sourceLineNo">120</span><a id="line.120">                // fall-through</a>
+<span class="sourceLineNo">121</span><a id="line.121">            }</a>
+<span class="sourceLineNo">122</span><a id="line.122">        }</a>
+<span class="sourceLineNo">123</span><a id="line.123">        if (testResultsPort.intValue() != 0) {</a>
+<span class="sourceLineNo">124</span><a id="line.124">            Boolean traceCalls = Boolean</a>
+<span class="sourceLineNo">125</span><a id="line.125">                    .parseBoolean(System.getProperty(SYS_PROP_PREFIX_JUNIT_RESULTS_REPORTER + "tracecalls"));</a>
+<span class="sourceLineNo">126</span><a id="line.126">            Boolean traceSocketMessages = Boolean</a>
+<span class="sourceLineNo">127</span><a id="line.127">                    .parseBoolean(System.getProperty(SYS_PROP_PREFIX_JUNIT_RESULTS_REPORTER + "tracesocketmessages"));</a>
+<span class="sourceLineNo">128</span><a id="line.128">            reportDefinition.add(new Object[] { EclipseJUnitViewSocketReporter.class.getName(),</a>
+<span class="sourceLineNo">129</span><a id="line.129">                    new Object[] { testResultsPort, traceCalls, traceSocketMessages, testFileNames } });</a>
+<span class="sourceLineNo">130</span><a id="line.130">        }</a>
+<span class="sourceLineNo">131</span><a id="line.131">        // ========================================================================================================================</a>
+<span class="sourceLineNo">132</span><a id="line.132"></a>
+<span class="sourceLineNo">133</span><a id="line.133"></a>
+<span class="sourceLineNo">134</span><a id="line.134">        // force coverage to a node-specific file</a>
+<span class="sourceLineNo">135</span><a id="line.135">        //</a>
+<span class="sourceLineNo">136</span><a id="line.136">        System.setProperty("net.sourceforge.cobertura.datafile", System.getProperty(REPORTS_DIRECTORY)+File.separator+COBERTURA_DIR+File.separator+System.getProperty(NODE_NAME)+"."+COBERTURA_RESULTS);</a>
+<span class="sourceLineNo">137</span><a id="line.137">        File reportDirectory = new File(System.getProperty(REPORTS_DIRECTORY)+File.separator+COBERTURA_DIR);</a>
+<span class="sourceLineNo">138</span><a id="line.138">        if (!reportDirectory.exists()) {</a>
+<span class="sourceLineNo">139</span><a id="line.139">            // we could run this in locker but it seems safe to just ignore mkdirs if already created</a>
+<span class="sourceLineNo">140</span><a id="line.140">            reportDirectory.mkdirs();</a>
+<span class="sourceLineNo">141</span><a id="line.141">        }</a>
+<span class="sourceLineNo">142</span><a id="line.142"></a>
+<span class="sourceLineNo">143</span><a id="line.143">        if (args.length == 1) {</a>
+<span class="sourceLineNo">144</span><a id="line.144">            // FIX THIS - this shouldn't happen if called correctly from maven</a>
+<span class="sourceLineNo">145</span><a id="line.145">            //</a>
+<span class="sourceLineNo">146</span><a id="line.146">            String[] tclasses = new String[1];</a>
+<span class="sourceLineNo">147</span><a id="line.147">            testSuites.add(new Object[] { TestSuite.class.getName(), new Object[] { tclasses } });</a>
+<span class="sourceLineNo">148</span><a id="line.148">        } else {</a>
+<span class="sourceLineNo">149</span><a id="line.149">            testSuites.add(new Object[] { TestSuite.class.getName(), new Object[] { Arrays.copyOfRange(args, 1, args.length) } });</a>
+<span class="sourceLineNo">150</span><a id="line.150">        }</a>
+<span class="sourceLineNo">151</span><a id="line.151"></a>
+<span class="sourceLineNo">152</span><a id="line.152">        // FIX THIS: does not respect "failIfNoTests" parameter</a>
+<span class="sourceLineNo">153</span><a id="line.153"></a>
+<span class="sourceLineNo">154</span><a id="line.154">        ClassLoader.getSystemClassLoader().setDefaultAssertionStatus(true);</a>
+<span class="sourceLineNo">155</span><a id="line.155"></a>
+<span class="sourceLineNo">156</span><a id="line.156">        // Surefire....sigh. The run() method is not documented, but zero</a>
+<span class="sourceLineNo">157</span><a id="line.157">        // indicates SUCCESS. (The const is private so you'll have to trust me)</a>
+<span class="sourceLineNo">158</span><a id="line.158">        int retval = surefire.run(reportDefinition, testSuites, ClassLoader.getSystemClassLoader(),</a>
+<span class="sourceLineNo">159</span><a id="line.159">                ClassLoader.getSystemClassLoader(), Boolean.TRUE);</a>
+<span class="sourceLineNo">160</span><a id="line.160"></a>
+<span class="sourceLineNo">161</span><a id="line.161">        if (useSystemExit || retval != 0) {</a>
+<span class="sourceLineNo">162</span><a id="line.162">            System.exit(retval);</a>
+<span class="sourceLineNo">163</span><a id="line.163">        }</a>
+<span class="sourceLineNo">164</span><a id="line.164">    }</a>
+<span class="sourceLineNo">165</span><a id="line.165">}</a>
 
 
 
@@ -233,5 +234,6 @@
 
 </pre>
 </div>
+</main>
 </body>
 </html>

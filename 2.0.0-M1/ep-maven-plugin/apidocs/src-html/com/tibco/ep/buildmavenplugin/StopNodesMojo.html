@@ -39,13 +39,13 @@
 <span class="sourceLineNo">030</span><a id="line.30">package com.tibco.ep.buildmavenplugin;</a>
 <span class="sourceLineNo">031</span><a id="line.31"></a>
 <span class="sourceLineNo">032</span><a id="line.32">import java.io.File;</a>
-<span class="sourceLineNo">033</span><a id="line.33">import java.util.Properties;</a>
-<span class="sourceLineNo">034</span><a id="line.34"></a>
-<span class="sourceLineNo">035</span><a id="line.35">import org.apache.maven.model.PluginExecution;</a>
-<span class="sourceLineNo">036</span><a id="line.36">import org.apache.maven.plugin.MojoExecutionException;</a>
-<span class="sourceLineNo">037</span><a id="line.37">import org.apache.maven.plugins.annotations.Mojo;</a>
-<span class="sourceLineNo">038</span><a id="line.38">import org.apache.maven.plugins.annotations.Parameter;</a>
-<span class="sourceLineNo">039</span><a id="line.39"></a>
+<span class="sourceLineNo">033</span><a id="line.33">import java.util.Map;</a>
+<span class="sourceLineNo">034</span><a id="line.34">import java.util.Properties;</a>
+<span class="sourceLineNo">035</span><a id="line.35"></a>
+<span class="sourceLineNo">036</span><a id="line.36">import org.apache.maven.model.PluginExecution;</a>
+<span class="sourceLineNo">037</span><a id="line.37">import org.apache.maven.plugin.MojoExecutionException;</a>
+<span class="sourceLineNo">038</span><a id="line.38">import org.apache.maven.plugins.annotations.Mojo;</a>
+<span class="sourceLineNo">039</span><a id="line.39">import org.apache.maven.plugins.annotations.Parameter;</a>
 <span class="sourceLineNo">040</span><a id="line.40"></a>
 <span class="sourceLineNo">041</span><a id="line.41">/**</a>
 <span class="sourceLineNo">042</span><a id="line.42"> * &lt;p&gt;Stop and remove nodes.&lt;/p&gt;</a>
@@ -72,167 +72,151 @@
 <span class="sourceLineNo">063</span><a id="line.63">    boolean skipStop;</a>
 <span class="sourceLineNo">064</span><a id="line.64"></a>
 <span class="sourceLineNo">065</span><a id="line.65">    /**</a>
-<span class="sourceLineNo">066</span><a id="line.66">     * &lt;p&gt;Set this to 'true' to skip running tests, but still compile them.&lt;/p&gt;</a>
+<span class="sourceLineNo">066</span><a id="line.66">     * &lt;p&gt;Set this to 'true' to skip removing test nodes&lt;/p&gt;</a>
 <span class="sourceLineNo">067</span><a id="line.67">     * </a>
 <span class="sourceLineNo">068</span><a id="line.68">     * &lt;p&gt;Example use in pom.xml:&lt;/p&gt;</a>
-<span class="sourceLineNo">069</span><a id="line.69">     * &lt;img src="uml/start-nodes-skipTests.svg" alt="pom"&gt;</a>
+<span class="sourceLineNo">069</span><a id="line.69">     * &lt;img src="uml/stop-nodes-skipRemove.svg" alt="pom"&gt;</a>
 <span class="sourceLineNo">070</span><a id="line.70">     * </a>
 <span class="sourceLineNo">071</span><a id="line.71">     * &lt;p&gt;Example use on commandline:&lt;/p&gt;</a>
-<span class="sourceLineNo">072</span><a id="line.72">     * &lt;img src="uml/start-nodes-skipTests-commandline.svg" alt="pom"&gt;</a>
+<span class="sourceLineNo">072</span><a id="line.72">     * &lt;img src="uml/stop-nodes-skipRemove-commandline.svg" alt="pom"&gt;</a>
 <span class="sourceLineNo">073</span><a id="line.73">     * </a>
 <span class="sourceLineNo">074</span><a id="line.74">     * @since 1.0.0</a>
 <span class="sourceLineNo">075</span><a id="line.75">     */</a>
-<span class="sourceLineNo">076</span><a id="line.76">    @Parameter(property = "skipTests")</a>
-<span class="sourceLineNo">077</span><a id="line.77">    boolean skipTests;</a>
+<span class="sourceLineNo">076</span><a id="line.76">    @Parameter(property = "skipRemove", defaultValue="false")</a>
+<span class="sourceLineNo">077</span><a id="line.77">    boolean skipRemove;</a>
 <span class="sourceLineNo">078</span><a id="line.78">    </a>
 <span class="sourceLineNo">079</span><a id="line.79">    /**</a>
-<span class="sourceLineNo">080</span><a id="line.80">     * &lt;p&gt;Set this to 'true' to skip removing test nodes&lt;/p&gt;</a>
+<span class="sourceLineNo">080</span><a id="line.80">     * Set this to 'false' to ignore errors on node stop</a>
 <span class="sourceLineNo">081</span><a id="line.81">     * </a>
 <span class="sourceLineNo">082</span><a id="line.82">     * &lt;p&gt;Example use in pom.xml:&lt;/p&gt;</a>
-<span class="sourceLineNo">083</span><a id="line.83">     * &lt;img src="uml/stop-nodes-skipRemove.svg" alt="pom"&gt;</a>
+<span class="sourceLineNo">083</span><a id="line.83">     * &lt;img src="uml/stop-nodes-failOnStopError.svg" alt="pom"&gt;</a>
 <span class="sourceLineNo">084</span><a id="line.84">     * </a>
 <span class="sourceLineNo">085</span><a id="line.85">     * &lt;p&gt;Example use on commandline:&lt;/p&gt;</a>
-<span class="sourceLineNo">086</span><a id="line.86">     * &lt;img src="uml/stop-nodes-skipRemove-commandline.svg" alt="pom"&gt;</a>
+<span class="sourceLineNo">086</span><a id="line.86">     * &lt;img src="uml/stop-nodes-failOnStopError-commandline.svg" alt="pom"&gt;</a>
 <span class="sourceLineNo">087</span><a id="line.87">     * </a>
 <span class="sourceLineNo">088</span><a id="line.88">     * @since 1.0.0</a>
 <span class="sourceLineNo">089</span><a id="line.89">     */</a>
-<span class="sourceLineNo">090</span><a id="line.90">    @Parameter(property = "skipRemove", defaultValue="false")</a>
-<span class="sourceLineNo">091</span><a id="line.91">    boolean skipRemove;</a>
-<span class="sourceLineNo">092</span><a id="line.92"></a>
+<span class="sourceLineNo">090</span><a id="line.90">    @Parameter(property = "failOnStopError", defaultValue="true")</a>
+<span class="sourceLineNo">091</span><a id="line.91">    boolean failOnStopError;</a>
+<span class="sourceLineNo">092</span><a id="line.92">    </a>
 <span class="sourceLineNo">093</span><a id="line.93">    /**</a>
-<span class="sourceLineNo">094</span><a id="line.94">     * &lt;p&gt;Set this to 'true' to only install nodes&lt;/p&gt;</a>
-<span class="sourceLineNo">095</span><a id="line.95">     * </a>
-<span class="sourceLineNo">096</span><a id="line.96">     * &lt;p&gt;Example use in pom.xml:&lt;/p&gt;</a>
-<span class="sourceLineNo">097</span><a id="line.97">     * &lt;img src="uml/start-nodes-installOnly.svg" alt="pom"&gt;</a>
-<span class="sourceLineNo">098</span><a id="line.98">     * </a>
-<span class="sourceLineNo">099</span><a id="line.99">     * &lt;p&gt;Example use on commandline:&lt;/p&gt;</a>
-<span class="sourceLineNo">100</span><a id="line.100">     * &lt;img src="uml/start-nodes-installOnly-commandline.svg" alt="pom"&gt;</a>
-<span class="sourceLineNo">101</span><a id="line.101">     * </a>
-<span class="sourceLineNo">102</span><a id="line.102">     * @since 1.1.0</a>
-<span class="sourceLineNo">103</span><a id="line.103">     */</a>
-<span class="sourceLineNo">104</span><a id="line.104">    @Parameter(property = "installOnly")</a>
-<span class="sourceLineNo">105</span><a id="line.105">    boolean installOnly;</a>
-<span class="sourceLineNo">106</span><a id="line.106">    </a>
-<span class="sourceLineNo">107</span><a id="line.107">    /**</a>
-<span class="sourceLineNo">108</span><a id="line.108">     * Set this to 'false' to ignore errors on node stop</a>
-<span class="sourceLineNo">109</span><a id="line.109">     * </a>
-<span class="sourceLineNo">110</span><a id="line.110">     * &lt;p&gt;Example use in pom.xml:&lt;/p&gt;</a>
-<span class="sourceLineNo">111</span><a id="line.111">     * &lt;img src="uml/stop-nodes-failOnStopError.svg" alt="pom"&gt;</a>
-<span class="sourceLineNo">112</span><a id="line.112">     * </a>
-<span class="sourceLineNo">113</span><a id="line.113">     * &lt;p&gt;Example use on commandline:&lt;/p&gt;</a>
-<span class="sourceLineNo">114</span><a id="line.114">     * &lt;img src="uml/stop-nodes-failOnStopError-commandline.svg" alt="pom"&gt;</a>
-<span class="sourceLineNo">115</span><a id="line.115">     * </a>
-<span class="sourceLineNo">116</span><a id="line.116">     * @since 1.0.0</a>
-<span class="sourceLineNo">117</span><a id="line.117">     */</a>
-<span class="sourceLineNo">118</span><a id="line.118">    @Parameter(property = "failOnStopError", defaultValue="true")</a>
-<span class="sourceLineNo">119</span><a id="line.119">    boolean failOnStopError;</a>
-<span class="sourceLineNo">120</span><a id="line.120">    </a>
-<span class="sourceLineNo">121</span><a id="line.121">    /**</a>
-<span class="sourceLineNo">122</span><a id="line.122">     * &lt;p&gt;List of node names to start ready for test cases to run.  If not set, a</a>
-<span class="sourceLineNo">123</span><a id="line.123">     * single node &lt;b&gt;A&lt;/b&gt; is used.&lt;/p&gt;</a>
-<span class="sourceLineNo">124</span><a id="line.124">     * </a>
-<span class="sourceLineNo">125</span><a id="line.125">     * &lt;p&gt;Example use in pom.xml:&lt;/p&gt;</a>
-<span class="sourceLineNo">126</span><a id="line.126">     * &lt;img src="uml/start-nodes-nodes.svg" alt="pom"&gt;</a>
-<span class="sourceLineNo">127</span><a id="line.127">     * </a>
-<span class="sourceLineNo">128</span><a id="line.128">     * @since 1.0.0</a>
-<span class="sourceLineNo">129</span><a id="line.129">     */</a>
-<span class="sourceLineNo">130</span><a id="line.130">    @Parameter</a>
-<span class="sourceLineNo">131</span><a id="line.131">    String[] nodes = new String[] {"A"};</a>
-<span class="sourceLineNo">132</span><a id="line.132"></a>
-<span class="sourceLineNo">133</span><a id="line.133">    /**</a>
-<span class="sourceLineNo">134</span><a id="line.134">     * Installation path - overrides servicename, nodes are ignored</a>
-<span class="sourceLineNo">135</span><a id="line.135">     *</a>
-<span class="sourceLineNo">136</span><a id="line.136">     * @since 1.6.0</a>
-<span class="sourceLineNo">137</span><a id="line.137">     */</a>
-<span class="sourceLineNo">138</span><a id="line.138">    @Parameter</a>
-<span class="sourceLineNo">139</span><a id="line.139">    String installPath;</a>
-<span class="sourceLineNo">140</span><a id="line.140">    </a>
-<span class="sourceLineNo">141</span><a id="line.141">    public void execute() throws MojoExecutionException {</a>
-<span class="sourceLineNo">142</span><a id="line.142">        getLog().debug("Stop nodes");</a>
-<span class="sourceLineNo">143</span><a id="line.143"></a>
-<span class="sourceLineNo">144</span><a id="line.144">        prechecks();</a>
-<span class="sourceLineNo">145</span><a id="line.145"></a>
-<span class="sourceLineNo">146</span><a id="line.146">        Properties modelProperties = project.getModel().getProperties();</a>
-<span class="sourceLineNo">147</span><a id="line.147">        boolean testCasesFound = true;</a>
-<span class="sourceLineNo">148</span><a id="line.148">        if (modelProperties.getProperty(TESTCASESFOUND_PROPERTY) != null &amp;&amp; modelProperties.getProperty(TESTCASESFOUND_PROPERTY).equals("false")) {</a>
-<span class="sourceLineNo">149</span><a id="line.149">            testCasesFound = false;</a>
-<span class="sourceLineNo">150</span><a id="line.150">        }</a>
-<span class="sourceLineNo">151</span><a id="line.151">        </a>
-<span class="sourceLineNo">152</span><a id="line.152">        boolean clean = false;</a>
-<span class="sourceLineNo">153</span><a id="line.153">        if (execution.getLifecyclePhase() != null &amp;&amp; (execution.getLifecyclePhase().equals("clean") || execution.getLifecyclePhase().equals("pre-clean"))) {</a>
-<span class="sourceLineNo">154</span><a id="line.154">            clean = true;</a>
-<span class="sourceLineNo">155</span><a id="line.155">        }</a>
-<span class="sourceLineNo">156</span><a id="line.156">        </a>
-<span class="sourceLineNo">157</span><a id="line.157">        // determine if we have executions steps in the pom - if so we can skip id this</a>
-<span class="sourceLineNo">158</span><a id="line.158">        // run is a default one</a>
-<span class="sourceLineNo">159</span><a id="line.159">        //</a>
-<span class="sourceLineNo">160</span><a id="line.160">        boolean hasExecutions = false;</a>
-<span class="sourceLineNo">161</span><a id="line.161">        if (mojoExecution.getPlugin() != null &amp;&amp; mojoExecution.getPlugin().getExecutions() != null) {</a>
-<span class="sourceLineNo">162</span><a id="line.162">            for (PluginExecution p : mojoExecution.getPlugin().getExecutions()) {</a>
-<span class="sourceLineNo">163</span><a id="line.163">                if (!p.getId().startsWith("default-")) {</a>
-<span class="sourceLineNo">164</span><a id="line.164">                    hasExecutions = true;</a>
-<span class="sourceLineNo">165</span><a id="line.165">                }</a>
-<span class="sourceLineNo">166</span><a id="line.166">            }</a>
-<span class="sourceLineNo">167</span><a id="line.167">        }</a>
-<span class="sourceLineNo">168</span><a id="line.168">        </a>
-<span class="sourceLineNo">169</span><a id="line.169">        if (!clean &amp;&amp; (</a>
-<span class="sourceLineNo">170</span><a id="line.170">                (hasExecutions &amp;&amp; mojoExecution.getExecutionId().startsWith("default-")) || skipTests || installOnly || !testCasesFound)) {</a>
-<span class="sourceLineNo">171</span><a id="line.171">            getLog().info("Stop and remove nodes is skipped (skipTests="+skipTests+",hasExecutions="+hasExecutions+",testCasesFound="+testCasesFound+",installOnly="+installOnly+",phase="+execution.getLifecyclePhase()+")");</a>
-<span class="sourceLineNo">172</span><a id="line.172">            return;</a>
-<span class="sourceLineNo">173</span><a id="line.173">        }</a>
-<span class="sourceLineNo">174</span><a id="line.174"></a>
-<span class="sourceLineNo">175</span><a id="line.175">        ErrorHandling errorHandling = (failOnStopError ? ErrorHandling.FAIL : ErrorHandling.IGNORE);</a>
-<span class="sourceLineNo">176</span><a id="line.176">        if (clean) {</a>
-<span class="sourceLineNo">177</span><a id="line.177">            errorHandling = ErrorHandling.IGNORE;</a>
-<span class="sourceLineNo">178</span><a id="line.178">        }</a>
-<span class="sourceLineNo">179</span><a id="line.179"></a>
-<span class="sourceLineNo">180</span><a id="line.180">        if (!initializeService(PlatformService.ADMINISTRATION, errorHandling)) {</a>
-<span class="sourceLineNo">181</span><a id="line.181"></a>
-<span class="sourceLineNo">182</span><a id="line.182">            assert errorHandling == ErrorHandling.IGNORE;</a>
-<span class="sourceLineNo">183</span><a id="line.183"></a>
-<span class="sourceLineNo">184</span><a id="line.184">            //  We could not initialize.</a>
-<span class="sourceLineNo">185</span><a id="line.185">            //</a>
-<span class="sourceLineNo">186</span><a id="line.186">            return;</a>
-<span class="sourceLineNo">187</span><a id="line.187">        }</a>
-<span class="sourceLineNo">188</span><a id="line.188"></a>
-<span class="sourceLineNo">189</span><a id="line.189">        // shut down</a>
-<span class="sourceLineNo">190</span><a id="line.190">        //</a>
-<span class="sourceLineNo">191</span><a id="line.191">        if (skipStop) {</a>
-<span class="sourceLineNo">192</span><a id="line.192">            getLog().info("Stop nodes is skipped");</a>
-<span class="sourceLineNo">193</span><a id="line.193">        } else {</a>
-<span class="sourceLineNo">194</span><a id="line.194">            for (int i=0; i&lt;nodes.length; i++) {</a>
-<span class="sourceLineNo">195</span><a id="line.195">                String nodeName = nodes[i]+"."+clusterName;</a>
-<span class="sourceLineNo">196</span><a id="line.196">                if (new File(nodeDirectory, nodeName).exists()) {</a>
-<span class="sourceLineNo">197</span><a id="line.197">                    stopNodes(nodeName, errorHandling);</a>
-<span class="sourceLineNo">198</span><a id="line.198">                }</a>
-<span class="sourceLineNo">199</span><a id="line.199">            }</a>
-<span class="sourceLineNo">200</span><a id="line.200">        }</a>
-<span class="sourceLineNo">201</span><a id="line.201"></a>
-<span class="sourceLineNo">202</span><a id="line.202">        if (skipRemove || skipStop) {</a>
-<span class="sourceLineNo">203</span><a id="line.203">            getLog().info("Remove nodes is skipped");</a>
-<span class="sourceLineNo">204</span><a id="line.204">            return;</a>
-<span class="sourceLineNo">205</span><a id="line.205">        }</a>
-<span class="sourceLineNo">206</span><a id="line.206"></a>
-<span class="sourceLineNo">207</span><a id="line.207">        // remove nodes</a>
-<span class="sourceLineNo">208</span><a id="line.208">        //</a>
-<span class="sourceLineNo">209</span><a id="line.209">        if (installPath != null) {</a>
-<span class="sourceLineNo">210</span><a id="line.210">            removeNode(installPath, errorHandling);</a>
-<span class="sourceLineNo">211</span><a id="line.211">        } else {</a>
-<span class="sourceLineNo">212</span><a id="line.212">            for (String node : nodes) {</a>
-<span class="sourceLineNo">213</span><a id="line.213">                String nodeName = node + "." + clusterName;</a>
-<span class="sourceLineNo">214</span><a id="line.214">                if (new File(nodeDirectory, nodeName).exists()) {</a>
-<span class="sourceLineNo">215</span><a id="line.215">                    try {</a>
-<span class="sourceLineNo">216</span><a id="line.216">                        removeNodes(nodeName, errorHandling);</a>
-<span class="sourceLineNo">217</span><a id="line.217">                    } catch (MojoExecutionException e) {</a>
-<span class="sourceLineNo">218</span><a id="line.218">                        removeNode(new File(nodeDirectory, nodeName)</a>
-<span class="sourceLineNo">219</span><a id="line.219">                            .getAbsolutePath(), errorHandling);</a>
-<span class="sourceLineNo">220</span><a id="line.220">                    }</a>
-<span class="sourceLineNo">221</span><a id="line.221">                }</a>
-<span class="sourceLineNo">222</span><a id="line.222">            }</a>
-<span class="sourceLineNo">223</span><a id="line.223">        }</a>
-<span class="sourceLineNo">224</span><a id="line.224"></a>
-<span class="sourceLineNo">225</span><a id="line.225">    }</a>
-<span class="sourceLineNo">226</span><a id="line.226">}</a>
+<span class="sourceLineNo">094</span><a id="line.94">     * &lt;p&gt;List of node names.  If not set, a</a>
+<span class="sourceLineNo">095</span><a id="line.95">     * single node &lt;b&gt;A&lt;/b&gt; is used.&lt;/p&gt;</a>
+<span class="sourceLineNo">096</span><a id="line.96">     * </a>
+<span class="sourceLineNo">097</span><a id="line.97">     * &lt;p&gt;Example use in pom.xml:&lt;/p&gt;</a>
+<span class="sourceLineNo">098</span><a id="line.98">     * &lt;img src="uml/start-nodes-nodes.svg" alt="pom"&gt;</a>
+<span class="sourceLineNo">099</span><a id="line.99">     * </a>
+<span class="sourceLineNo">100</span><a id="line.100">     * @since 1.0.0</a>
+<span class="sourceLineNo">101</span><a id="line.101">     */</a>
+<span class="sourceLineNo">102</span><a id="line.102">    @Parameter</a>
+<span class="sourceLineNo">103</span><a id="line.103">    String[] nodes = new String[] {"A"};</a>
+<span class="sourceLineNo">104</span><a id="line.104"></a>
+<span class="sourceLineNo">105</span><a id="line.105">    /**</a>
+<span class="sourceLineNo">106</span><a id="line.106">     * Node installation path - overrides servicename, nodes are ignored</a>
+<span class="sourceLineNo">107</span><a id="line.107">     *</a>
+<span class="sourceLineNo">108</span><a id="line.108">     * @since 1.6.0</a>
+<span class="sourceLineNo">109</span><a id="line.109">     */</a>
+<span class="sourceLineNo">110</span><a id="line.110">    @Parameter</a>
+<span class="sourceLineNo">111</span><a id="line.111">    String installPath;</a>
+<span class="sourceLineNo">112</span><a id="line.112">    </a>
+<span class="sourceLineNo">113</span><a id="line.113">    // not used here so skip in docs</a>
+<span class="sourceLineNo">114</span><a id="line.114">    @Parameter(readonly = true)</a>
+<span class="sourceLineNo">115</span><a id="line.115">    BuldType buildtype;</a>
+<span class="sourceLineNo">116</span><a id="line.116">    @Parameter(readonly = true)</a>
+<span class="sourceLineNo">117</span><a id="line.117">    Map&lt;String, String&gt; environmentVariables;</a>
+<span class="sourceLineNo">118</span><a id="line.118">    @Parameter(readonly = true)</a>
+<span class="sourceLineNo">119</span><a id="line.119">    String[] ignoreLeaks;</a>
+<span class="sourceLineNo">120</span><a id="line.120">    @Parameter(property = "skipTests", readonly = true)</a>
+<span class="sourceLineNo">121</span><a id="line.121">    boolean skipTests;</a>
+<span class="sourceLineNo">122</span><a id="line.122">    @Parameter(readonly = true, property = "installOnly")</a>
+<span class="sourceLineNo">123</span><a id="line.123">    boolean installOnly;</a>
+<span class="sourceLineNo">124</span><a id="line.124">    </a>
+<span class="sourceLineNo">125</span><a id="line.125">    public void execute() throws MojoExecutionException {</a>
+<span class="sourceLineNo">126</span><a id="line.126">        getLog().debug("Stop nodes");</a>
+<span class="sourceLineNo">127</span><a id="line.127"></a>
+<span class="sourceLineNo">128</span><a id="line.128">        prechecks();</a>
+<span class="sourceLineNo">129</span><a id="line.129"></a>
+<span class="sourceLineNo">130</span><a id="line.130">        Properties modelProperties = project.getModel().getProperties();</a>
+<span class="sourceLineNo">131</span><a id="line.131">        boolean testCasesFound = true;</a>
+<span class="sourceLineNo">132</span><a id="line.132">        if (modelProperties.getProperty(TESTCASESFOUND_PROPERTY) != null &amp;&amp; modelProperties.getProperty(TESTCASESFOUND_PROPERTY).equals("false")) {</a>
+<span class="sourceLineNo">133</span><a id="line.133">            testCasesFound = false;</a>
+<span class="sourceLineNo">134</span><a id="line.134">        }</a>
+<span class="sourceLineNo">135</span><a id="line.135">        </a>
+<span class="sourceLineNo">136</span><a id="line.136">        boolean clean = false;</a>
+<span class="sourceLineNo">137</span><a id="line.137">        if (execution.getLifecyclePhase() != null &amp;&amp; (execution.getLifecyclePhase().equals("clean") || execution.getLifecyclePhase().equals("pre-clean"))) {</a>
+<span class="sourceLineNo">138</span><a id="line.138">            clean = true;</a>
+<span class="sourceLineNo">139</span><a id="line.139">        }</a>
+<span class="sourceLineNo">140</span><a id="line.140">        </a>
+<span class="sourceLineNo">141</span><a id="line.141">        // determine if we have executions steps in the pom - if so we can skip id this</a>
+<span class="sourceLineNo">142</span><a id="line.142">        // run is a default one</a>
+<span class="sourceLineNo">143</span><a id="line.143">        //</a>
+<span class="sourceLineNo">144</span><a id="line.144">        boolean hasExecutions = false;</a>
+<span class="sourceLineNo">145</span><a id="line.145">        if (mojoExecution.getPlugin() != null &amp;&amp; mojoExecution.getPlugin().getExecutions() != null) {</a>
+<span class="sourceLineNo">146</span><a id="line.146">            for (PluginExecution p : mojoExecution.getPlugin().getExecutions()) {</a>
+<span class="sourceLineNo">147</span><a id="line.147">                if (!p.getId().startsWith("default-")) {</a>
+<span class="sourceLineNo">148</span><a id="line.148">                    hasExecutions = true;</a>
+<span class="sourceLineNo">149</span><a id="line.149">                }</a>
+<span class="sourceLineNo">150</span><a id="line.150">            }</a>
+<span class="sourceLineNo">151</span><a id="line.151">        }</a>
+<span class="sourceLineNo">152</span><a id="line.152">        </a>
+<span class="sourceLineNo">153</span><a id="line.153">        if (!clean &amp;&amp; (</a>
+<span class="sourceLineNo">154</span><a id="line.154">                (hasExecutions &amp;&amp; mojoExecution.getExecutionId().startsWith("default-")) || skipTests || installOnly || !testCasesFound)) {</a>
+<span class="sourceLineNo">155</span><a id="line.155">            getLog().info("Stop and remove nodes is skipped (skipTests="+skipTests+",hasExecutions="+hasExecutions+",testCasesFound="+testCasesFound+",installOnly="+installOnly+",phase="+execution.getLifecyclePhase()+")");</a>
+<span class="sourceLineNo">156</span><a id="line.156">            return;</a>
+<span class="sourceLineNo">157</span><a id="line.157">        }</a>
+<span class="sourceLineNo">158</span><a id="line.158"></a>
+<span class="sourceLineNo">159</span><a id="line.159">        ErrorHandling errorHandling = (failOnStopError ? ErrorHandling.FAIL : ErrorHandling.IGNORE);</a>
+<span class="sourceLineNo">160</span><a id="line.160">        if (clean) {</a>
+<span class="sourceLineNo">161</span><a id="line.161">            errorHandling = ErrorHandling.IGNORE;</a>
+<span class="sourceLineNo">162</span><a id="line.162">        }</a>
+<span class="sourceLineNo">163</span><a id="line.163"></a>
+<span class="sourceLineNo">164</span><a id="line.164">        if (!initializeService(PlatformService.ADMINISTRATION, errorHandling)) {</a>
+<span class="sourceLineNo">165</span><a id="line.165"></a>
+<span class="sourceLineNo">166</span><a id="line.166">            assert errorHandling == ErrorHandling.IGNORE;</a>
+<span class="sourceLineNo">167</span><a id="line.167"></a>
+<span class="sourceLineNo">168</span><a id="line.168">            //  We could not initialize.</a>
+<span class="sourceLineNo">169</span><a id="line.169">            //</a>
+<span class="sourceLineNo">170</span><a id="line.170">            return;</a>
+<span class="sourceLineNo">171</span><a id="line.171">        }</a>
+<span class="sourceLineNo">172</span><a id="line.172"></a>
+<span class="sourceLineNo">173</span><a id="line.173">        // shut down</a>
+<span class="sourceLineNo">174</span><a id="line.174">        //</a>
+<span class="sourceLineNo">175</span><a id="line.175">        if (skipStop) {</a>
+<span class="sourceLineNo">176</span><a id="line.176">            getLog().info("Stop nodes is skipped");</a>
+<span class="sourceLineNo">177</span><a id="line.177">        } else {</a>
+<span class="sourceLineNo">178</span><a id="line.178">            for (int i=0; i&lt;nodes.length; i++) {</a>
+<span class="sourceLineNo">179</span><a id="line.179">                String nodeName = nodes[i]+"."+clusterName;</a>
+<span class="sourceLineNo">180</span><a id="line.180">                if (new File(nodeDirectory, nodeName).exists()) {</a>
+<span class="sourceLineNo">181</span><a id="line.181">                    stopNodes(nodeName, errorHandling);</a>
+<span class="sourceLineNo">182</span><a id="line.182">                }</a>
+<span class="sourceLineNo">183</span><a id="line.183">            }</a>
+<span class="sourceLineNo">184</span><a id="line.184">        }</a>
+<span class="sourceLineNo">185</span><a id="line.185"></a>
+<span class="sourceLineNo">186</span><a id="line.186">        if (skipRemove || skipStop) {</a>
+<span class="sourceLineNo">187</span><a id="line.187">            getLog().info("Remove nodes is skipped");</a>
+<span class="sourceLineNo">188</span><a id="line.188">            return;</a>
+<span class="sourceLineNo">189</span><a id="line.189">        }</a>
+<span class="sourceLineNo">190</span><a id="line.190"></a>
+<span class="sourceLineNo">191</span><a id="line.191">        // remove nodes</a>
+<span class="sourceLineNo">192</span><a id="line.192">        //</a>
+<span class="sourceLineNo">193</span><a id="line.193">        if (installPath != null) {</a>
+<span class="sourceLineNo">194</span><a id="line.194">            removeNode(installPath, errorHandling);</a>
+<span class="sourceLineNo">195</span><a id="line.195">        } else {</a>
+<span class="sourceLineNo">196</span><a id="line.196">            for (String node : nodes) {</a>
+<span class="sourceLineNo">197</span><a id="line.197">                String nodeName = node + "." + clusterName;</a>
+<span class="sourceLineNo">198</span><a id="line.198">                if (new File(nodeDirectory, nodeName).exists()) {</a>
+<span class="sourceLineNo">199</span><a id="line.199">                    try {</a>
+<span class="sourceLineNo">200</span><a id="line.200">                        removeNodes(nodeName, errorHandling);</a>
+<span class="sourceLineNo">201</span><a id="line.201">                    } catch (MojoExecutionException e) {</a>
+<span class="sourceLineNo">202</span><a id="line.202">                        removeNode(new File(nodeDirectory, nodeName)</a>
+<span class="sourceLineNo">203</span><a id="line.203">                            .getAbsolutePath(), errorHandling);</a>
+<span class="sourceLineNo">204</span><a id="line.204">                    }</a>
+<span class="sourceLineNo">205</span><a id="line.205">                }</a>
+<span class="sourceLineNo">206</span><a id="line.206">            }</a>
+<span class="sourceLineNo">207</span><a id="line.207">        }</a>
+<span class="sourceLineNo">208</span><a id="line.208"></a>
+<span class="sourceLineNo">209</span><a id="line.209">    }</a>
+<span class="sourceLineNo">210</span><a id="line.210">}</a>
 
 
 
