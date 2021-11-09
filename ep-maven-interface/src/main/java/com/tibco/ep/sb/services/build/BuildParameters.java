@@ -43,15 +43,14 @@ public class BuildParameters {
 
     private final List<Path> compileClassPath = new ArrayList<>();
     private final List<Path> testClassPath = new ArrayList<>();
-
     private final List<Path> projectCompileClassPath = new ArrayList<>();
     private final List<Path> dependenciesCompileClassPath = new ArrayList<>();
     private final List<Path> projectTestCompileClassPath = new ArrayList<>();
     private final List<Path> dependenciesTestCompileClassPath = new ArrayList<>();
-
     private final List<Path> sourcePaths = new ArrayList<>();
     private final List<Path> testSourcePaths = new ArrayList<>();
     private final Map<String, String> compilerProperties = new HashMap<>();
+    private Path projectRootDirectory = null;
     private Path buildDirectory = null;
     private Path configurationDirectory = null;
     private Path testConfigurationDirectory = null;
@@ -61,6 +60,22 @@ public class BuildParameters {
      * Construct a new set of parameters
      */
     public BuildParameters() {
+    }
+
+    /**
+     * @param projectRootDirectory The project root directory
+     * @return This
+     */
+    public BuildParameters withProjectRootDirectory(Path projectRootDirectory) {
+        this.projectRootDirectory = projectRootDirectory;
+        return this;
+    }
+
+    /**
+     * @return The project root directory
+     */
+    public Path getProjectRootDirectory() {
+        return projectRootDirectory;
     }
 
     /**

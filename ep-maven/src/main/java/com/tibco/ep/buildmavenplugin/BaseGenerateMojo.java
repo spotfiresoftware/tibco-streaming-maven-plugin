@@ -188,6 +188,9 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
         try {
             buildParameters
+                .withProjectRootDirectory(project.getBasedir().toPath());
+
+            buildParameters
                 .withCompilerProperties(compilerProperties == null
                     ? new HashMap<>() : compilerProperties)
                 .withSourcePaths(toPathsCheckExist(eventflowDirectories))
@@ -202,12 +205,6 @@ public abstract class BaseGenerateMojo extends BaseMojo {
             buildParameters
                 .withDependenciesCompileClassPath(getDependencyClassPaths(BuildTarget.MAIN))
                 .withDependenciesTestCompileClassPath(getDependencyClassPaths(BuildTarget.TEST));
-
-            //  FIX THIS (FL): remove when SBRT has all parameters.
-            //
-            buildParameters
-                .withCompileClassPath(getCompileClassPath())
-                .withTestClassPath(getTestClassPath());
 
             buildParameters
                 .withConfigurationDirectory(configurationDirectory.toPath())

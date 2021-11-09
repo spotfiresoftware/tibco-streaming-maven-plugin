@@ -30,7 +30,7 @@
 
 checkSequence(new File(basedir, "build.log"),
         "[INFO] Found 3 modules",
-        "[INFO] Module com.tibco.test.first.MyFirstModule: code generation SUCCESS",
+        "[DEBUG] Module com.tibco.test.first.MyFirstModule: code generation SUCCESS",
         "[ERROR] Module com.tibco.test.second.MySecondModule: code generation FAILURE",
         "[ERROR]  [1] Error:",
         "[ERROR]  [2] Location:",
