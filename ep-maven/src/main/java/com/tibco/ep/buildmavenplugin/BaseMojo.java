@@ -340,6 +340,9 @@ abstract class BaseMojo extends AbstractMojo {
                         getLog().debug("Ignoring error", e);
                         return false;
                     }
+
+                    throw new MojoExecutionException(
+                        "Could not instantiate context for product home " + productHome, e);
                 }
                 if (getLog().isDebugEnabled()) {
                     context.withTracingEnabled();
