@@ -1,0 +1,190 @@
+# Goals
+
+* [Goals](#goals)
+* [Lifecycle bindings](#lifecycle-bindings)
+
+<a name="goals"></a>
+
+## Goals
+
+The maven goals available are :
+
+* [com.tibco.ep:ep-maven-plugin:package-java-fragment](${context.get("site.ep-maven-plugin.url")}/package-java-fragment-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:test-java-fragment](${context.get("site.ep-maven-plugin.url")}/test-java-fragment-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:package-eventflow-fragment](${context.get("site.ep-maven-plugin.url")}/package-eventflow-fragment-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:test-eventflow-fragment](${context.get("site.ep-maven-plugin.url")}/test-eventflow-fragment-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:package-tcs-fragment](${context.get("site.ep-maven-plugin.url")}/package-tcs-fragment-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:package-liveview-fragment](${context.get("site.ep-maven-plugin.url")}/package-liveview-fragment-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:test-liveview-fragment](${context.get("site.ep-maven-plugin.url")}/test-liveview-fragment-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:package-application](${context.get("site.ep-maven-plugin.url")}/package-application-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:start-nodes](${context.get("site.ep-maven-plugin.url")}/start-nodes-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:administer-nodes](${context.get("site.ep-maven-plugin.url")}/administer-nodes-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:deploy-fragment](${context.get("site.ep-maven-plugin.url")}/deploy-fragment-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:unpack-nar](${context.get("site.ep-maven-plugin.url")}/unpack-nar-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:unpack-fragment](${context.get("site.ep-maven-plugin.url")}/unpack-fragment-mojo.html)
+
+* [com.tibco.ep:ep-maven-plugin:check-testcases](${context.get("site.ep-maven-plugin.url")}/check-testcases-mojo.html)
+
+* [ep-maven-plugin:help](${context.get("site.ep-maven-plugin.url")}/help-mojo.html)
+
+<a name="lifecycle-bindings"></a>
+
+## Lifecycle bindings
+
+The maven plugin configures lifecycle bindings for the new packaging types as follows :
+  
+* Packaging *ep-java-fragment*
+
+Default lifecycle :
+  
+| phase                | goals |
+|----------------------|-------|
+| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](${context.get("site.ep-maven-plugin.url")}//set-resources-mojo.html)</br>
+| process-resources    | [org.apache.maven.plugins:maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/)
+| compile              | [org.apache.maven.plugins:maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)
+| process-test-resources | [org.apache.maven.plugins:maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/)
+| test-compile         | [org.apache.maven.plugins:maven-compiler-plugin:testCompile](https://maven.apache.org/plugins/maven-compiler-plugin/testCompile-mojo.html)
+| test                 | <br>[com.tibco.ep:ep-maven-plugin:check-testcases](${context.get("site.ep-maven-plugin.url")}/check-testcases-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:start-nodes](${context.get("site.ep-maven-plugin.url")}/start-nodes-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:test-java-fragment](${context.get("site.ep-maven-plugin.url")}/test-java-fragment-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html)</br>
+| package              | [com.tibco.ep:ep-maven-plugin:package-java-fragment](${context.get("site.ep-maven-plugin.url")}/package-java-fragment-mojo.html)
+| install              | [org.apache.maven.plugins:maven-install-plugin:install](https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html)
+| deploy               | [org.apache.maven.plugins:maven-deploy-plugin:deploy](https://maven.apache.org/plugins/maven-deploy-plugin/)
+
+Clean lifecycle :
+  
+| phase                | goals |
+|----------------------|-------|
+| pre-clean            | [com.tibco.ep:ep-maven-plugin:install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html)
+| clean                | <br>[com.tibco.ep:ep-maven-plugin:stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html),</br><br>[org.apache.maven.plugins:maven-clean-plugin:clean](https://maven.apache.org/plugins/maven-clean-plugin/clean-mojo.html)</br>
+
+* Packaging **jar**
+
+This is the same as ep-java-fragment, except a jar file is created instead of a fragment zip.
+  
+Default lifecycle :
+  
+| phase                | goals |
+|----------------------|-------|
+| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](${context.get("site.ep-maven-plugin.url")}/set-resources-mojo.html)</br>
+| process-resources    | [org.apache.maven.plugins:maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/)
+| compile              | [org.apache.maven.plugins:maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)
+| process-test-resources | [org.apache.maven.plugins:maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/)
+| test-compile         | [org.apache.maven.plugins:maven-compiler-plugin:testCompile](https://maven.apache.org/plugins/maven-compiler-plugin/testCompile-mojo.html)
+| test                 | <br>[com.tibco.ep:ep-maven-plugin:check-testcases](${context.get("site.ep-maven-plugin.url")}/check-testcases-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:start-nodes](${context.get("site.ep-maven-plugin.url")}/start-nodes-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:test-java-fragment](${context.get("site.ep-maven-plugin.url")}/test-java-fragment-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html)</br>
+| package              | [com.tibco.ep:ep-maven-plugin:package-java-fragment](${context.get("site.ep-maven-plugin.url")}/package-java-fragment-mojo.html)
+| install              | [org.apache.maven.plugins:maven-install-plugin:install](https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html)
+| deploy               | [org.apache.maven.plugins:maven-deploy-plugin:deploy](https://maven.apache.org/plugins/maven-deploy-plugin/)
+
+Clean lifecycle :
+  
+| phase                | goals |
+|----------------------|-------|
+| pre-clean            | [com.tibco.ep:ep-maven-plugin:install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html)
+| clean                | <br>[com.tibco.ep:ep-maven-plugin:stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html),</br><br>[org.apache.maven.plugins:maven-clean-plugin:clean](https://maven.apache.org/plugins/maven-clean-plugin/clean-mojo.html)</br>
+
+* Packaging **ep-eventflow-fragment**
+
+Default lifecycle :
+  
+| phase                | goals |
+|----------------------|-------|
+| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](${context.get("site.ep-maven-plugin.url")}/set-resources-mojo.html)</br>
+| process-resources    | [org.apache.maven.plugins:maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/)
+| compile              | <br>[com.tibco.ep:ep-maven-plugin:unpack-fragment](${context.get("site.ep-maven-plugin.url")}/unpack-fragment-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:unpack-nar](${context.get("site.ep-maven-plugin.url")}/unpack-nar-mojo.html),</br><br>[org.apache.maven.plugins:maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)</br>
+| process-test-resources | [org.apache.maven.plugins:maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/)
+| test-compile         | [org.apache.maven.plugins:maven-compiler-plugin:testCompile](https://maven.apache.org/plugins/maven-compiler-plugin/testCompile-mojo.html)
+| test                 | <br>[com.tibco.ep:ep-maven-plugin:check-testcases](${context.get("site.ep-maven-plugin.url")}/check-testcases-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:start-nodes](${context.get("site.ep-maven-plugin.url")}/start-nodes-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:test-eventflow-fragment](${context.get("site.ep-maven-plugin.url")}/test-eventflow-fragment-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html)</br>
+| package              | [com.tibco.ep:ep-maven-plugin:package-eventflow-fragment](${context.get("site.ep-maven-plugin.url")}/package-eventflow-fragment-mojo.html)
+| install              | [org.apache.maven.plugins:maven-install-plugin:install](https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html)
+| deploy               | [org.apache.maven.plugins:maven-deploy-plugin:deploy](https://maven.apache.org/plugins/maven-deploy-plugin/)
+
+Clean lifecycle :-
+  
+| phase                | goals |
+|----------------------|-------|
+| pre-clean            | [com.tibco.ep:ep-maven-plugin:install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html)
+| clean                | <br>[com.tibco.ep:ep-maven-plugin:stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html),</br><br>[org.apache.maven.plugins:maven-clean-plugin:clean](https://maven.apache.org/plugins/maven-clean-plugin/clean-mojo.html)</br>
+
+* Packaging **ep-tcs-fragment**
+
+Default lifecycle :
+  
+| phase                | goals |
+|----------------------|-------|
+| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](${context.get("site.ep-maven-plugin.url")}/set-resources-mojo.html)</br>
+| process-resources    | [org.apache.maven.plugins:maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/)
+| compile              | [org.apache.maven.plugins:maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)
+| process-test-resources | [org.apache.maven.plugins:maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/)
+| test-compile         | [org.apache.maven.plugins:maven-compiler-plugin:testCompile](https://maven.apache.org/plugins/maven-compiler-plugin/testCompile-mojo.html)
+| package              | [com.tibco.ep:ep-maven-plugin:package-tcs-fragment](${context.get("site.ep-maven-plugin.url")}/package-tcs-fragment-mojo.html)
+| install              | [org.apache.maven.plugins:maven-install-plugin:install](https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html)
+| deploy               | [org.apache.maven.plugins:maven-deploy-plugin:deploy](https://maven.apache.org/plugins/maven-deploy-plugin/)
+
+Clean lifecycle :-
+  
+| phase                | goals |
+|----------------------|-------|
+| pre-clean            | [com.tibco.ep:ep-maven-plugin:install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html)
+| clean                | <br>[com.tibco.ep:ep-maven-plugin:stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html),</br><br>[org.apache.maven.plugins:maven-clean-plugin:clean](https://maven.apache.org/plugins/maven-clean-plugin/clean-mojo.html)</br>
+
+* Packaging **ep-liveview-fragment**
+
+Default lifecycle :
+  
+| phase                | goals |
+|----------------------|-------|
+| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](${context.get("site.ep-maven-plugin.url")}/set-resources-mojo.html)</br>
+| process-resources    | [org.apache.maven.plugins:maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/)
+| compile              | <br>[com.tibco.ep:ep-maven-plugin:unpack-fragment](${context.get("site.ep-maven-plugin.url")}/unpack-fragment-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:unpack-nar](${context.get("site.ep-maven-plugin.url")}/unpack-nar-mojo.html),</br><br>[org.apache.maven.plugins:maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)</br>
+| process-test-resources | [org.apache.maven.plugins:maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/)
+| test-compile         | [org.apache.maven.plugins:maven-compiler-plugin:testCompile](https://maven.apache.org/plugins/maven-compiler-plugin/testCompile-mojo.html)
+| test                 | <br>[com.tibco.ep:ep-maven-plugin:check-testcases](${context.get("site.ep-maven-plugin.url")}/check-testcases-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:start-nodes](${context.get("site.ep-maven-plugin.url")}/start-nodes-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:test-liveview-fragment](${context.get("site.ep-maven-plugin.url")}/test-liveview-fragment-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html)</br>
+| package              | [com.tibco.ep:ep-maven-plugin:package-liveview-fragment](${context.get("site.ep-maven-plugin.url")}/package-liveview-fragment-mojo.html)
+| install              | [org.apache.maven.plugins:maven-install-plugin:install](https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html)
+| deploy               | [org.apache.maven.plugins:maven-deploy-plugin:deploy](https://maven.apache.org/plugins/maven-deploy-plugin/)
+
+Clean lifecycle :
+  
+| phase                | goals |
+|----------------------|-------|
+| pre-clean            | [com.tibco.ep:ep-maven-plugin:install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html)
+| clean                | <br>[com.tibco.ep:ep-maven-plugin:stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html),</br><br>[org.apache.maven.plugins:maven-clean-plugin:clean](https://maven.apache.org/plugins/maven-clean-plugin/clean-mojo.html)</br>
+
+* Packaging **ep-application**
+
+Default lifecycle :
+  
+| phase                | goals |
+|----------------------|-------|
+| validate             | <br>[com.tibco.ep:ep-maven-plugin:install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html),</br><br>[com.tibco.ep:ep-maven-plugin:set-resources](${context.get("site.ep-maven-plugin.url")}/set-resources-mojo.html)</br>
+| process-resources    | [org.apache.maven.plugins:maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/)
+| compile              | [org.apache.maven.plugins:maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)
+| process-test-resources | [org.apache.maven.plugins:maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/)
+| test-compile         | [org.apache.maven.plugins:maven-compiler-plugin:testCompile](https://maven.apache.org/plugins/maven-compiler-plugin/testCompile-mojo.html)
+| package              | [com.tibco.ep:ep-maven-plugin:package-application](${context.get("site.ep-maven-plugin.url")}/package-application-mojo.html)
+| pre-integration-test | [com.tibco.ep:ep-maven-plugin:start-nodes](${context.get("site.ep-maven-plugin.url")}/start-nodes-mojo.html)
+| post-integration-test| [com.tibco.ep:ep-maven-plugin:stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html)
+| install              | [org.apache.maven.plugins:maven-install-plugin:install](https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html)
+| deploy               | [org.apache.maven.plugins:maven-deploy-plugin:deploy](https://maven.apache.org/plugins/maven-deploy-plugin/)
+
+Clean lifecycle :
+  
+| phase                | goals |
+|----------------------|-------|
+| pre-clean            | [com.tibco.ep:ep-maven-plugin:install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html)
+| clean                | <br>[com.tibco.ep:ep-maven-plugin:stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html),</br><br>[org.apache.maven.plugins:maven-clean-plugin:clean](https://maven.apache.org/plugins/maven-clean-plugin/clean-mojo.html)</br>

@@ -56,6 +56,9 @@
 
         <!-- Skipping integration tests by default -->
         <skipIntegrationTests>true</skipIntegrationTests>
+
+        <!-- Expanded in site content -->
+        <site.ep-maven-plugin.url>https://tibcosoftware.github.io/tibco-streaming-maven-plugin/${project.version}/${project.artifactId}</site.ep-maven-plugin.url>
     </properties>
 
     <!-- use mvn site -Puml to re-generate svg from source ( then commit ) -->
