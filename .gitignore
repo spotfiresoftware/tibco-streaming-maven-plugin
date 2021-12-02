@@ -7,6 +7,7 @@ producthome
 # Maven build intermediates
 # From the maven shade plugin.
 dependency-reduced-pom.xml
+*.versionsBackup
 
 # Eclipse project settings. Settings files not be needed because all our
 # projects are Maven plain old jar projects; m2e should be capable of
