@@ -70,6 +70,21 @@ public class UnitTest extends BetterAbstractMojoTestCase {
     @Rule
     public TestResources resources = new TestResources();
 
+    private String getPlatformOSArchPart() {
+        if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
+            return "osxx86_64";
+        } else if (System.getProperty("os.name").toLowerCase().indexOf("linux") >= 0) {
+            if (System.getProperty("os.arch").equals("aarch64")) {
+                return "linuxaarch64";
+            } else {
+                return "linuxx86_64";
+            }
+        }
+
+        // Assuming Windows x64.
+        return "windowsx64";
+    }
+    
     /**
      * Install product - do this first
      *
@@ -80,6 +95,8 @@ public class UnitTest extends BetterAbstractMojoTestCase {
         LOGGER.info("Install Product");
         SimulatedLog simulatedLog = new SimulatedLog(false);
 
+        final String dependencyVersionUnderTest = "2.1.0-SNAPSHOT";
+        
         File pom = new File("target/projects", "pom.xml");
         Assert.assertNotNull(pom);
         Assert.assertTrue(pom.exists());
@@ -94,18 +111,11 @@ public class UnitTest extends BetterAbstractMojoTestCase {
         // install to a different directory
         //
         File productHome = new File(Paths.get("").toAbsolutePath().toFile(), "producthome");
-        File markerFile;
-        if (System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0) {
-            markerFile = new File(new File(productHome, "dependency-maven-plugin-markers"), "com.tibco.ep.dtm-platform_osxx86_64-zip-2.1.0-SNAPSHOT.marker");
-        } else if (System.getProperty("os.name").toLowerCase().indexOf("linux") >= 0) {
-            if (System.getProperty("os.arch").equals("aarch64")) {
-                markerFile = new File(new File(productHome, "dependency-maven-plugin-markers"), "com.tibco.ep.dtm-platform_linuxaarch64-zip-2.1.0-SNAPSHOT.marker");
-            } else {
-                markerFile = new File(new File(productHome, "dependency-maven-plugin-markers"), "com.tibco.ep.dtm-platform_linuxx86_64-zip-2.1.0-SNAPSHOT.marker");
-            }
-        } else {
-            markerFile = new File(new File(productHome, "dependency-maven-plugin-markers"), "com.tibco.ep.dtm-platform_windowsx64-zip-2.1.0-SNAPSHOT.marker");
-        }
+        final File markerFile =
+            new File(new File(productHome, "dependency-maven-plugin-markers"),
+                     "com.tibco.ep.dtm-platform_" + getPlatformOSArchPart()
+                     + "-zip-" + dependencyVersionUnderTest + ".marker");
+
         installProduct = (InstallProductMojo) lookupConfiguredMojo(pom, "install-product");
         Assert.assertNotNull(installProduct);
         installProduct.productHome = productHome;
