@@ -95,7 +95,9 @@ public class UnitTest extends BetterAbstractMojoTestCase {
         LOGGER.info("Install Product");
         SimulatedLog simulatedLog = new SimulatedLog(false);
 
-        final String dependencyVersionUnderTest = "2.1.0-SNAPSHOT";
+        final String dependencyVersionUnderTest = System.getProperty("CURRENT_PROJECT_VERSION");
+        assertTrue("Bad CURRENT_PROJECT_VERSION=" + dependencyVersionUnderTest,
+            dependencyVersionUnderTest != null && !dependencyVersionUnderTest.isEmpty());
         
         File pom = new File("target/projects", "pom.xml");
         Assert.assertNotNull(pom);
