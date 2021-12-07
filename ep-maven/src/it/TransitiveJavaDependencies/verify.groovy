@@ -52,7 +52,7 @@ def extractFromZip(File zFile, String toExtract) {
     return extracted.toFile();
 }
 
-File extracted = extractFromZip(basedir.toPath().resolve(Paths.get("B", "target", "B-2.1.0-SNAPSHOT-ep-eventflow-fragment.zip")).toFile(),
+File extracted = extractFromZip(basedir.toPath().resolve(Paths.get("B", "target", "B-" + CURRENT_PROJECT_VERSION + "-ep-eventflow-fragment.zip")).toFile(),
         "MANIFEST")
 
 assert extracted.text.contains("TIBCO-EP-Event-Modules: com.tibco.sample.b.B");

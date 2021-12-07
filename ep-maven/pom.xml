@@ -322,6 +322,9 @@
                         <pomInclude>*/pom.xml</pomInclude>
                     </pomIncludes>
                     <postBuildHookScript>verify</postBuildHookScript>
+                    <scriptVariables>
+                        <CURRENT_PROJECT_VERSION>${project.version}</CURRENT_PROJECT_VERSION>
+                    </scriptVariables>
                     <settingsFile>src/it/settings.xml</settingsFile>
                     <skipInvocation>${skipIntegrationTests}</skipInvocation>
                 </configuration>
