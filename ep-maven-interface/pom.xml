@@ -50,6 +50,7 @@
     <properties>
         <maven.site.skip>false</maven.site.skip>
         <maven.site.deploy.skip>false</maven.site.deploy.skip>
+        <maven.deploy.skip>false</maven.deploy.skip>
 
         <archetype.test.ignoreEOLStyle>true</archetype.test.ignoreEOLStyle>
     </properties>
@@ -187,17 +188,6 @@
         </plugins>
     </reporting>
 
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -211,5 +201,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    
 </project>

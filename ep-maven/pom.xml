@@ -51,6 +51,7 @@
     <properties>
         <maven.site.skip>false</maven.site.skip>
         <maven.site.deploy.skip>false</maven.site.deploy.skip>
+        <maven.deploy.skip>false</maven.deploy.skip>
 
         <archetype.test.ignoreEOLStyle>true</archetype.test.ignoreEOLStyle>
 
@@ -356,14 +357,6 @@
     </build>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
         <site>
             <id>www.tibco.com</id>
             <url>https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</url>
