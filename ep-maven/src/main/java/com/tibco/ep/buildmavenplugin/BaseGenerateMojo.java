@@ -216,9 +216,6 @@ public abstract class BaseGenerateMojo extends BaseMojo {
             throw new MojoExecutionException("Cannot resolve dependency", e);
         }
 
-        logPaths("Compile ClassPath", buildParameters.getCompileClassPath());
-        logPaths("Test ClassPath", buildParameters.getTestClassPath());
-
         logPaths("Project Compile ClassPath", buildParameters.getProjectCompileClassPath());
         logPaths("Dependencies Compile ClassPath", buildParameters.getDependenciesCompileClassPath());
         logPaths("Project Test Compile ClassPath", buildParameters.getProjectTestCompileClassPath());
@@ -287,42 +284,6 @@ public abstract class BaseGenerateMojo extends BaseMojo {
             throw new MojoExecutionException("Could not create: " + tempDirectory);
         }
         getLog().debug(ENGINE_DATA_AREA + " set to " + tempDirectoryString);
-    }
-
-    private List<Path> getTestClassPath() throws MojoExecutionException, DependencyResolutionRequiredException {
-        //  FIX THIS (FL): not good since we need to add the CP of test dependencies.
-        //  To be finalized when getCompileClassPath() is ok.
-        //
-        return toPaths(project.getTestClasspathElements());
-    }
-
-    private List<Path> getCompileClassPath() throws MojoExecutionException, DependencyResolutionRequiredException {
-
-        //  Filter out compile class path elements that do not exist.
-        //
-        LinkedHashSet<Path> classpath = toPaths(project.getCompileClasspathElements()).stream()
-            .filter(p -> p.toFile().exists()).collect(Collectors.toCollection(LinkedHashSet::new));
-
-        //  Then dependencies.
-        //
-        visitDependencies((currentProjectArtefactDependency, indent, context) -> {
-
-            if (target == BuildTarget.MAIN
-                && currentProjectArtefactDependency.getScope().equals((Artifact.SCOPE_TEST))) {
-
-                getLog().debug(indent + currentProjectArtefactDependency
-                    + " [skipping (and skipping dependencies)]");
-                return false;
-            }
-
-            getLog().debug(indent + currentProjectArtefactDependency + " [adding]");
-
-            classpath.add(currentProjectArtefactDependency.getFile().toPath());
-
-            return true;
-        });
-
-        return new ArrayList<>(classpath);
     }
 
     private List<Path> getDependencyClassPaths(BuildTarget target) throws MojoExecutionException {

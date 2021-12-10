@@ -41,8 +41,6 @@ import java.util.Map;
  */
 public class BuildParameters {
 
-    private final List<Path> compileClassPath = new ArrayList<>();
-    private final List<Path> testClassPath = new ArrayList<>();
     private final List<Path> projectCompileClassPath = new ArrayList<>();
     private final List<Path> dependenciesCompileClassPath = new ArrayList<>();
     private final List<Path> projectTestCompileClassPath = new ArrayList<>();
@@ -77,27 +75,6 @@ public class BuildParameters {
     public Path getProjectRootDirectory() {
         return projectRootDirectory;
     }
-
-    /**
-     * @param classPath The compile classpath
-     * @return This
-     */
-    @Deprecated
-    public BuildParameters withCompileClassPath(List<Path> classPath) {
-        this.compileClassPath.addAll(classPath);
-        return this;
-    }
-
-    /**
-     * @param classPath The test classpath
-     * @return This
-     */
-    @Deprecated
-    public BuildParameters withTestClassPath(List<Path> classPath) {
-        this.testClassPath.addAll(classPath);
-        return this;
-    }
-
 
     /**
      * @return The class path added by the project (typically target/classes)
@@ -231,22 +208,6 @@ public class BuildParameters {
     }
 
     /**
-     * @return The compile classpath
-     */
-    @Deprecated
-    public List<Path> getCompileClassPath() {
-        return compileClassPath;
-    }
-
-    /**
-     * @return The test classpath
-     */
-    @Deprecated
-    public List<Path> getTestClassPath() {
-        return testClassPath;
-    }
-
-    /**
      * @return The source paths
      */
     public List<Path> getSourcePaths() {
@@ -298,8 +259,6 @@ public class BuildParameters {
     @Override
     public String toString() {
         return "BuildParameters{" +
-            ", compileClassPath=" + compileClassPath +
-            ", testClassPath=" + testClassPath +
             ", sourcePaths=" + sourcePaths +
             ", testSourcePaths=" + testSourcePaths +
             ", compilerProperties=" + compilerProperties +
