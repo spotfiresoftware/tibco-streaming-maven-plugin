@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2020, TIBCO Software Inc.
+ * Copyright (C) 2018-2022, TIBCO Software Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -35,11 +35,12 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import static org.apache.maven.plugins.annotations.LifecyclePhase.TEST;
-
 import java.io.File;
 import java.util.Arrays;
 import java.util.Properties;
+import java.util.stream.Stream;
+
+import static org.apache.maven.plugins.annotations.LifecyclePhase.TEST;
 
 /**
  * <p>Test a EventFlow fragment using sbunit.</p>
@@ -86,7 +87,7 @@ public class TestEventFlowFragmentMojo extends BaseTestMojo {
      *
      * @since 1.0.0
      */
-    @Parameter( required = false, property = "eventflowDirectories" )
+    @Parameter(required = false, property = "eventflowDirectories")
     File[] eventflowDirectories;
 
     /**
@@ -99,7 +100,7 @@ public class TestEventFlowFragmentMojo extends BaseTestMojo {
      *
      * @since 1.0.0
      */
-    @Parameter( defaultValue = "${project.basedir}/src/main/configurations", required = true )
+    @Parameter(defaultValue = "${project.basedir}/src/main/configurations", required = true)
     File configurationDirectory;
 
     /**
@@ -112,18 +113,32 @@ public class TestEventFlowFragmentMojo extends BaseTestMojo {
      *
      * @since 1.0.0
      */
-    @Parameter( defaultValue = "${project.basedir}/src/test/configurations", required = true )
+    @Parameter(defaultValue = "${project.basedir}/src/test/configurations", required = true)
     File testConfigurationDirectory;
 
+    /**
+     * <p>Eventflow test source directories</p>
+     *
+     * <p>If no testEventflowDirectories is specified, a single directory of
+     * ${project.basedir}/src/test/eventflow is used.</p>
+     *
+     * @since 2.0.1
+     */
+    @Parameter(required = false, property = "testEventflowDirectories")
+    File[] testEventflowDirectories;
+
+    @Override
     public void execute() throws MojoExecutionException {
 
-        eventflowDirectories = getOrDefaultEventFlowDirectories(eventflowDirectories);
+        eventflowDirectories = getOrDefaultSrcMainEventflow(eventflowDirectories);
+        testEventflowDirectories = getOrDefaultSrcTestEventflow(testEventflowDirectories);
 
-        getLog().debug( "Testing eventflow fragment "+Arrays.toString(eventflowDirectories) );
+        getLog().debug("Testing eventflow fragment " + Arrays.toString(eventflowDirectories));
 
         Properties modelProperties = project.getModel().getProperties();
         boolean testCasesFound = true;
-        if (modelProperties.getProperty(TESTCASESFOUND_PROPERTY) != null && modelProperties.getProperty(TESTCASESFOUND_PROPERTY).equals("false")) {
+        if (modelProperties.getProperty(TESTCASESFOUND_PROPERTY) != null && modelProperties.getProperty(TESTCASESFOUND_PROPERTY)
+            .equals("false")) {
             testCasesFound = false;
         }
 
@@ -131,7 +146,8 @@ public class TestEventFlowFragmentMojo extends BaseTestMojo {
         // run is a default one
         //
         boolean hasExecutions = false;
-        if (mojoExecution.getPlugin() != null && mojoExecution.getPlugin().getExecutions() != null) {
+        if (mojoExecution.getPlugin() != null && mojoExecution.getPlugin()
+            .getExecutions() != null) {
             for (PluginExecution p : mojoExecution.getPlugin().getExecutions()) {
                 if (!p.getId().startsWith("default-")) {
                     hasExecutions = true;
@@ -139,8 +155,9 @@ public class TestEventFlowFragmentMojo extends BaseTestMojo {
             }
         }
 
-        if ((hasExecutions && mojoExecution.getExecutionId().startsWith("default-")) || skipTests || installOnly || !testCasesFound) {
-            getLog().info("Tests are skipped (skipTests="+skipTests+",hasExecutions="+hasExecutions+",installOnly="+installOnly+",testCasesFound="+testCasesFound+")");
+        if ((hasExecutions && mojoExecution.getExecutionId()
+            .startsWith("default-")) || skipTests || installOnly || !testCasesFound) {
+            getLog().info("Tests are skipped (skipTests=" + skipTests + ",hasExecutions=" + hasExecutions + ",installOnly=" + installOnly + ",testCasesFound=" + testCasesFound + ")");
             return;
         }
 
@@ -160,7 +177,11 @@ public class TestEventFlowFragmentMojo extends BaseTestMojo {
         // run test cases
         //
         newJunitTest()
-            .withEventFlowDirectories(eventflowDirectories)
+            .withEventFlowDirectories(
+                Stream.concat(
+                        Stream.of(eventflowDirectories),
+                        Stream.of(testEventflowDirectories))
+                    .toArray(File[]::new))
             .run();
     }
 

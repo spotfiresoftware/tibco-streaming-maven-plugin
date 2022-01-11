@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2020, TIBCO Software Inc.
+ * Copyright (C) 2018-2022, TIBCO Software Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -102,6 +102,8 @@ abstract class BaseMojo extends AbstractMojo {
     private static final String SB_CONTAINER_IDENTIFIER = "container";
     private static final String SB_SERVER_ARTIFACT_IDENTIFIER = "server";
     private static final String SB_SUPPORT_ARTIFACT_PREFIX = "support_platform_";
+    public static final String DEFAULT_SRC_MAIN_EVENTFLOW = "src/main/eventflow";
+    public static final String DEFAULT_SRC_TEST_EVENTFLOW = "src/test/eventflow";
 
     /**
      * maven property to use to skip start/stop/tests if no tests exist
@@ -252,28 +254,6 @@ abstract class BaseMojo extends AbstractMojo {
         return artifactId.startsWith(SB_PRODUCT_ARTIFACT_PREFIX)
             || artifactId.startsWith(SB_SUPPORT_ARTIFACT_PREFIX);
     }
-
-    /**
-     * @param currentValue The current value
-     * @param path         The path of the default directory
-     * @return The current value if it contains a value, or an array pointing to the default path
-     */
-    File[] getOrDefault(File[] currentValue, String path) {
-        if (currentValue != null && currentValue.length > 0) {
-            return currentValue;
-        }
-
-        return new File[]{new File(project.getBasedir(), path)};
-    }
-
-    /**
-     * @param eventFlowDirectories The current event flow directories value
-     * @return The current value or the default if needed
-     */
-    File[] getOrDefaultEventFlowDirectories(File[] eventFlowDirectories) {
-        return getOrDefault(eventFlowDirectories, "/src/main/eventflow");
-    }
-
 
     /**
      * @return The administration service
@@ -869,6 +849,47 @@ abstract class BaseMojo extends AbstractMojo {
             return new ArrayList<>();
         }
         return Arrays.asList(array);
+    }
+
+    /**
+     * Use a default directory if the original value is null or empty. Only use the value if the
+     * default directory exists.
+     *
+     * @param originalValue The original value
+     * @param defaultDir    The default directory
+     * @return The array represented by the default value
+     */
+    private File[] initializeAndCheck(File[] originalValue, String defaultDir) {
+
+        if (originalValue == null || originalValue.length == 0) {
+
+            //  Default value, if it exists.
+            //
+            File defaultValue = new File(project.getBasedir(), defaultDir);
+            if (defaultValue.exists() && defaultValue.isDirectory()) {
+                return new File[]{defaultValue};
+            } else {
+                return new File[]{};
+            }
+        }
+
+        return originalValue;
+    }
+
+    /**
+     * @param pomValue The POM value for eventflowDirectories
+     * @return The actual value
+     */
+    File[] getOrDefaultSrcMainEventflow(File[] pomValue) {
+        return initializeAndCheck(pomValue, DEFAULT_SRC_MAIN_EVENTFLOW);
+    }
+
+    /**
+     * @param pomValue The POM value for testEventflowDirectories
+     * @return The actual value
+     */
+    File[] getOrDefaultSrcTestEventflow(File[] pomValue) {
+        return initializeAndCheck(pomValue, DEFAULT_SRC_TEST_EVENTFLOW);
     }
 
     /**

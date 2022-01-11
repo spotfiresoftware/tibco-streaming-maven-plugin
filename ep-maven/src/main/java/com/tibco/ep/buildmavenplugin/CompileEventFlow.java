@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, TIBCO Software Inc.
+ * Copyright (C) 2018-2022, TIBCO Software Inc.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -73,7 +73,7 @@ public class CompileEventFlow extends BaseMojo {
         
         getLog().debug( "Compiling streambase fragment");
 
-        eventflowDirectories = getOrDefaultEventFlowDirectories(eventflowDirectories);
+        eventflowDirectories = getOrDefaultSrcMainEventflow(eventflowDirectories);
 
         prechecks();
 

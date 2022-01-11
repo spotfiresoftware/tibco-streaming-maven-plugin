@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, TIBCO Software Inc.
+ * Copyright (C) 2018-2022, TIBCO Software Inc.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -111,7 +111,7 @@ public class SetResources extends BasePackageMojo {
 
         prechecks();
 
-        eventflowDirectories = getOrDefaultEventFlowDirectories(eventflowDirectories);
+        eventflowDirectories = getOrDefaultSrcMainEventflow(eventflowDirectories);
 
         if (configurationDirectory.exists()) {
             Resource resource = new Resource();

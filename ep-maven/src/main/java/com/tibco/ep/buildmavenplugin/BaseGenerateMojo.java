@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2021, TIBCO Software Inc.
+ * Copyright (C) 2020-2022, TIBCO Software Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -136,23 +136,6 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         return new File(file).toPath();
     }
 
-    private File[] initializeAndCheck(File[] originalValue, String defaultDir) {
-
-        if (originalValue == null || originalValue.length == 0) {
-
-            //  Default value, if it exists.
-            //
-            File defaultValue = new File(project.getBasedir(), defaultDir);
-            if (defaultValue.exists() && defaultValue.isDirectory()) {
-                return new File[]{defaultValue};
-            } else {
-                return new File[]{};
-            }
-        }
-
-        return originalValue;
-    }
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
@@ -177,8 +160,8 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         prechecks();
         initializeService(PlatformService.CODE_GENERATION, ErrorHandling.FAIL);
 
-        eventflowDirectories = initializeAndCheck(eventflowDirectories, "/src/main/eventflow");
-        testEventflowDirectories = initializeAndCheck(testEventflowDirectories, "/src/test/eventflow");
+        eventflowDirectories = getOrDefaultSrcMainEventflow(eventflowDirectories);
+        testEventflowDirectories = getOrDefaultSrcTestEventflow(testEventflowDirectories);
 
         setupEngineDataArea();
 
