@@ -351,6 +351,12 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         }
 
         @Override
+        public void onWarning(String entityName, String warning) {
+            IBuildNotifier.super.onWarning(entityName, warning);
+            getLog().warn("Module " + entityName + ": " + warning);
+        }
+
+        @Override
         public void onCompleted(BuildResult result) {
 
             double seconds = result.getElapsedTimeMillis();
