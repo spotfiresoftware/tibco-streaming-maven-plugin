@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<modify version="7.4.0">
+    <add>
+        <implements module-reference="Multiplier.sbint"/>
+        <import from="Multiplier.sbint"/>
+        <parameter-definitions>
+            <parameter default="xxx" name="path"/>
+        </parameter-definitions>
+        <stream name="InputStream1" schema="MyInputSchema">
+            <param name="gui:x" value="-185"/>
+            <param name="gui:y" value="-159"/>
+        </stream>
+        <stream name="InputStream2" schema="MyInputSchema">
+            <param name="gui:x" value="-185"/>
+            <param name="gui:y" value="-60"/>
+        </stream>
+        <box name="Union" type="union">
+            <input port="1" stream="InputStream1"/>
+            <input port="2" stream="InputStream2"/>
+            <output port="1" stream="out:Union_1"/>
+            <param name="strict" value="false"/>
+            <param name="gui:x" value="-66"/>
+            <param name="gui:y" value="-111"/>
+            <param name="gui:height" value="63"/>
+            <param name="gui:bends:1" value="-95,-129;-87,-91"/>
+            <param name="gui:bends:2" value="-108,-30;-100,-68"/>
+        </box>
+        <box name="Double" type="map">
+            <input port="1" stream="out:Union_1"/>
+            <output port="1" stream="OutputStream"/>
+            <target-list>
+                <item name="input" selection="all"/>
+                <expressions>
+                    <include field="newValue">value*2</include>
+                    <replace field="path">append(path, "Doubler.sbapp")</replace>
+                </expressions>
+            </target-list>
+            <param name="gui:x" value="39"/>
+            <param name="gui:y" value="-110"/>
+        </box>
+        <output-stream name="OutputStream" schema="MyOutputSchema">
+            <param name="gui:x" value="126"/>
+            <param name="gui:y" value="-110"/>
+        </output-stream>
+    </add>
+</modify>

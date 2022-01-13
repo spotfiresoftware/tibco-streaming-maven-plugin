@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<application version="7.4.0">
+    <named-schemas>
+        <schema name="MyInputSchema">
+            <field name="value" type="int"/>
+            <field name="action" type="string"/>
+            <field name="path" type="list">
+                <element-type type="string"/>
+            </field>
+        </schema>
+        <schema name="MyOutputSchema">
+            <field name="value" type="int"/>
+            <field name="action" type="string"/>
+            <field name="newValue" type="int"/>
+            <field name="path" type="list">
+                <element-type type="string"/>
+            </field>
+        </schema>
+    </named-schemas>
+    <stream name="InputStream1" schema="MyInputSchema"/>
+    <stream name="InputStream2" schema="MyInputSchema"/>
+    <output-stream name="OutputStream" schema="MyOutputSchema"/>
+</application>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<modify version="7.4.0">
+    <add>
+        <parameter-definitions>
+            <parameter default="&quot;xxx&quot;" name="path"/>
+        </parameter-definitions>
+        <stream name="Input">
+            <schema>
+                <field description="module to receive data" name="value" type="int"/>
+                <field name="action" type="string"/>
+            </schema>
+            <param name="gui:x" value="-99"/>
+            <param name="gui:y" value="-26"/>
+        </stream>
+        <box name="DispatchStyle" type="filter">
+            <input port="1" stream="Input"/>
+            <output port="1" stream="out:DispatchStyle_1"/>
+            <output port="2" stream="out:DispatchStyle_2"/>
+            <param name="autogen-nomatch-port" value="true"/>
+            <param name="expression.0" value="notnull(action)"/>
+            <param name="expression.1" value="true"/>
+            <param name="gui:x" value="36"/>
+            <param name="gui:y" value="-28"/>
+            <param name="gui:height" value="63"/>
+            <param name="gui:bends:1" value="15,4;15,3"/>
+        </box>
+        <box name="BroadcastDispatch" type="map">
+            <input port="1" stream="out:DispatchStyle_2"/>
+            <output port="1" stream="out:BroadcastDispatch_1"/>
+            <target-list>
+                <item name="input" selection="all"/>
+                <expressions>
+                    <include field="path">list("Entering port 2 for Broadcast dispatch")</include>
+                </expressions>
+            </target-list>
+            <param name="gui:x" value="169"/>
+            <param name="gui:y" value="61"/>
+            <param name="gui:bends:1" value="122,15;140,91"/>
+        </box>
+        <box name="NameDispatch" type="map">
+            <input port="1" stream="out:DispatchStyle_1"/>
+            <output port="1" stream="out:NameDispatch_1"/>
+            <target-list>
+                <item name="input" selection="all"/>
+                <expressions>
+                    <include field="path">list("Entering port 1 for Name dispatch")</include>
+                </expressions>
+            </target-list>
+            <param name="gui:x" value="169"/>
+            <param name="gui:y" value="-38"/>
+        </box>
+        <extension-point canvas-icon="ResourceFiles/calculator.png" name="Multiply">
+            <input dispatch="name" key="lower(action)" name="InputStream1" port="1" stream="out:NameDispatch_1"/>
+            <input dispatch="broadcast" name="InputStream2" port="2" stream="out:BroadcastDispatch_1"/>
+            <output name="OutputStream" port="1" stream="Output"/>
+            <error stream="Error"/>
+            <multiplicity type="interface">
+                <instance file="Doubler.sbapp" name="double"/>
+                <instance file="Tripler.sbapp" name="triple"/>
+            </multiplicity>
+            <param name="file" value="Multiplier.sbint"/>
+            <param name="gui:x" value="298"/>
+            <param name="gui:y" value="5"/>
+            <param name="gui:height" value="63"/>
+            <param name="gui:bends:1" value="264,-8;272,25"/>
+            <param name="gui:bends:2" value="239,91;247,48"/>
+        </extension-point>
+        <output-stream name="Error">
+            <param name="gui:x" value="413"/>
+            <param name="gui:y" value="73"/>
+            <param name="gui:bends:1" value="369,48;381,103"/>
+        </output-stream>
+        <output-stream name="Output">
+            <param name="gui:x" value="413"/>
+            <param name="gui:y" value="-26"/>
+            <param name="gui:bends:1" value="386,25;390,4"/>
+        </output-stream>
+        <gui.note name="Note">
+            <property name="description" value="Valid values for the action field in the Input stream are &quot;double&quot;, &quot;triple&quot;, and &quot;null&quot;. The null action broadcasts the tuple to all configured modules."/>
+            <param name="gui:x" value="-121"/>
+            <param name="gui:y" value="95"/>
+            <param name="gui:width" value="214"/>
+            <param name="gui:height" value="129"/>
+        </gui.note>
+    </add>
+</modify>
