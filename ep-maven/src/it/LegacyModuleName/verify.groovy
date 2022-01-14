@@ -29,10 +29,10 @@
  */
 
 checkSequence(new File(basedir, "build.log"),
-        "[WARNING] Module ExtensionPoint: Application is using legacy module " +
-                "name reference for: Multiplier.sbint . Move the module into " +
-                "src/[main|test]/eventflow and use a fully qualified module name " +
-                "to reference it in module references or extension points.",
+        "[WARNING] Module ExtensionPoint: Module Multiplier.sbint is loaded from " +
+                "classpath and is not fully qualified. This is deprecated. Move the module " +
+                "into src/[main|test]/eventflow and use a fully qualified module name to " +
+                "reference the module in module references or extension points.",
         "BUILD SUCCESS")
 
 static def checkSequence(File file, String... sequence) {
