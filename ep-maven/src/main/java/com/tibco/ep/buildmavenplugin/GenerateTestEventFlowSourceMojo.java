@@ -35,8 +35,20 @@ import org.apache.maven.plugins.annotations.Mojo;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_TEST_SOURCES;
 
-//  Code generation uses static compiler options, that's NOT thread safe.
-//
+
+/**
+ * <p>Typecheck EventFlows and generate java sources</p>
+ *
+ * <p>The plugin will scan the configured EventFlow source and test directories and typecheck/build
+ * them in the dependency order, reporting any typecheck failure.</p>
+ *
+ * <p>It does not build the generated java sources, this is done using a standard maven compiler
+ * plugin execution.</p>
+ *
+ * <p>See {@link GenerateEventFlowSourceMojo} for more information (only differs from the list of
+ * scanned directories).</p>
+ *
+ */
 @Mojo(name = "generate-test-eventflow", defaultPhase = GENERATE_TEST_SOURCES, threadSafe = false)
 public class GenerateTestEventFlowSourceMojo extends BaseGenerateMojo {
 

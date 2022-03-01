@@ -71,15 +71,96 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
     //  Maven parameters
     //
+    /**
+     * <p>The compiler properties used during EventFlow typecheck/build</p>
+     *
+     * <p>Example use in pom.xml:</p>
+     * <pre>
+     * &lt;configuration&gt;
+     *   ...
+     *   &lt;compilerProperties&gt;
+     *      &lt;compilerProperty&gt;streambase.runtime.stream-queue-timeout=1500&lt;/compilerProperties&gt;
+     *      &lt;compilerProperty&gt;streambase.runtime.stream-queue-timeout-report-threshold=10&lt;/compilerProperties&gt;
+     *   &lt;/compilerProperties&gt;
+     *   ...
+     * &lt;/configuration&gt;
+     * </pre>
+     *
+     * <p>Example use on commandline:</p>
+     * <pre>
+     *     mvn install -DcompilerProperties=streambase.runtime.stream-queue-timeout=1500,streambase.runtime.stream-queue-timeout-report-threshold=10
+     * </pre>
+     *
+     * @since 2.0.0
+     */
     @Parameter(property = "compilerProperties", required = false)
     String[] compilerPropertiesEntries;
     Map<String, String> compilerProperties;
+
+
+    /**
+     * <p>The "main" EventFlow directories</p>
+     *
+     * <p>Default value is: ${project.basedir}/src/main/eventflow</p>
+     *
+     * <p>Example use in pom.xml:</p>
+     * <pre>
+     * &lt;configuration&gt;
+     *   ...
+     *   &lt;eventflowDirectories&gt;
+     *      &lt;eventflowDirectory&gt;${project.basedir}/src/main/eventflow&lt;/eventflowDirectory&gt;
+     *      &lt;eventflowDirectory&gt;${project.basedir}/src/main/other&lt;/eventflowDirectory&gt;
+     *   &lt;/eventflowDirectories&gt;
+     *   ...
+     * &lt;/configuration&gt;
+     * </pre>
+     *
+     * <p>Example use on commandline:</p>
+     * <pre>
+     *     mvn install -DeventflowDirectories=src/main/eventflow,src/main/other
+     * </pre>
+     *
+     * @since 2.0.0
+     */
     @Parameter(required = false, property = "eventflowDirectories")
     File[] eventflowDirectories;
+
+    /**
+     * <p>The "test" EventFlow directories</p>
+     *
+     * <p>Default value is: src/test/eventflow</p>
+     *
+     * <p>Example use in pom.xml:</p>
+     * <pre>
+     * &lt;configuration&gt;
+     *   ...
+     *   &lt;testEventflowDirectories&gt;
+     *      &lt;testEventflowDirectory&gt;${project.basedir}/src/test/eventflow&lt;/testEventflowDirectory&gt;
+     *      &lt;testEventflowDirectory&gt;${project.basedir}/src/test/other&lt;/testEventflowDirectory&gt;
+     *   &lt;/testEventflowDirectories&gt;
+     *   ...
+     * &lt;/configuration&gt;
+     * </pre>
+     *
+     * <p>Example use on commandline:</p>
+     * <pre>
+     *     mvn install -testEventflowDirectories=src/test/eventflow,src/test/other
+     * </pre>
+     *
+     * @since 2.0.0
+     */
     @Parameter(required = false, property = "testEventflowDirectories")
     File[] testEventflowDirectories;
+
+    /**
+     * <p>DEVELOPMENT ONLY, DO NOT USE.</p>
+     */
     @Parameter(required = false, property = "failFast", defaultValue = "false")
     Boolean failFast;
+
+    /**
+     * <p>DEVELOPMENT ONLY, DO NOT USE.</p>
+     */
     @Parameter(required = false, property = "skipGenerateSources", defaultValue = "false")
     Boolean skipGenerateSources;
 
@@ -89,9 +170,15 @@ public abstract class BaseGenerateMojo extends BaseMojo {
      * <p>This is added to the list of resource directories</p>
      *
      * <p>Example use in pom.xml:</p>
-     * <img src="uml/package-configurationDirectory.svg" alt="pom">
+     * <pre>
+     * &lt;configuration&gt;
+     *   ...
+     *   &lt;configurationDirectory&gt;${project.basedir}/src/main/confs&lt;/configurationDirectory&gt;
+     *   ...
+     * &lt;/configuration&gt;
+     * </pre>
      *
-     * @since 1.0.0
+     * @since 2.0.0
      */
     @Parameter(defaultValue = "${project.basedir}/src/main/configurations", required = true)
     File configurationDirectory;
@@ -102,9 +189,15 @@ public abstract class BaseGenerateMojo extends BaseMojo {
      * <p>This is added to the list of test resource directories</p>
      *
      * <p>Example use in pom.xml:</p>
-     * <img src="uml/package-testConfigurationDirectory.svg" alt="pom">
+     * <pre>
+     * &lt;configuration&gt;
+     *   ...
+     *   &lt;testConfigurationDirectory&gt;${project.basedir}/src/main/confs&lt;/testConfigurationDirectory&gt;
+     *   ...
+     * &lt;/configuration&gt;
+     * </pre>
      *
-     * @since 1.0.0
+     * @since 2.0.0
      */
     @Parameter(defaultValue = "${project.basedir}/src/test/configurations", required = true)
     File testConfigurationDirectory;

@@ -35,8 +35,36 @@ import org.apache.maven.plugins.annotations.Mojo;
 
 import static org.apache.maven.plugins.annotations.LifecyclePhase.GENERATE_SOURCES;
 
-//  Code generation uses static compiler options, that's NOT thread safe.
-//
+
+/**
+ * <p>Typecheck EventFlows and generate java sources</p>
+ *
+ * <p>The plugin will scan the configured EventFlow source directories and typecheck/build them in the
+ * dependency order, reporting any typecheck failure.</p>
+ *
+ * <p>It does not build the generated java sources, this is done using a standard maven compiler
+ * plugin execution.</p>
+ *
+ * <p>The plugin keeps track of individual SBAPP/SBINT dependencies and will trigger or skip a
+ * a rebuild accordingly.</p>
+ *
+ * <p>SBAPPs and SBINTs have public interfaces and private implementation details. The public
+ * interface is composed of anything that another SBAPP/SBINT can import. Schemas, Streams, QueryTable,
+ * Constants are part of the public interface. Everything else (Module operators, etc) is private.</p>
+ *
+ * <p>If an EventFlow A depends on another EventFlow B and A and B are in the same fragment, then,
+ * upon a change on B's public interface, the plugin will rebuild B, then A. Upon a change on B's
+ * implementation only, the plugin will only rebuild B.</p>
+ *
+ * <p>If an EventFlow A depends on another EventFlow B and A and B are in different fragments, the
+ * plugin will only trigger a rebuild of A if the rebuild of B has happened and is installed in the
+ * maven repository (i.e. if the fragment containing B has been rebuilt successfully).</p>
+ *
+ * <p>EventFlow builds are shared between Studio and the Maven command line. A fragment built using
+ * the command line will not get rebuilt by Studio and vice-versa. A Maven clean or the removal of
+ * the default *target* directory will force a rebuild on the next call.</p>
+ *
+ */
 @Mojo(name = "generate-main-eventflow", defaultPhase = GENERATE_SOURCES, threadSafe = false)
 public class GenerateEventFlowSourceMojo extends BaseGenerateMojo {
 

@@ -16,14 +16,36 @@
 
 The recommended EventFlow directory structure is :
 
-![EventFlow directory structure](uml/eventflow-structure.svg)
+``` shell
+ep-eventflow-fragment
+|------  pom.xml
+|------  src
+|     |------  main
+|     |     |------  eventflow        - sbapp, ssql and sbint files
+|     |     |------  java             - java functions, operators (if any)
+|     |     |------  configurations   - HOCON configuration files
+|     |     |------  resources        - sbfs, sbref, upgrade plan and other resources
+|     |
+|     |------  test
+|     |     |------  eventflow        - sbapp, ssql and sbint files for tests
+|     |     |------  java             - java functions, operators for tests (if any) and sbunit test case sources
+|     |     |------  configurations   - HOCON configuration files for test
+|     |     |------  resources        - sbfs, sbref, upgrade plan and other test resources
+|     |
+|     |------  site                   - documentation
+|
+|------  target                       - built artifacts
+```
 
-Note that the default source directory is set by the plugin to 
-src/main/eventflow.
+Note that the default EventFlow source directory is set by the plugin to
+src/main/eventflow, and the default EventFlow test source directory is set to
+src/test/eventflow.
+
+Test sources (EventFlow, java, etc) are not included in the EventFlow fragment archive.
 
 <a name="basic-build-sbunit-test-and-install"></a>
 
-## Basic build, sbunit test and install
+# Basic build, sbunit test and install
 
 The following pom.xml will build, unit test and install to the local maven 
 repository, an eventflow fragment.
@@ -46,7 +68,7 @@ repository, an eventflow fragment.
     <parent>
         <groupId>com.tibco.ep.sb.parent</groupId>
         <artifactId>ep-eventflow-fragment</artifactId>
-        <version>10.4.0</version>
+        <version>11.0.0</version>
     </parent>
 
 </project>
@@ -56,34 +78,74 @@ When the maven install goal is called (mvn install), this pom.xml instructs
 maven to perform the following steps :
 
 1. Uses [install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html) to check if the 
-    dependent product ( in this case com.tibco.ep.thirdparty:tibco-sb\_linuxx86_64 ) is
+    dependent product ( in this case com.tibco.ep.sb.rt:platform_osxx86_64 ) is
     installed.  If its not, maven will download the archive and the plugin
     will extract into $TIBCO_EP_HOME.
 
-2. Uses the standard maven plugin [maven-compiler-plugin:testCompile](https://maven.apache.org/plugins/maven-compiler-plugin/testCompile-mojo.html)
-    to compile any java test sources to class files.
+2. Uses [set-resources](${context.get("site.ep-maven-plugin.url")}/set-resources-mojo.html) to add
+    configuration and eventflow directories to the Maven resources.
 
-3. Uses [start-nodes](${context.get("site.ep-maven-plugin.url")}/start-nodes-mojo.html) to start a test cluster.  
+3. Uses the standard maven plugin [maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/resources-mojo.html) to
+    copy resources to the output directory.
+
+4. Uses [unpack-nar](${context.get("site.ep-maven-plugin.url")}/unpack-nar-mojo.html) to unpack
+    Native ARchives to the output directory.
+
+5. Uses [unpack-fragment](${context.get("site.ep-maven-plugin.url")}/unpack-fragment-mojo.html) to unpack
+    fragments to the output directory.
+
+6. Uses the standard maven plugin [maven-compiler-plugin:testCompile](https://maven.apache.org/plugins/maven-compiler-plugin/testCompile-mojo.html)
+    to compile any java main sources to class files.
+
+7. Uses [generate-eventflow-fragment](${context.get("site.ep-maven-plugin.url")}/generate-eventflow-fragment-mojo.html)
+    to generate java classes for eventflows from the eventflowdirectories into the main output
+    directory.
+
+8. Uses [compile-eventflow-fragment](${context.get("site.ep-maven-plugin.url")}/compile-eventflow-fragment-mojo.html)
+    to copy eventflow resources to the main output directory.
+
+9. Uses the standard maven plugin [maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)
+    to compile any generated java classes.
+
+10. Uses the standard maven plugin [maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/testResources-mojo.html)
+    to copy test resources to the test output directory.
+
+11. Uses the standard maven plugin [maven-compiler-plugin:testCompile](https://maven.apache.org/plugins/maven-compiler-plugin/testCompile-mojo.html)
+    to compile any test java classes.
+
+12. Uses [generate-test-eventflow-fragment](${context.get("site.ep-maven-plugin.url")}/generate-test-eventflow-fragment-mojo.html)
+    to generate java classes for eventflows from the testEventflowdirectories into the test output
+    directory.
+
+13. Uses the standard maven plugin [maven-compiler-plugin:testCompile](https://maven.apache.org/plugins/maven-compiler-plugin/testCompile-mojo.html)
+    to compile any generated test java classes.
+
+14. Uses [check-testcases](${context.get("site.ep-maven-plugin.url")}/check-testcases-mojo.html)
+    to check for test cases.
+
+15. Uses [start-nodes](${context.get("site.ep-maven-plugin.url")}/start-nodes-mojo.html) to start a test cluster.
     Since this pom.xml has no configuration, a single node is started 
-    A.${artifactId} (ie A.goldylocks in this example) with a random but unused 
+    A.${artifactId} (ie A.helloworld in this example) with a random but unused
     discovery port.
  
-4. Uses [test-java-fragment](${context.get("site.ep-maven-plugin.url")}/test-java-fragment-mojo.html) to launch
+16. Uses [test-eventflow-fragment](${context.get("site.ep-maven-plugin.url")}/test-eventflow-fragment-mojo.html) to launch
     sbunit on the cluster and report the test results.  Should the test cases
-    fail then no further processing occurs.
+    fail then the node will be stopped.
 
-5. Uses [stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html) to stop and remove the test 
+17. Uses [stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html) to stop and remove the test
     nodes
 
-6. Uses [package-eventflow-fragment](${context.get("site.ep-maven-plugin.url")}/package-eventflow-fragment-mojo.html) to create
+18. Uses [package-eventflow-fragment](${context.get("site.ep-maven-plugin.url")}/package-eventflow-fragment-mojo.html) to create
     a EventFlow fragment zip file in the build directory (by default, set to target)
     and attaches it to the build.
 
-7. Uses the standard maven plugin [maven-install-plugin:install](https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html)
+19. Uses the standard maven plugins to generate sources and javadoc and attach them to the source
+    jar.
+
+20. Uses the standard maven plugin [maven-install-plugin:install](https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html)
     to install the built and tested artifacts to the local maven repository.
 
-The EventFlow fragment application code, test cases and sbunit are deployed 
-to the test node :
+The EventFlow fragment application code, test cases and sbunit are deployed to the test node :
 
 ![One node sbunit test](uml/one-node-sbunit.svg)
 
@@ -92,114 +154,152 @@ An example run is shown below :
 ``` shell
 $ mvn install
 [INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
-[INFO] Building EventFlow Fragment - GoldyLocks 3.0.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- ep-maven-plugin:1.0.0:install-product (default-install-product-1) @ goldylocks ---
-[INFO] com.tibco.ep.thirdparty:tibco-sb_osxx86_64:zip:7.6.0:test already installed
-[INFO] 
-[INFO] --- buildnumber-maven-plugin:1.4:create-timestamp (default) @ goldylocks ---
-[INFO] 
-[INFO] --- maven-compiler-plugin:3.3:testCompile (default-testCompile) @ goldylocks ---
+[INFO]
+[INFO] -----------------------< com.example:helloworld >-----------------------
+[INFO] Building Java Fragment - hello world 3.0.0
+[INFO] -----------------------[ ep-eventflow-fragment ]------------------------
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0-SNAPSHOT:install-product (default-install-product-1) @ helloworld ---
+[INFO] com.tibco.ep.sb.rt:platform_osxx86_64:zip:11.0.0-SNAPSHOT:test already installed manually to /Users/flionell/tibco/dev/core
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0-SNAPSHOT:set-resources (default-set-resources) @ helloworld ---
+[INFO]
+[INFO] --- maven-enforcer-plugin:3.0.0:enforce (hard-build-requirements) @ helloworld ---
+[INFO]
+[INFO] --- maven-resources-plugin:3.1.0:resources (default-resources) @ helloworld ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 0 resource
+[INFO] Copying 0 resource
+[INFO] Copying 2 resources
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0-SNAPSHOT:unpack-nar (default-unpack-nar) @ helloworld ---
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0-SNAPSHOT:unpack-fragment (default-unpack-fragment) @ helloworld ---
+[INFO]
+[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile-1) @ helloworld ---
 [INFO] Nothing to compile - all classes are up to date
-[INFO] 
-[INFO] --- ep-maven-plugin:1.0.0:start-nodes (default-start-nodes) @ goldylocks ---
-[INFO] [A.goldylocks] Running "install node"
-[INFO] [dtm]    Installing node
-[INFO] [dtm]        DEVELOPMENT executables
-[INFO] [dtm]        File shared memory
-[INFO] [dtm]        7 concurrent allocation segments
-[INFO] [dtm]        Host name plordmac
-[INFO] [dtm]        Container tibco/dtm
-[INFO] [dtm]        Starting container services
-[INFO] [dtm]        Loading node configuration
-[INFO] [dtm]        Auditing node security
-[INFO] [dtm]        Administration port is 11072
-[INFO] [dtm]        Service name is A.goldylocks
-[INFO] [dtm]    Node installed
-[INFO] [A.goldylocks] Finished "install node"
-[INFO] [goldylocks] Running "start node"
-[INFO] Node           Status                       
-[INFO] [A.goldylocks] Start node                   
-[INFO] [A.goldylocks] Loading node configuration   
-[INFO] [A.goldylocks] Auditing node security       
-[INFO] [A.goldylocks] Host name plordmac           
-[INFO] [A.goldylocks] Administration port is 11072 
-[INFO] [A.goldylocks] Service name is A.goldylocks 
-[INFO] [A.goldylocks] Node started                 
-[INFO] [goldylocks] Finished "start node"
-[INFO] 
-[INFO] --- ep-maven-plugin:1.0.0:test-eventflow-fragment (default-test-eventflow-fragment) @ goldylocks ---
-[INFO] [dtm] INFO: Deployment tool version: [TIBCO Distributed Transactional Memory Platform 3.0.0 (build 160201)] starting at [Mon Feb 01 14:19:46 GMT 2016]
-[INFO] [dtm] INFO: Node version: [TIBCO Distributed Transactional Memory Platform 3.0.0 (build 160201)]
-[INFO] [dtm] INFO: Starting com.tibco.ep.buildmavenplugin.surefire.Runner on node A.goldylocks ...
-[INFO] [dtm] INFO: com.tibco.ep.buildmavenplugin.surefire.Runner started on JVM com_tibco_ep_buildmavenplugin_surefire_Runner0 on node A.goldylocks.
-[INFO] [A.goldylocks] 
-[INFO] [A.goldylocks] -------------------------------------------------------
-[INFO] [A.goldylocks] T E S T S
-[INFO] [A.goldylocks] -------------------------------------------------------
-[INFO] [A.goldylocks] Running com.tibco.sb.test.GoldylocksTest
-[INFO] [A.goldylocks] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.502 sec
-[INFO] [A.goldylocks] 
-[INFO] [A.goldylocks] Results :
-[INFO] [A.goldylocks] 
-[INFO] [A.goldylocks] Tests run: 4, Failures: 0, Errors: 0, Skipped: 0
-[INFO] [A.goldylocks] 
-[INFO] [dtm] INFO: JVM com_tibco_ep_buildmavenplugin_surefire_Runner0 exited with status [0]
-[INFO] [goldylocks] Finished "junit"
-[INFO] 
-[INFO] --- ep-maven-plugin:1.0.0:stop-nodes (default-stop-nodes-1) @ goldylocks ---
-[INFO] [goldylocks] Running "stop node"
-[INFO] Node           Status                                                              
-[INFO] [A.goldylocks] Stopping node                                                       
-[INFO] [A.goldylocks] Dtm::distribution stopping                                          
-[INFO] [A.goldylocks] application::com_tibco_ep_buildmavenplugin_surefire_Runner0 stopped 
-[INFO] [A.goldylocks] Node stopped                                                        
-[INFO] [goldylocks] Finished "stop node"
-[INFO] [goldylocks] Running "remove node"
-[INFO] Node           Status                           
-[INFO] [A.goldylocks] Removing node                    
-[INFO] [A.goldylocks] Shutting down container services 
-[INFO] [A.goldylocks] Removing node directory          
-[INFO] [A.goldylocks] Node removed                     
-[INFO] [goldylocks] Finished "remove node"
-[INFO] 
-[INFO] --- ep-maven-plugin:1.0.0:package-eventflow-fragment (default-package-eventflow-fragment) @ goldylocks ---
-[INFO] Building zip: /Users/plord/workspace/dtmexamples/eventflow-fragments/goldylocks/target/goldylocks-3.0.0-ep-eventflow-fragment.zip
-[INFO] 
-[INFO] >>> maven-source-plugin:2.4:jar (attach-sources) > generate-sources @ goldylocks >>>
-[INFO] 
-[INFO] --- ep-maven-plugin:1.0.0:install-product (default-install-product-1) @ goldylocks ---
-[INFO] com.tibco.ep.thirdparty:tibco-sb_osxx86_64:zip:7.6.0:test already installed
-[INFO] 
-[INFO] --- buildnumber-maven-plugin:1.4:create-timestamp (default) @ goldylocks ---
-[INFO] 
-[INFO] <<< maven-source-plugin:2.4:jar (attach-sources) < generate-sources @ goldylocks <<<
-[INFO] 
-[INFO] --- maven-source-plugin:2.4:jar (attach-sources) @ goldylocks ---
-[INFO] 
-[INFO] --- maven-javadoc-plugin:2.10.3:jar (attach-javadocs) @ goldylocks ---
-[INFO] Not executing Javadoc as the project is not a Java classpath-capable package
-[INFO] 
-[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ goldylocks ---
-[INFO] No primary artifact to install, installing attached artifacts instead.
-[INFO] Installing /Users/plord/workspace/dtmexamples/eventflow-fragments/goldylocks/pom.xml to /Users/plord/workspace/BUILD/repository/com/tibco/ep/dtmexamples/eventflowfragment/goldylocks/3.0.0/goldylocks-3.0.0.pom
-[INFO] Installing /Users/plord/workspace/dtmexamples/eventflow-fragments/goldylocks/target/goldylocks-3.0.0-ep-eventflow-fragment.zip to /Users/plord/workspace/BUILD/repository/com/tibco/ep/dtmexamples/eventflowfragment/goldylocks/3.0.0/goldylocks-3.0.0-ep-eventflow-fragment.zip
-[INFO] Installing /Users/plord/workspace/dtmexamples/eventflow-fragments/goldylocks/target/goldylocks-3.0.0-sources.jar to /Users/plord/workspace/BUILD/repository/com/tibco/ep/dtmexamples/eventflowfragment/goldylocks/3.0.0/goldylocks-3.0.0-sources.jar
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0-SNAPSHOT:generate-main-eventflow (default-generate-main-eventflow) @ helloworld ---
+[INFO] Found 1 module
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0-SNAPSHOT:compile-eventflow-fragment (default-compile-eventflow-fragment) @ helloworld ---
+[INFO]
+[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ helloworld ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/target/classes
+[INFO]
+[INFO] --- maven-resources-plugin:3.1.0:testResources (default-testResources) @ helloworld ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 0 resource
+[INFO] Copying 0 resource
+[INFO]
+[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile) @ helloworld ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/target/test-classes
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0-SNAPSHOT:generate-test-eventflow (default-generate-test-eventflow) @ helloworld ---
+[INFO] Found 0 module
+[INFO]
+[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile-1) @ helloworld ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/target/test-classes
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0-SNAPSHOT:check-testcases (default-check-testcases) @ helloworld ---
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0-SNAPSHOT:start-nodes (default-start-nodes) @ helloworld ---
+[INFO] UDP port 59781 selected for discovery
+[INFO] [A.helloworld] Running "install node"
+[INFO] [A.helloworld] 	Installing node
+[INFO] [A.helloworld] 		DEVELOPMENT executables
+[INFO] [A.helloworld] 		File shared memory
+[INFO] [A.helloworld] 		7 concurrent allocation segments
+[INFO] [A.helloworld] 		Host name MacBookPro-of-flionell.local
+[INFO] [A.helloworld] 		Starting node services
+[INFO] [A.helloworld] 		Loading node configuration
+[INFO] [A.helloworld] 		Auditing node security
+[INFO] [A.helloworld] 		Administration port is 9831
+[INFO] [A.helloworld] 		Service name is A.helloworld
+[INFO] [A.helloworld] 	Node installed
+[INFO] [A.helloworld] Finished "install node"
+[INFO] [helloworld] Running "start node"
+[INFO] [A.helloworld] 	Starting node
+[INFO] [A.helloworld] 		Loading node configuration
+[INFO] [A.helloworld] 		Auditing node security
+[INFO] [A.helloworld] 		Host name MacBookPro-of-flionell.local
+[INFO] [A.helloworld] 		Administration port is 9831
+[INFO] [A.helloworld] 		Service name is A.helloworld
+[INFO] [A.helloworld] 	Node started
+[INFO] [helloworld] Finished "start node"
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0-SNAPSHOT:test-eventflow-fragment (default-test-eventflow-fragment) @ helloworld ---
+[INFO] [dtm] INFO: Deploy tool version: [TIBCO Distributed Transactional Memory Platform 11.0.0-SNAPSHOT (build 2202210815)] starting at [Mon Feb 28 11:12:20 CET 2022]
+[INFO] [dtm] INFO: Node version: [TIBCO Streaming Runtime 11.0.0-SNAPSHOT (build 2202210837)]
+[INFO] [dtm] INFO: Starting com.tibco.ep.buildmavenplugin.surefire.Runner on node A.helloworld ...
+[INFO] [dtm] INFO: com.tibco.ep.buildmavenplugin.surefire.Runner started on JVM com_tibco_ep_buildmavenplugin_surefire_Runner0 on node A.helloworld.
+[INFO] [A.helloworld] No user-defined Logback configuration, using product default configuration
+[INFO] [A.helloworld] 2022-02-28 11:12:23.986000+0100 [516:main] INFO  com.tibco.ep.dtm.stdout:
+[INFO] [A.helloworld] -------------------------------------------------------
+[INFO] [A.helloworld]  T E S T S
+[INFO] [A.helloworld] -------------------------------------------------------
+[INFO] [A.helloworld] Running com.example.helloworld.TestCase
+[INFO] [A.helloworld] Test Case 1
+[INFO] [A.helloworld] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.853 sec
+[INFO] [A.helloworld] 2022-02-28 11:12:27.850000+0100 [516:main] INFO  com.tibco.ep.dtm.stdout:
+[INFO] [A.helloworld] Results :
+[INFO] [A.helloworld] 2022-02-28 11:12:27.851000+0100 [516:main] INFO  com.tibco.ep.dtm.stdout:
+[INFO] [A.helloworld] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] [A.helloworld] 2022-02-28 11:12:27.851000+0100 [516:main] INFO  com.tibco.ep.dtm.stdout:
+[INFO] [dtm] INFO: Engine com_tibco_ep_buildmavenplugin_surefire_Runner0 on node [A.helloworld] exited with status [0]
+[INFO] [helloworld] Finished "deploy com.tibco.ep.buildmavenplugin.surefire.Runner"
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0-SNAPSHOT:stop-nodes (default-stop-nodes-1) @ helloworld ---
+[INFO] [A.helloworld] Running "stop node"
+[INFO] [A.helloworld] 	Stopping node
+[INFO] [A.helloworld] 		Engine application::com_tibco_ep_buildmavenplugin_surefire_Runner0 stopped
+[INFO] [A.helloworld] 	Node stopped
+[INFO] [A.helloworld] Finished "stop node"
+[INFO] [A.helloworld] Running "remove node"
+[INFO] [A.helloworld] 	Removing node
+[INFO] [A.helloworld] 		Shutting down node services
+[INFO] [A.helloworld] 		Engine System::administration stopped
+[INFO] [A.helloworld] 	Node removed
+[INFO] [A.helloworld] Finished "remove node"
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0-SNAPSHOT:package-eventflow-fragment (default-package-eventflow-fragment) @ helloworld ---
+[INFO] Building zip: /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/target/helloworld-3.0.0-ep-eventflow-fragment.zip
+[INFO]
+[INFO] >>> maven-source-plugin:3.2.1:jar (attach-sources) > generate-sources @ helloworld >>>
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0-SNAPSHOT:install-product (default-install-product-1) @ helloworld ---
+[INFO] com.tibco.ep.sb.rt:platform_osxx86_64:zip:11.0.0-SNAPSHOT:test already installed manually to /Users/flionell/tibco/dev/core
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0-SNAPSHOT:set-resources (default-set-resources) @ helloworld ---
+[INFO]
+[INFO] --- maven-enforcer-plugin:3.0.0:enforce (hard-build-requirements) @ helloworld ---
+[INFO]
+[INFO] <<< maven-source-plugin:3.2.1:jar (attach-sources) < generate-sources @ helloworld <<<
+[INFO]
+[INFO]
+[INFO] --- maven-source-plugin:3.2.1:jar (attach-sources) @ helloworld ---
+[INFO] Building jar: /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/target/helloworld-3.0.0-sources.jar
+[INFO]
+[INFO] --- maven-javadoc-plugin:3.3.1:jar (attach-javadocs) @ helloworld ---
+[INFO]
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ helloworld ---
+[INFO] Installing /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/target/helloworld-3.0.0-ep-eventflow-fragment.zip to /Users/flionell/tibco/dev/core/BUILD/repository/com/example/helloworld/3.0.0/helloworld-3.0.0.zip
+[INFO] Installing /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/pom.xml to /Users/flionell/tibco/dev/core/BUILD/repository/com/example/helloworld/3.0.0/helloworld-3.0.0.pom
+[INFO] Installing /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/target/helloworld-3.0.0-sources.jar to /Users/flionell/tibco/dev/core/BUILD/repository/com/example/helloworld/3.0.0/helloworld-3.0.0-sources.jar
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 27.410 s
-[INFO] Finished at: 2016-02-01T14:20:02+00:00
-[INFO] Final Memory: 38M/580M
+[INFO] Total time:  37.467 s
+[INFO] Finished at: 2022-02-28T11:12:34+01:00
 [INFO] ------------------------------------------------------------------------
 ```
 
 <a name="calling-out-to-java"></a>
 
-## Calling out to java
+# Calling out to java
 
 Java code that needs to be included with the application can be placed in 
 java source directory ( src/main/java ).  This code will be added to the 
@@ -207,7 +307,7 @@ fragment and included with any test cases.
 
 <a name="external-dependency"></a>
 
-## External dependency
+# External dependency
 
 External java (jar) dependencies can be added to the maven pom.xml - these are
 then included in build, test and package steps.
@@ -233,7 +333,7 @@ For example :
 
 <a name="building-native-libraries"></a>
 
-## Building native libraries
+# Building native libraries
 
 Whilst a maven build could use [exec-maven-plugin](http://www.mojohaus.org/exec-maven-plugin/)
 to call the native toolchain ( make, g++ etc ), the maven plugin 
@@ -323,7 +423,7 @@ fragment is built.
 
 <a name="third-party-native-libraries"></a>
 
-## Third party native libraries
+# Third party native libraries
 
 Its also possible to build a nar archive containing shared libraries from 
 a third party - ie when the source isn't available.  The directory
@@ -432,7 +532,7 @@ and the shared libraries will be included in the runtime library path.
 
 <a name="multiple-sbapps"></a>
 
-## Multiple sbapps
+# Multiple sbapps
 
 There is no difference between a fragment consisting of one sbapp file
 and a fragment consisting of multiple sbapp files.  Multiple sbapp and
@@ -440,7 +540,7 @@ sbint files are added to the EventFlow fragment.
 
 <a name="java-adapters"></a>
 
-## Java adapters
+# Java adapters
 
 EventFlow adapters written in java can be built in a maven module with a
 packaging type of jar and use a EventFlow application with sbunit to test.
@@ -479,7 +579,7 @@ To use this adapter in a EventFlow application just set as a dependency :
 
 <a name="eventflow-fragment-referencing-another-eventflow-fragment"></a>
 
-## EventFlow fragment referencing another EventFlow fragment
+# EventFlow fragment referencing another EventFlow fragment
 
 To import a EventFlow application add the fragment to the pom.xml
 dependencies :-
@@ -497,7 +597,14 @@ dependencies :-
         ....
 ```
 
-The maven plugin will extract this fragment dependency into the target 
-directory and referenced in test cases.  Note that the extracted dependency
-is not included in the built fragment zip.
+The dependency is a binary dependency: the typecheck/build process reads information about the
+dependency from the EventFlow archive. This archive is read from the maven repository during the
+maven build, in the same way java dependencies are read. Building the current EventFlow does not
+require the sources of the dependency.
+
+This is also true in Studio: the EventFlow dependency project does not have to be opened in the
+current workspace for the Studio build/typecheck to work. In this case, the information are also
+read from the maven repository.
+If a dependency is opened in the current workspace, then the information are read from the files
+in the workspace, not from the repository.
 

@@ -66,8 +66,12 @@
 			<item name="Goals" href="goals.html" collapse="true">
 				<item name="Java - package" href="package-java-fragment-mojo.html" />
 				<item name="Java - unit test" href="test-java-fragment-mojo.html" />
+				<item name="EventFlow - compile" href="compile-eventflow-fragment-mojo.html" />
+				<item name="EventFlow - generate main" href="generate-main-eventflow-mojo.html" />
+				<item name="EventFlow - generate test" href="generate-test-eventflow-mojo.html" />
 				<item name="EventFlow - package" href="package-eventflow-fragment-mojo.html" />
 				<item name="EventFlow - unit test" href="test-eventflow-fragment-mojo.html" />
+				<item name="LiveView - compile" href="compile-liveview-fragment-mojo.html" />
 				<item name="LiveView - package" href="package-liveview-fragment-mojo.html" />
 				<item name="LiveView - unit test" href="test-liveview-fragment-mojo.html" />
 				<item name="TIBCO Cloud Streaming - package" href="package-tcs-fragment-mojo.html" />
@@ -76,6 +80,7 @@
 				<item name="Manage - stop nodes" href="stop-nodes-mojo.html" />
 				<item name="Manage - administer" href="administer-nodes-mojo.html" />
 				<item name="Manage - install product" href="install-product-mojo.html" />
+				<item name="Manage - set resources" href="set-resources-mojo.html" />
 				<item name="Manage - deploy fragment" href="deploy-fragment-mojo.html" />
 				<item name="Unpack - nar" href="unpack-nar-mojo.html" />
 				<item name="Unpack - fragment" href="unpack-fragment-mojo.html" />

@@ -89,107 +89,154 @@ These are :
 
 ## Build, test and install
 
-Run **mvn install**.  For example:
+Run **mvn install**. This will compile the java files in the project, typecheck the eventflow 
+fragment, trigger the fragment code generation, compile the generated code, package the eventflow 
+fragment in an eventflow archive, start a test node, execute the tests, and stop the test node.
+For example:
 
 ``` shell
 $ mvn install
 [INFO] Scanning for projects...
-[INFO]                                                                         
-[INFO] ------------------------------------------------------------------------
+[INFO]
+[INFO] -----------------------< com.example:helloworld >-----------------------
 [INFO] Building Java Fragment - hello world 3.0.0
-[INFO] ------------------------------------------------------------------------
-[INFO] 
-[INFO] --- ep-maven-plugin:1.0.0:install-product (default-install-product-1) @ helloworld ---
-[INFO] com.tibco.ep.dtm:platform_osxx86_64:zip:3.0.0:test product is already installed manually
-[INFO] 
-[INFO] --- maven-compiler-plugin:3.3:compile (default-compile) @ helloworld ---
+[INFO] -----------------------[ ep-eventflow-fragment ]------------------------
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0:install-product (default-install-product-1) @ helloworld ---
+[INFO] com.tibco.ep.sb.rt:platform_osxx86_64:zip:11.0.0:test already installed manually to /Users/flionell/tibco/dev/core
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0:set-resources (default-set-resources) @ helloworld ---
+[INFO]
+[INFO] --- maven-enforcer-plugin:3.0.0:enforce (hard-build-requirements) @ helloworld ---
+[INFO]
+[INFO] --- maven-resources-plugin:3.1.0:resources (default-resources) @ helloworld ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 0 resource
+[INFO] Copying 0 resource
+[INFO] Copying 2 resources
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0:unpack-nar (default-unpack-nar) @ helloworld ---
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0:unpack-fragment (default-unpack-fragment) @ helloworld ---
+[INFO]
+[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile-1) @ helloworld ---
+[INFO] Nothing to compile - all classes are up to date
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0:generate-main-eventflow (default-generate-main-eventflow) @ helloworld ---
+[INFO] Found 1 module
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0:compile-eventflow-fragment (default-compile-eventflow-fragment) @ helloworld ---
+[INFO]
+[INFO] --- maven-compiler-plugin:3.8.1:compile (default-compile) @ helloworld ---
 [INFO] Changes detected - recompiling the module!
-[INFO] Compiling 2 source files to /Users/plord/workspace/dtmexamples/java-fragments/helloworld/target/classes
-[INFO] 
-[INFO] --- maven-compiler-plugin:3.3:testCompile (default-testCompile) @ helloworld ---
+[INFO] Compiling 1 source file to /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/target/classes
+[INFO]
+[INFO] --- maven-resources-plugin:3.1.0:testResources (default-testResources) @ helloworld ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] Copying 0 resource
+[INFO] Copying 0 resource
+[INFO]
+[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile) @ helloworld ---
 [INFO] Changes detected - recompiling the module!
-[INFO] Compiling 1 source file to /Users/plord/workspace/dtmexamples/java-fragments/helloworld/target/test-classes
-[INFO] 
-[INFO] --- ep-maven-plugin:1.0.0:start-nodes (default-start-nodes) @ helloworld ---
-[INFO] [A.helloworld] Starting install node
-[INFO] [A.helloworld]  Installing node
-[INFO] [A.helloworld]      DEVELOPMENT executables
-[INFO] [A.helloworld]      File shared memory
-[INFO] [A.helloworld]      7 concurrent allocation segments
-[INFO] [A.helloworld]      Host name plordmac
-[INFO] [A.helloworld]      Container tibco/dtm
-[INFO] [A.helloworld]      Starting container services
-[INFO] [A.helloworld]      Loading node configuration
-[INFO] [A.helloworld]      Auditing node security
-[INFO] [A.helloworld]      Administration port is 36091
-[INFO] [A.helloworld]      Service name is A.helloworld
-[INFO] [A.helloworld]  Node installed
-[INFO] [A.helloworld] Completed install node
-[INFO] [helloworld] Starting start node
-[INFO] [A.helloworld] Start node 
-[INFO] [A.helloworld] Loading node configuration 
-[INFO] [A.helloworld] Auditing node security 
-[INFO] [A.helloworld] Host name plordmac 
-[INFO] [A.helloworld] Administration port is 36091 
-[INFO] [A.helloworld] Service name is A.helloworld 
-[INFO] [A.helloworld] Node started 
-[INFO] 
-[INFO] --- ep-maven-plugin:1.0.0:test-java-fragment (default-test-java-fragment) @ helloworld ---
-[INFO] [helloworld] INFO: Deployment tool version: [TIBCO Distributed Transactional Memory Platform 3.0.0 (build 160118)] starting at [Wed Jan 20 10:09:36 GMT 2016]
-[INFO] [helloworld] INFO: Node version: [TIBCO Distributed Transactional Memory Platform 3.0.0 (build 160118)]
-[INFO] [helloworld] INFO: Starting com.tibco.ep.buildmavenplugin.surefire.Runner ...
-[INFO] [helloworld] INFO: com.tibco.ep.buildmavenplugin.surefire.Runner started on JVM com_tibco_ep_buildmavenplugin_surefire_Runner0.
-[INFO] [helloworld] 10:09:38.592 [main] DEBUG c.tibco.haservice.ComponentNotifier - preConfigurationInitialize
-[INFO] [helloworld] 10:09:38.751 [main] DEBUG c.t.haservice.ConfigurationNotifier - set owner for configuration notifier
-[INFO] [helloworld] 10:09:38.751 [main] DEBUG c.tibco.haservice.ComponentNotifier - registering admin targets
-[INFO] [helloworld] 10:09:39.053 [main] DEBUG c.t.e.d.c.node.NodeNotifier - Created NodeNotifier
-[INFO] [helloworld] 
-[INFO] [helloworld] -------------------------------------------------------
-[INFO] [helloworld] T E S T S
-[INFO] [helloworld] -------------------------------------------------------
-[INFO] [helloworld] Running com.tibco.ep.testcases.TestCase
-[INFO] [helloworld] 10:09:39.293 [main] INFO  com.tibco.ep.testjavafragment.Main - Test Case 1
-[INFO] [helloworld] 10:09:39.299 [main] INFO  com.tibco.ep.testjavafragment.Main - Test Case 2
-[INFO] [helloworld] 10:09:39.299 [main] INFO  com.tibco.ep.testjavafragment.Main - Creating instance of Node A.helloworld
-[INFO] [helloworld] 10:09:39.316 [main] INFO  com.tibco.ep.testjavafragment.Main - Deleting instance of Node
-[INFO] [helloworld] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.108 sec
-[INFO] [helloworld] 
-[INFO] [helloworld] Results :
-[INFO] [helloworld] 
-[INFO] [helloworld] Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
-[INFO] [helloworld] 
-[INFO] [helloworld] 10:09:39.337 [Thread-0] DEBUG c.tibco.haservice.ComponentNotifier - postConfigurationTerminate
-[INFO] [helloworld] 10:09:39.338 [Thread-0] DEBUG c.tibco.haservice.ComponentNotifier - last owner, doing node level cleanup
-[INFO] [helloworld] 10:09:39.344 [Thread-0] DEBUG c.tibco.haservice.ComponentNotifier - unregistering admin targets
-[INFO] [helloworld] 10:09:39.345 [Thread-0] DEBUG c.tibco.haservice.ComponentNotifier - deleting configuration notifier
-[INFO] [helloworld] INFO: JVM com_tibco_ep_buildmavenplugin_surefire_Runner0 exited with status [0]
-[INFO] [helloworld] Completed junit
-[INFO] 
-[INFO] --- ep-maven-plugin:1.0.0:stop-nodes (default-stop-nodes-1) @ helloworld ---
-[INFO] [helloworld] Starting stop node
-[INFO] [A.helloworld] Stopping node 
-[INFO] [A.helloworld] Dtm::distribution stopping 
-[INFO] [A.helloworld] application::com_tibco_ep_buildmavenplugin_surefire_Runner0 stopped 
-[INFO] [A.helloworld] Node stopped 
-[INFO] [helloworld] Starting remove node
-[INFO] [A.helloworld] Removing node 
-[INFO] [A.helloworld] Shutting down container services 
-[INFO] [A.helloworld] Removing node directory 
-[INFO] [A.helloworld] Node removed 
-[INFO] 
-[INFO] --- ep-maven-plugin:1.0.0:package-java-fragment (default-package-java-fragment) @ helloworld ---
-[INFO] Building zip: /Users/plord/workspace/dtmexamples/java-fragments/helloworld/target/helloworld-3.0.0-ep-java-fragment.zip
-[INFO] 
+[INFO] Compiling 1 source file to /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/target/test-classes
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0:generate-test-eventflow (default-generate-test-eventflow) @ helloworld ---
+[INFO] Found 0 module
+[INFO]
+[INFO] --- maven-compiler-plugin:3.8.1:testCompile (default-testCompile-1) @ helloworld ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 1 source file to /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/target/test-classes
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0:check-testcases (default-check-testcases) @ helloworld ---
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0:start-nodes (default-start-nodes) @ helloworld ---
+[INFO] UDP port 59781 selected for discovery
+[INFO] [A.helloworld] Running "install node"
+[INFO] [A.helloworld] 	Installing node
+[INFO] [A.helloworld] 		DEVELOPMENT executables
+[INFO] [A.helloworld] 		File shared memory
+[INFO] [A.helloworld] 		7 concurrent allocation segments
+[INFO] [A.helloworld] 		Host name MacBookPro-of-flionell.local
+[INFO] [A.helloworld] 		Starting node services
+[INFO] [A.helloworld] 		Loading node configuration
+[INFO] [A.helloworld] 		Auditing node security
+[INFO] [A.helloworld] 		Administration port is 9831
+[INFO] [A.helloworld] 		Service name is A.helloworld
+[INFO] [A.helloworld] 	Node installed
+[INFO] [A.helloworld] Finished "install node"
+[INFO] [helloworld] Running "start node"
+[INFO] [A.helloworld] 	Starting node
+[INFO] [A.helloworld] 		Loading node configuration
+[INFO] [A.helloworld] 		Auditing node security
+[INFO] [A.helloworld] 		Host name MacBookPro-of-flionell.local
+[INFO] [A.helloworld] 		Administration port is 9831
+[INFO] [A.helloworld] 		Service name is A.helloworld
+[INFO] [A.helloworld] 	Node started
+[INFO] [helloworld] Finished "start node"
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0:test-eventflow-fragment (default-test-eventflow-fragment) @ helloworld ---
+[INFO] [dtm] INFO: Deploy tool version: [TIBCO Distributed Transactional Memory Platform 11.0.0 (build 2202210815)] starting at [Mon Feb 28 11:12:20 CET 2022]
+[INFO] [dtm] INFO: Node version: [TIBCO Streaming Runtime 11.0.0 (build 2202210837)]
+[INFO] [dtm] INFO: Starting com.tibco.ep.buildmavenplugin.surefire.Runner on node A.helloworld ...
+[INFO] [dtm] INFO: com.tibco.ep.buildmavenplugin.surefire.Runner started on JVM com_tibco_ep_buildmavenplugin_surefire_Runner0 on node A.helloworld.
+[INFO] [A.helloworld] No user-defined Logback configuration, using product default configuration
+[INFO] [A.helloworld] 2022-02-28 11:12:23.986000+0100 [516:main] INFO  com.tibco.ep.dtm.stdout:
+[INFO] [A.helloworld] -------------------------------------------------------
+[INFO] [A.helloworld]  T E S T S
+[INFO] [A.helloworld] -------------------------------------------------------
+[INFO] [A.helloworld] Running com.example.helloworld.TestCase
+[INFO] [A.helloworld] Test Case 1
+[INFO] [A.helloworld] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.853 sec
+[INFO] [A.helloworld] 2022-02-28 11:12:27.850000+0100 [516:main] INFO  com.tibco.ep.dtm.stdout:
+[INFO] [A.helloworld] Results :
+[INFO] [A.helloworld] 2022-02-28 11:12:27.851000+0100 [516:main] INFO  com.tibco.ep.dtm.stdout:
+[INFO] [A.helloworld] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+[INFO] [A.helloworld] 2022-02-28 11:12:27.851000+0100 [516:main] INFO  com.tibco.ep.dtm.stdout:
+[INFO] [dtm] INFO: Engine com_tibco_ep_buildmavenplugin_surefire_Runner0 on node [A.helloworld] exited with status [0]
+[INFO] [helloworld] Finished "deploy com.tibco.ep.buildmavenplugin.surefire.Runner"
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0:stop-nodes (default-stop-nodes-1) @ helloworld ---
+[INFO] [A.helloworld] Running "stop node"
+[INFO] [A.helloworld] 	Stopping node
+[INFO] [A.helloworld] 		Engine application::com_tibco_ep_buildmavenplugin_surefire_Runner0 stopped
+[INFO] [A.helloworld] 	Node stopped
+[INFO] [A.helloworld] Finished "stop node"
+[INFO] [A.helloworld] Running "remove node"
+[INFO] [A.helloworld] 	Removing node
+[INFO] [A.helloworld] 		Shutting down node services
+[INFO] [A.helloworld] 		Engine System::administration stopped
+[INFO] [A.helloworld] 	Node removed
+[INFO] [A.helloworld] Finished "remove node"
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0:package-eventflow-fragment (default-package-eventflow-fragment) @ helloworld ---
+[INFO] Building zip: /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/target/helloworld-3.0.0-ep-eventflow-fragment.zip
+[INFO]
+[INFO] >>> maven-source-plugin:3.2.1:jar (attach-sources) > generate-sources @ helloworld >>>
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0:install-product (default-install-product-1) @ helloworld ---
+[INFO] com.tibco.ep.sb.rt:platform_osxx86_64:zip:11.0.0:test already installed manually to /Users/flionell/tibco/dev/core
+[INFO]
+[INFO] --- ep-maven-plugin:2.1.0:set-resources (default-set-resources) @ helloworld ---
+[INFO]
+[INFO] --- maven-enforcer-plugin:3.0.0:enforce (hard-build-requirements) @ helloworld ---
+[INFO]
+[INFO] <<< maven-source-plugin:3.2.1:jar (attach-sources) < generate-sources @ helloworld <<<
+[INFO]
+[INFO]
+[INFO] --- maven-source-plugin:3.2.1:jar (attach-sources) @ helloworld ---
+[INFO] Building jar: /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/target/helloworld-3.0.0-sources.jar
+[INFO]
+[INFO] --- maven-javadoc-plugin:3.3.1:jar (attach-javadocs) @ helloworld ---
+[INFO]
 [INFO] --- maven-install-plugin:2.5.2:install (default-install) @ helloworld ---
-[INFO] No primary artifact to install, installing attached artifacts instead.
-[INFO] Installing /Users/plord/workspace/dtmexamples/java-fragments/helloworld/pom.xml to /Users/plord/workspace/BUILD/repository/com/tibco/ep/dtmexamples/javafragment/helloworld/3.0.0/helloworld-3.0.0.pom
-[INFO] Installing /Users/plord/workspace/dtmexamples/java-fragments/helloworld/target/helloworld-3.0.0-ep-java-fragment.zip to /Users/plord/workspace/BUILD/repository/com/tibco/ep/dtmexamples/javafragment/helloworld/3.0.0/helloworld-3.0.0-ep-java-fragment.zip
+[INFO] Installing /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/target/helloworld-3.0.0-ep-eventflow-fragment.zip to /Users/flionell/tibco/dev/core/BUILD/repository/com/example/helloworld/3.0.0/helloworld-3.0.0.zip
+[INFO] Installing /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/pom.xml to /Users/flionell/tibco/dev/core/BUILD/repository/com/example/helloworld/3.0.0/helloworld-3.0.0.pom
+[INFO] Installing /Users/flionell/Documents/StreamBase Studio 11.0 Workspace/helloworld/target/helloworld-3.0.0-sources.jar to /Users/flionell/tibco/dev/core/BUILD/repository/com/example/helloworld/3.0.0/helloworld-3.0.0-sources.jar
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time: 21.507 s
-[INFO] Finished at: 2016-01-20T10:09:44+00:00
-[INFO] Final Memory: 31M/507M
+[INFO] Total time:  37.467 s
+[INFO] Finished at: 2022-02-28T11:12:34+01:00
 [INFO] ------------------------------------------------------------------------
 ```
 
