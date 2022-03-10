@@ -1,0 +1,153 @@
+//
+//  Copyright (C) 2022, TIBCO Software Inc.
+//  
+//  Redistribution and use in source and binary forms, with or without
+//  modification, are permitted provided that the following conditions are met:
+//  
+//  1. Redistributions of source code must retain the above copyright notice,
+//     this list of conditions and the following disclaimer.
+//  
+//  2. Redistributions in binary form must reproduce the above copyright notice,
+//     this list of conditions and the following disclaimer in the documentation
+//     and/or other materials provided with the distribution.
+//  
+//  3. Neither the name of the copyright holder nor the names of its contributors
+//     may be used to endorse or promote products derived from this software
+//     without specific prior written permission.
+//  
+//  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+//  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+//  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+//  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+//  LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+//  CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+//  SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+//  INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+//  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+//  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+//  POSSIBILITY OF SUCH DAMAGE.
+//
+// Declarative pipeline for TIBCO-internal Jenkins builds.
+//
+
+@Library('workflowLibs@master') _
+
+// Guards against accidental starts.
+def buildStart = epDeclarative.guardStart([:])
+if (!buildStart) {
+    return
+}
+
+pipeline {
+    options {
+        // Only keep a few builds, for up to week.
+        buildDiscarder(logRotator(daysToKeepStr: '7',
+                                  numToKeepStr: '3' ))
+        timeout(time: 2, unit: 'HOURS')
+        skipDefaultCheckout() // to subdirectory, see below
+    }
+
+    triggers {
+        pollSCM('H 0 * * 1-5')
+    }
+
+    parameters {
+        choice(name: 'deployArtifacts', choices: ['default', 'never', 'always'],
+               description: 'By default, only main and release-work branches are deployed. Some deployments can be skipped if there are no changes in the default case.')
+
+        choice(name: 'deploySonatypeOSSRH', choices: ['release', 'never'],
+               description: 'By default, only releases are deployed to Sonatype OSSH.')
+
+        string(name: 'mavenExtras', defaultValue: '',
+               description: 'Extra JVM options for Maven, usually -DskipTests and the like.')
+
+        booleanParam(name: 'cleanWorkspace', defaultValue: true, description: 'Clean workspace before build.')
+
+        string(name: 'notificationEmail', defaultValue: 'change-authors',
+               description: 'Email address for notifications on failure.')
+
+        string(name: 'successEmail', defaultValue: 'change-authors',
+               description: 'Email address for notifications on success.')
+
+        choice(name: 'buildVerbose', choices: ['default', 'pipeline', 'tools' ],
+               description: 'Make build more verbose with pipeline and tool diagnostics.')
+    }
+    
+    agent {
+        node {
+            label "(o.centos8 || o.rh8 || o.almalinux8) && q.str"
+        }
+    }
+
+    environment { // Not persisted in Artifactory build record.
+        // Needed for Maven CommonSettings.
+        TIBCO_EP_HOME = "${env.WORKSPACE}/EP"
+    }
+
+    stages {
+        stage ('janitor-before-job') {
+            steps {
+                script {
+                    epDeclarative.preCleanup()
+                }
+            }
+        }
+
+        stage ('checkout') {
+            steps {
+                // Check out to a subdirectory to avoid clashes with TIBCO_EP_HOME
+                // and other helper directories in the workspace.
+                dir ('src') {
+                    checkout scm
+                }
+            }
+        }
+
+        stage ('Build') {
+            steps {
+                script {
+                    def jobUtil = new com.tibco.workflow.JobUtil()
+
+                    def platform = "linux" // the one platform for which we build.
+
+                    epDeclarative.buildInit(
+                        pomFile: 'src/pom.xml',
+                        mavenSnapshotRepo: 'ep-snapshots',
+                        mavenReleaseRepo: 'ep-rc',
+                        javaTool: jobUtil.getOracleJava11Tool(),
+                        mavenTool: jobUtil.getMaven36Tool(),
+                        // OSSH of release-work branches
+                        mavenBranchOptions: [
+                            [ matching: [ "release-work/.+" ],
+                             properties: [ 'gpg.skip': 'false' ] ]
+                        ],
+                        primaryPlatform: "linux",
+                        siteProduct: "tibco-streaming-maven-plugin"
+                    )
+
+                    epDeclarative.buildMaven(
+                        goals: "install",
+                        platform: platform,
+                        otherDeployRun: ( "never".equals(params.deploySonatypeOSSRH) ? null
+                                         : [ goals: "deploy",
+                                            pomFile: 'src/ep-maven/pom.xml' ] ) )
+
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                epDeclarative.postAlways()
+            }
+        }
+
+        cleanup {
+            script {
+                epDeclarative.postCleanup()
+            }
+        }
+    }
+}
