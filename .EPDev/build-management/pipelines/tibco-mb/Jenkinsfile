@@ -110,6 +110,8 @@ pipeline {
 
                     def platform = "linux" // the one platform for which we build.
 
+                    def publicPomFile = "src/ep-maven/pom.xml"
+                    
                     epDeclarative.buildInit(
                         pomFile: 'src/pom.xml',
                         mavenSnapshotRepo: 'ep-snapshots',
@@ -122,7 +124,8 @@ pipeline {
                              properties: [ 'gpg.skip': 'false' ] ]
                         ],
                         primaryPlatform: "linux",
-                        siteProduct: "tibco-streaming-maven-plugin"
+                        siteProduct: "tibco-streaming-maven-plugin",
+                        sitePomFile: publicPomFile
                     )
 
                     epDeclarative.buildMaven(
@@ -130,8 +133,7 @@ pipeline {
                         platform: platform,
                         otherDeployRun: ( "never".equals(params.deploySonatypeOSSRH) ? null
                                          : [ goals: "deploy",
-                                            pomFile: 'src/ep-maven/pom.xml' ] ) )
-
+                                            pomFile: publicPomFile ] ) )
                 }
             }
         }
