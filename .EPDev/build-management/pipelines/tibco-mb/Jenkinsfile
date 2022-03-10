@@ -128,12 +128,19 @@ pipeline {
                         sitePomFile: publicPomFile
                     )
 
+                    def otherDeployRun = null
+                    
+                    if (jobUtil.isMavenReleaseVersion(epDeclarative.getPomVersion())
+                        && (!"never".equals(params.deploySonatypeOSSRH))) {
+                        echo "Will deploy to Sonatype OSSRH."
+                        otherDeployRun = [ goals: "deploy",
+                                          pomFile: publicPomFile ]
+                    }
+                    
                     epDeclarative.buildMaven(
                         goals: "install",
                         platform: platform,
-                        otherDeployRun: ( "never".equals(params.deploySonatypeOSSRH) ? null
-                                         : [ goals: "deploy",
-                                            pomFile: publicPomFile ] ) )
+                        otherDeployRun: otherDeployRun )
                 }
             }
         }
