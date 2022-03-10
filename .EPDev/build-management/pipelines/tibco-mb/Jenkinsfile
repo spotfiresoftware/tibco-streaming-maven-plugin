@@ -121,7 +121,7 @@ pipeline {
                         // OSSH of release-work branches
                         mavenBranchOptions: [
                             [ matching: [ "release-work/.+" ],
-                             properties: [ 'gpg.skip': 'false' ] ]
+                             properties: [ 'oss-stage.skip': 'false' ] ]
                         ],
                         primaryPlatform: "linux",
                         siteProduct: "tibco-streaming-maven-plugin",
