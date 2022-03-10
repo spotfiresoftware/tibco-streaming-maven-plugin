@@ -60,6 +60,7 @@
 
         <!-- Expanded in site content -->
         <site.ep-maven-plugin.url>https://tibcosoftware.github.io/tibco-streaming-maven-plugin/${project.version}/${project.artifactId}</site.ep-maven-plugin.url>
+        <com.tibco.siteurl>file://${user.home}/tibco/site/${project.groupId}/${project.version}</com.tibco.siteurl>
     </properties>
 
     <!-- use mvn site -Puml to re-generate svg from source ( then commit ) -->
@@ -359,7 +360,7 @@
     <distributionManagement>
         <site>
             <id>www.tibco.com</id>
-            <url>https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</url>
+            <url>${com.tibco.siteurl}</url>
         </site>
     </distributionManagement>
 
