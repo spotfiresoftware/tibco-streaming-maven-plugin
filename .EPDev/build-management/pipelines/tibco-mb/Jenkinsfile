@@ -129,11 +129,11 @@ pipeline {
                     )
 
                     def otherDeployRun = null
-                    
+
                     if (jobUtil.isMavenReleaseVersion(epDeclarative.getPomVersion())
                         && (!"never".equals(params.deploySonatypeOSSRH))) {
                         echo "Will deploy to Sonatype OSSRH."
-                        otherDeployRun = [ goals: "deploy",
+                        otherDeployRun = [ goals: "deploy:deploy",
                                           pomFile: publicPomFile ]
                     }
                     
