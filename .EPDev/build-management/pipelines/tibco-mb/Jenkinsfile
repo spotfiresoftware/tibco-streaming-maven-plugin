@@ -130,11 +130,15 @@ pipeline {
 
                     def otherDeployRun = null
 
-                    if (jobUtil.isMavenReleaseVersion(epDeclarative.getPomVersion())
-                        && (!"never".equals(params.deploySonatypeOSSRH))) {
-                        echo "Will deploy to Sonatype OSSRH."
-                        otherDeployRun = [ goals: "deploy:deploy",
-                                          pomFile: publicPomFile ]
+                    if (false) {
+                        // Artifactory-integrated Maven seems to always skip deployment.
+                        // OSSRH deployment will need to happen by other means.
+                        if (jobUtil.isMavenReleaseVersion(epDeclarative.getPomVersion())
+                            && (!"never".equals(params.deploySonatypeOSSRH))) {
+                            echo "Will deploy to Sonatype OSSRH."
+                            otherDeployRun = [ goals: "deploy:deploy",
+                                              pomFile: publicPomFile ]
+                        }
                     }
                     
                     epDeclarative.buildMaven(
