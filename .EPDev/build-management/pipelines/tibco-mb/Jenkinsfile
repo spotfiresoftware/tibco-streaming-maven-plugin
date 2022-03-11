@@ -121,7 +121,7 @@ pipeline {
                         // OSSH of release-work branches
                         mavenBranchOptions: [
                             [ matching: [ "release-work/.+" ],
-                             properties: [ 'gpg.skip': 'false' ] ]
+                             properties: [ 'oss-stage.skip': 'false' ] ]
                         ],
                         primaryPlatform: "linux",
                         siteProduct: "tibco-streaming-maven-plugin",
@@ -129,12 +129,16 @@ pipeline {
                     )
 
                     def otherDeployRun = null
-                    
-                    if (jobUtil.isMavenReleaseVersion(epDeclarative.getPomVersion())
-                        && (!"never".equals(params.deploySonatypeOSSRH))) {
-                        echo "Will deploy to Sonatype OSSRH."
-                        otherDeployRun = [ goals: "deploy",
-                                          pomFile: publicPomFile ]
+
+                    if (false) {
+                        // Artifactory-integrated Maven seems to always skip deployment.
+                        // OSSRH deployment will need to happen by other means.
+                        if (jobUtil.isMavenReleaseVersion(epDeclarative.getPomVersion())
+                            && (!"never".equals(params.deploySonatypeOSSRH))) {
+                            echo "Will deploy to Sonatype OSSRH."
+                            otherDeployRun = [ goals: "deploy:deploy",
+                                              pomFile: publicPomFile ]
+                        }
                     }
                     
                     epDeclarative.buildMaven(
