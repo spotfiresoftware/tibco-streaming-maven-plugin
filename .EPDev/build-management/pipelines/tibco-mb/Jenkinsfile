@@ -52,7 +52,7 @@ pipeline {
     }
 
     parameters {
-        choice(name: 'deployArtifacts', choices: ['default', 'never', 'always'],
+        choice(name: 'deployArtifacts', choices: ['snapshot', 'release', 'default', 'never', 'always'],
                description: 'By default, only main and release-work branches are deployed. Some deployments can be skipped if there are no changes in the default case.')
 
         choice(name: 'deploySonatypeOSSRH', choices: ['release', 'never'],
@@ -118,9 +118,9 @@ pipeline {
                         mavenReleaseRepo: 'ep-rc',
                         javaTool: jobUtil.getOracleJava11Tool(),
                         mavenTool: jobUtil.getMaven36Tool(),
-                        // OSSH of release-work branches
+                        // OSSH of release-work branches -- not ready.
                         mavenBranchOptions: [
-                            [ matching: [ "release-work/.+" ],
+                            [ matching: [ "release-workNOTREADY/.+" ],
                              properties: [ 'oss-stage.skip': 'false' ] ]
                         ],
                         primaryPlatform: "linux",
