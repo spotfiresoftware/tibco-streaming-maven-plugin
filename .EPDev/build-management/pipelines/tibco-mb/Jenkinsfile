@@ -118,9 +118,9 @@ pipeline {
                         mavenReleaseRepo: 'ep-rc',
                         javaTool: jobUtil.getOracleJava11Tool(),
                         mavenTool: jobUtil.getMaven36Tool(),
-                        // OSSH of release-work branches
+                        // OSSH of release-work branches -- not ready.
                         mavenBranchOptions: [
-                            [ matching: [ "release-work/.+" ],
+                            [ matching: [ "release-workNOTREADY/.+" ],
                              properties: [ 'oss-stage.skip': 'false' ] ]
                         ],
                         primaryPlatform: "linux",
