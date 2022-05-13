@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"com.tibco.ep.buildmavenplugin"},{"l":"com.tibco.ep.sb.services"},{"l":"com.tibco.ep.sb.services.stubs.admin"},{"l":"com.tibco.ep.sb.services.stubs.build"}]
