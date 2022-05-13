@@ -33,7 +33,7 @@
 	<skin>
 		<groupId>org.apache.maven.skins</groupId>
 		<artifactId>maven-fluido-skin</artifactId>
-		<version>1.8</version>
+		<version>1.10.0</version>
 	</skin>
 
 	<custom>
@@ -92,8 +92,7 @@
 		<menu ref="reports" />
 
 		<links>
-			<item name="DevZone" href="https://devzone.tibco.com/dashboard.action" />
-			<item name="Component Exchange" href="https://devzone.tibco.com/display/comp/TIBCO+Component+Exchange" />
+		    <item name="Component Exchange" href="https://devzone.tibco.com/display/comp/TIBCO+Component+Exchange" />
 		</links>
 	</body>
 </project>

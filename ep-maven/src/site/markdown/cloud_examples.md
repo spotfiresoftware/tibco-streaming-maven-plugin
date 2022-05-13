@@ -278,10 +278,8 @@ $ docker exec A.efdockerapp_application epadmin servicename=efdockerapp_applicat
 
 See also the following resources :
 
-* [docker](https://www.docker.com/)
+* [Docker](https://www.docker.com/)
 
-* [docker hub](https://hub.docker.com/)
+* [Docker Hub](https://hub.docker.com/)
 
-* [maven plugin documentation](https://dmp.fabric8.io/)
-
-More complex examples can be found in the [cloud](http://devzone.tibco.com/sites/streambase/latest/dtmexamples/cloud/) section of devzone.
+* [Maven plugin documentation](https://dmp.fabric8.io/)

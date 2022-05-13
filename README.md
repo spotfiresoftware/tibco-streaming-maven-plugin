@@ -1,6 +1,6 @@
 # TIBCO&reg; Streaming maven plugin
 
-This github repository contains the maven plugin for TIBCO&reg; Streaming
+This GitHub repository contains the Maven plugin for TIBCO&reg; Streaming
 
 Overview:
 
@@ -16,4 +16,4 @@ Overview:
     * [Continuous integration examples](ep-maven/src/site/markdown/contint_examples.md)
     * [Cloud examples](ep-maven/src/site/markdown/cloud_examples.md)
 * [Goals](ep-maven/src/site/markdown/goals.md)
-* [html docs](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0-SNAPSHOT/ep-maven-plugin/)
+* [Latest release documentation](https://tibcosoftware.github.io/tibco-streaming-maven-plugin/2.1.0/ep-maven-plugin/)
