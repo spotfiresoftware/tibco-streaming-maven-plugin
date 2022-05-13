@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLHierarchy</id>
+    <coordinates>
+      <x>40</x>
+      <y>10</y>
+      <w>600</w>
+      <h>400</h>
+    </coordinates>
+    <panel_attributes>type=Package
+thirdpartylibs - pom.xml
+	src
+		nar
+			resources
+				aol - directory containing platform specific files
+					amd64-Linux-gpp
+						lib - directory containing linux libraries
+					amd64-Windows-msvc
+						lib - directory containing windows libraries
+					x86_64-MacOSX-gpp
+						lib - directory containing MacOS libraries
+				noarch - directory containing cross platform files </panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>

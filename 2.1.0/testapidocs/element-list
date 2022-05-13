@@ -1,0 +1,4 @@
+com.tibco.ep.buildmavenplugin
+com.tibco.ep.sb.services
+com.tibco.ep.sb.services.stubs.admin
+com.tibco.ep.sb.services.stubs.build
