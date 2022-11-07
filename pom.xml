@@ -612,7 +612,7 @@
                     <configuration>
                         <showDeprecation>true</showDeprecation>
                         <showWarnings>true</showWarnings>
-			<release>11</release>
+			            <release>11</release>
                     </configuration>
                 </plugin>
 
