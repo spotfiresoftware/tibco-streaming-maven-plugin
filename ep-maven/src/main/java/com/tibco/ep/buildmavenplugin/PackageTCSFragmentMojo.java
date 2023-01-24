@@ -1,8 +1,8 @@
 /*******************************************************************************
  *
  * COPYRIGHT
- *      Copyright 2019-2020 TIBCO Software Inc. ALL RIGHTS RESERVED.
- *      TIBCO Software Inc. Confidential Information
+ *      Copyright 2019-2023 Cloud Software Group, Inc. ALL RIGHTS RESERVED.
+ *      Cloud Software Group, Inc. Confidential Information
  *
  *******************************************************************************/
 package com.tibco.ep.buildmavenplugin;
