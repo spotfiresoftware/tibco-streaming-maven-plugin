@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2018, TIBCO Software Inc.
+  Copyright (c) 2018-2023 Cloud Software Group, Inc.
   
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -70,7 +70,7 @@
     <inceptionYear>2018</inceptionYear>
 
     <organization>
-        <name>TIBCO Software Inc.</name>
+        <name>Cloud Software Group, Inc.</name>
         <url>http://www.tibco.com</url>
     </organization>
 
@@ -89,7 +89,7 @@
             <id>plord</id>
             <name>Peter Lord</name>
             <email>plord@tibco.com</email>
-            <organization>TIBCO Software Inc.</organization>
+            <organization>Cloud Software Group, Inc.</organization>
             <roles>
                 <role>developer</role>
             </roles>
@@ -98,7 +98,7 @@
             <id>flionell</id>
             <name>Frederic Lionello</name>
             <email>flionell@tibco.com</email>
-            <organization>TIBCO Software Inc.</organization>
+            <organization>Cloud Software Group, Inc.</organization>
             <roles>
                 <role>developer</role>
             </roles>

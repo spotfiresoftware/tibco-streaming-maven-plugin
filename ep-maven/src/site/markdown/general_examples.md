@@ -964,7 +964,7 @@ IgnoreLeaks: com.company.Singleton,com.company.NotInteresting
 Created-By: Apache Maven 3.5.0
 Build-Jdk: 1.8.0_151
 Implementation-URL: http://www.tibco.com
-Implementation-Vendor: TIBCO Software Inc.
+Implementation-Vendor: Cloud Software Group, Inc.
 ```
 
 To make this easier, the maven plugin sets the maven variable **${ignoreLeaks}** than can be
