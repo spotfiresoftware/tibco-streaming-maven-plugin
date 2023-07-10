@@ -743,7 +743,7 @@
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>4.6.0.0</version>
+                    <version>4.7.3.5</version>
                 </plugin>
 
                 <plugin>
@@ -761,7 +761,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>8.2.1</version>
+                    <version>8.3.1</version>
                 </plugin>
 
                 <!-- When asking for updated versions, ignore alphas
