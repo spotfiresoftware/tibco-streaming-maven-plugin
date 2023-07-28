@@ -70,8 +70,8 @@
     <inceptionYear>2018</inceptionYear>
 
     <organization>
-        <name>TIBCO Software Inc.</name>
-        <url>http://www.tibco.com</url>
+        <name>Cloud Software Group, Inc.</name>
+        <url>https://www.cloud.com</url>
     </organization>
 
     <licenses>
@@ -89,7 +89,7 @@
             <id>plord</id>
             <name>Peter Lord</name>
             <email>plord@tibco.com</email>
-            <organization>TIBCO Software Inc.</organization>
+            <organization>Cloud Software Group, Inc.</organization>
             <roles>
                 <role>developer</role>
             </roles>
@@ -98,7 +98,7 @@
             <id>flionell</id>
             <name>Frederic Lionello</name>
             <email>flionell@tibco.com</email>
-            <organization>TIBCO Software Inc.</organization>
+            <organization>Cloud Software Group, Inc.</organization>
             <roles>
                 <role>developer</role>
             </roles>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright (C) 2018 - 2019, TIBCO Software Inc.
+  Copyright (C) 2018 - 2023, Cloud Software Group, Inc.
   
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -57,7 +57,7 @@
 				<item name="Java fragment examples" href="java_examples.html" />
 				<item name="Java jar examples" href="java_jar_examples.html" />
 				<item name="EventFlow fragment examples" href="eventflow_examples.html" />
-				<item name="TIBCO Cloud Streaming fragment examples" href="tcs_examples.html" />
+				<item name="Streaming Web fragment examples" href="tcs_examples.html" />
 				<item name="LiveView fragment examples" href="liveview_examples.html" />
 				<item name="Application examples" href="application_examples.html" />
 				<item name="CI examples" href="contint_examples.html" />
@@ -74,7 +74,7 @@
 				<item name="LiveView - compile" href="compile-liveview-fragment-mojo.html" />
 				<item name="LiveView - package" href="package-liveview-fragment-mojo.html" />
 				<item name="LiveView - unit test" href="test-liveview-fragment-mojo.html" />
-				<item name="TIBCO Cloud Streaming - package" href="package-tcs-fragment-mojo.html" />
+				<item name="Streaming Web - package" href="package-tcs-fragment-mojo.html" />
 				<item name="Application - package" href="package-application-mojo.html" />
 				<item name="Manage - start nodes" href="start-nodes-mojo.html" />
 				<item name="Manage - stop nodes" href="stop-nodes-mojo.html" />

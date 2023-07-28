@@ -284,7 +284,7 @@ abstract class BasePackageMojo extends BaseMojo {
             try (FileOutputStream pos = new FileOutputStream(new File(tempPropertiesPath));
                  OutputStreamWriter osw = new OutputStreamWriter(pos)) {
 
-                osw.write("# Created by TIBCO Streaming Maven Plugin\n");
+                osw.write("# Created by Spotfire Streaming Maven Plugin\n");
                 osw.write("version=" + project.getVersion() + "\n");
                 osw.write("groupId=" + project.getGroupId() + "\n");
                 osw.write("artifactId=" + project.getArtifactId() + "\n");
