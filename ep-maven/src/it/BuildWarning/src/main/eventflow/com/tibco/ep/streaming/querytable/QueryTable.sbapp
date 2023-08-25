@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<modify version="11.1.0">
+    <add>
+        <annotations>
+            <annotation name="hygienic"/>
+        </annotations>
+        <type-metadata>
+            <param name="type" value="module"/>
+            <param name="fully-qualified-name" value="com.tibco.ep.streaming.querytable.QueryTable"/>
+        </type-metadata>
+        <memory-model-settings/>
+        <dynamic-variables/>
+        <data connection="default.QueryTable.myTable" name="ByConnectionPath" shared="false" source="connection" type="querytable">
+            <param name="replicated" value="false"/>
+            <param name="storage-method" value="heap"/>
+            <table-schema>
+                <schema>
+                    <field name="name" type="string"/>
+                </schema>
+                <primary-index type="btree">
+                    <field name="name"/>
+                </primary-index>
+            </table-schema>
+            <param name="truncate" value="false"/>
+            <preload format="csv" mode="empty"/>
+        </data>
+    </add>
+</modify>
