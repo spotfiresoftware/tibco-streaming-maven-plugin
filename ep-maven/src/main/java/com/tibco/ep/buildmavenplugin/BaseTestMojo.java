@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2020, TIBCO Software Inc.
+ * Copyright (C) 2018-2023, Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -1101,7 +1101,7 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
                         terminateNodes(deployServiceName);
                     }
 
-                    throw new MojoExecutionException("Launching junit test cases failed failed: node " + deployServiceName + " error code " + resultCode);
+                    throw new MojoExecutionException("Launching junit test cases failed: node " + deployServiceName + " error code " + resultCode);
                 });
             deployRunner.run();
 
