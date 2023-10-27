@@ -117,7 +117,7 @@ pipeline {
                         mavenSnapshotRepo: 'ep-snapshots',
                         mavenReleaseRepo: 'ep-rc',
                         javaTool: jobUtil.getOracleJava11Tool(),
-                        mavenTool: jobUtil.getMaven36Tool(),
+                        mavenTool: jobUtil.getMaven38Tool(),
                         // OSSH of release-work branches -- not ready.
                         mavenBranchOptions: [
                             [ matching: [ "release-workNOTREADY/.+" ],
