@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLState</id>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>540</w>
+      <h>330</h>
+    </coordinates>
+    <panel_attributes>halign=left
+bg=light_gray
+&lt;plugin&gt;
+  &lt;groupId&gt;com.tibco.ep&lt;/groupId&gt;
+  &lt;artifactId&gt;ep-maven-plugin&lt;/artifactId&gt;
+  &lt;extensions&gt;true&lt;/extensions&gt;
+  &lt;executions&gt;
+    &lt;execution&gt;
+      &lt;id&gt;deploy fragment&lt;/id&gt;
+      &lt;phase&gt;pre-integration-test&lt;/phase&gt;
+*      &lt;goals&gt;&lt;goal&gt;deploy-fragment&lt;/goal&gt;&lt;/goals&gt;*
+      &lt;configuration&gt;
+        &lt;skip&gt;${skipTests}&lt;/skip&gt;
+        &lt;fragmentType&gt;LIVEVIEW&lt;/fragmentType&gt;
+        &lt;target&gt;liveview&lt;/target&gt;
+        &lt;arguments&gt;
+          &lt;argument&gt;project=${project.basedir}/src/main/liveview&lt;/argument&gt;
+        &lt;/arguments&gt;
+      &lt;/configuration&gt;
+    &lt;/execution&gt;
+ &lt;/executions&gt;
+&lt;/plugin&gt;</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
