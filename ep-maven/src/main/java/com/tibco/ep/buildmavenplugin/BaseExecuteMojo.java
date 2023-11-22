@@ -232,9 +232,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
         for (int count = 0; count < 10000; count++) {
 
             int port = RANDOM.nextInt(65536 - 49152) + 49152;
-            try {
-                DatagramSocket socket = new DatagramSocket(port);
-                socket.close();
+            try (DatagramSocket socket = new DatagramSocket(port)) {
 
                 // save it to a file if possible
                 //
@@ -461,6 +459,11 @@ abstract class BaseExecuteMojo extends BaseMojo {
         }
     }
 
+    /**
+     * Create a new destination
+     * @param serviceName service name
+     * @return destination
+     */
     IDestination newDestination(String serviceName) {
 
         AbstractDestinationBuilder builder = getContext().newDestination().withName(serviceName);
@@ -485,10 +488,20 @@ abstract class BaseExecuteMojo extends BaseMojo {
         return builder.build();
     }
 
+    /**
+     * Create a new administration command
+     * @param serviceName service name
+     * @return command
+     */
     AdminCommand newCommand(String serviceName) {
         return new AdminCommand(serviceName);
     }
 
+    /**
+     * Create a new administration command
+     * @param adminPort admin port
+     * @return command
+     */
     AdminCommand newCommand(int adminPort) {
         return new AdminCommand(adminPort);
     }
@@ -515,6 +528,9 @@ abstract class BaseExecuteMojo extends BaseMojo {
         TESTCOV
     }
 
+    /**
+     * Adminisration command
+     */
     class AdminCommand {
 
         private Optional<String> serviceName;
@@ -544,27 +560,52 @@ abstract class BaseExecuteMojo extends BaseMojo {
             errorHandling = ErrorHandling.FAIL;
         }
 
+        /**
+         * Set host name
+         * @param hostname host name
+         * @return this
+         */
         public AdminCommand hostname(String hostname) {
             this.hostname = Optional.ofNullable(hostname);
             return this;
         }
 
+        /**
+         * Set command and target
+         * @param command command
+         * @param target target
+         * @return this
+         */
         public AdminCommand commandAndTarget(String command, String target) {
             this.command = command;
             this.target = target;
             return this;
         }
 
+        /**
+         * Set parameters
+         * @param parameters parameter
+         * @return this
+         */
         public AdminCommand parameters(Map<String, String> parameters) {
             this.parameters = parameters;
             return this;
         }
 
+        /**
+         * Set error handling
+         * @param errorHandling error handling
+         * @return this
+         */
         public AdminCommand errorHandling(ErrorHandling errorHandling) {
             this.errorHandling = errorHandling;
             return this;
         }
 
+        /**
+         * Run command
+         * @throws MojoExecutionException execution error
+         */
         void run() throws MojoExecutionException {
 
             doSetEnvironment();
@@ -582,7 +623,7 @@ abstract class BaseExecuteMojo extends BaseMojo {
                 assert !adminPort.isPresent() : adminPort;
 
                 shortDescription = serviceName.get();
-                longDescription = "node " + serviceName;
+                longDescription = "node " + serviceName.get();
 
                 int actualDiscoveryPort = getDiscoveryPort();
 
