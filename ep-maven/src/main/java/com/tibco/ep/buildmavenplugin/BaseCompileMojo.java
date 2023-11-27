@@ -8,20 +8,19 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 
-import javax.inject.Inject;
-
 import org.apache.maven.model.Resource;
-import org.apache.maven.shared.filtering.DefaultMavenResourcesFiltering;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.shared.filtering.MavenFilteringException;
 import org.apache.maven.shared.filtering.MavenResourcesExecution;
+import org.apache.maven.shared.filtering.MavenResourcesFiltering;
 
 /**
  * Mojo used to "compile" sources (i.e. copy from source to target).
  */
 abstract class BaseCompileMojo extends BaseMojo {
 
-    @Inject
-    private DefaultMavenResourcesFiltering filtering;
+    @Component
+    private MavenResourcesFiltering filtering;
 
     /**
      * Copies resources from {@code sourceDirectories} to {@code targetDirectories}. The {@code sourceDirectories}
