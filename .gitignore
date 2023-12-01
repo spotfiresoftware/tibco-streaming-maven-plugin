@@ -33,3 +33,6 @@ dependency-reduced-pom.xml
 # Other outputs.
 plan.png
 plan.svg
+
+# Other IDE settings/files
+.vscode

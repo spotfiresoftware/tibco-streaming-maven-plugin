@@ -29,76 +29,48 @@
  ******************************************************************************/
 package com.tibco.ep.buildmavenplugin;
 
+import java.io.File;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
+import org.apache.maven.shared.filtering.MavenFilteringException;
 
 /**
- * <p>Compile eventflow</p>
+ * <p>
+ * Compile LiveView.
+ * </p>
  * 
- * <p>Compilation includes copying the source files to the output directory</p>
+ * <p>
+ * Compilation includes copying the source files to the output directory
+ * </p>
  */
 @Mojo(name = "compile-liveview-fragment", defaultPhase = LifecyclePhase.COMPILE, threadSafe = true)
-public class CompileLiveView extends BaseMojo {
-    
+public class CompileLiveView extends BaseCompileMojo {
+
     /**
-     * <p>Liveview source directory</p>
+     * <p>
+     * LiveView source directory.
+     * </p>
      * 
-     * <p>Example use in pom.xml:</p>
+     * <p>
+     * Example use in pom.xml:
+     * </p>
      * <img src="uml/liveviewDirectory.svg" alt="pom">
      * 
      * @since 1.0.0
      */
-    @Parameter( defaultValue = "${project.basedir}/src/main/liveview", required = true, property = "liveviewDirectory" )
+    @Parameter(defaultValue = "${project.basedir}/src/main/liveview", required = true, property = "liveviewDirectory")
     File liveviewDirectory;
-    
-    
+
+    @Override
     public void execute() throws MojoExecutionException {
-        
-        getLog().debug( "Compiling liveview fragment "+liveviewDirectory);
-
-        prechecks();
-        
-        if (liveviewDirectory.exists()) {
-            try {
-                Files.walkFileTree(liveviewDirectory.toPath(), new SimpleFileVisitor<Path>() {
-
-                    @Override
-                    public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
-                        try {
-                            Files.createDirectories(Paths.get(project.getBuild().getOutputDirectory(), liveviewDirectory.toPath().relativize(dir).toString()));
-                        } catch (IOException e) {
-                            // ignore
-                        }
-                        return FileVisitResult.CONTINUE;
-                    }
-
-                    @Override
-                    public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                        if (file.toString().endsWith(".lvconf")) {
-
-                            // copy file to output directory
-                            //                                
-                            Files.copy(file, Paths.get(project.getBuild().getOutputDirectory(), liveviewDirectory.toPath().relativize(file).toString()), StandardCopyOption.REPLACE_EXISTING);
-
-                        }
-                        return FileVisitResult.CONTINUE;
-                    }
-                });
-            } catch (IOException e) {
-                throw new MojoExecutionException("Failed to read resource directory: " + e.getMessage(), e);
-            }
+        getLog().debug("Compiling LiveView fragment " + liveviewDirectory);
+        try {
+            execute(new File[] { liveviewDirectory }, new File(project.getBuild().getOutputDirectory()), "**/*.lvconf");
+        } catch (MavenFilteringException e) {
+            throw new MojoExecutionException("Failed to copy LiveView conf files", e);
         }
     }
 
