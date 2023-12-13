@@ -1101,7 +1101,7 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
                         terminateNodes(deployServiceName);
                     }
 
-                    throw new MojoExecutionException("Launching junit test cases failed failed: node " + deployServiceName + " error code " + resultCode);
+                    throw new MojoExecutionException("Launching junit test cases failed: node " + deployServiceName + " error code " + resultCode);
                 });
             deployRunner.run();
 

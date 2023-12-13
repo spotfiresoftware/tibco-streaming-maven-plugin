@@ -1,4 +1,4 @@
-# TIBCO Cloud Streaming fragment examples
+# Streaming Web fragment examples
 
 * [Directory structure](#directory-structure)
 * [Basic build and install](#basic-build-and-install)
@@ -8,7 +8,7 @@
 
 # Directory structure
 
-The recommended TIBCO Cloud Streaming directory structure is :
+The recommended Streaming Web directory structure is :
 
 ![EventFlow directory structure](uml/tcs-structure.svg)
 
@@ -20,7 +20,7 @@ src/main/eventflow.
 ## Basic build and install
 
 The following pom.xml will build and install to the local maven 
-repository, a TIBCO Cloud Streaming fragment.
+repository, a Streaming Web fragment.
 
 ``` xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -55,7 +55,7 @@ maven to perform the following steps :
     will extract into $TIBCO_EP_HOME.
 
 2. Uses [package-tcs-fragment](${context.get("site.ep-maven-plugin.url")}/package-tcs-fragment-mojo.html) to create
-    a TIBCO Cloud Streaming fragment zip file in the build directory (by default, set to target)
+    a Streaming Web fragment zip file in the build directory (by default, set to target)
     and attaches it to the build.
 
 3. Uses the standard maven plugin [maven-install-plugin:install](https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html)
@@ -105,7 +105,7 @@ $ mvn install
 
 ## Depending on block projects
 
-A TIBCO Cloud Streaming project needs to express dependencies on the block projects referenced from 
+A Streaming Web project needs to express dependencies on the block projects referenced from 
 the project's flow diagram.  These projects' fragments will be added to the fragment.
   
 For example :

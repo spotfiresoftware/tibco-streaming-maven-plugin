@@ -27,7 +27,7 @@
 //  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 //  POSSIBILITY OF SUCH DAMAGE.
 //
-// Declarative pipeline for TIBCO-internal Jenkins builds.
+// Declarative pipeline for internal Jenkins builds.
 //
 
 @Library('workflowLibs@master') _
@@ -75,7 +75,7 @@ pipeline {
     
     agent {
         node {
-            label "(o.centos8 || o.rh8 || o.almalinux8) && q.str"
+            label "(o.rockylinux8 || o.rh8 || o.almalinux8) && q.str"
         }
     }
 
@@ -117,7 +117,7 @@ pipeline {
                         mavenSnapshotRepo: 'ep-snapshots',
                         mavenReleaseRepo: 'ep-rc',
                         javaTool: jobUtil.getOracleJava11Tool(),
-                        mavenTool: jobUtil.getMaven36Tool(),
+                        mavenTool: jobUtil.getMaven38Tool(),
                         // OSSH of release-work branches -- not ready.
                         mavenBranchOptions: [
                             [ matching: [ "release-workNOTREADY/.+" ],

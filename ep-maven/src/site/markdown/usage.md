@@ -2,12 +2,12 @@
 
 * [Build artifacts](#build-artifacts)
 * [Packaging types](#packaging-types)
-* [TIBCO product installation](#tibco-product-installation)
+* [Product installation](#product-installation)
 * [Codeline structure](#codeline-structure)
 * [Example project object model files ( pom.xml )](#example-project-object-model-files-pom-xml)
 * [Plugin prefixes](#plugin-prefixes)
 
-The following sections provides an introduction to the TIBCO Event Processing 
+The following sections provides an introduction to the Event Processing 
 (EP) Build Maven plugin.
 
 <a name="build-artifacts"></a>
@@ -35,7 +35,7 @@ The maven plugin supports the following packaging types :
   
 * **ep-liveview-fragment** - LiveView fragment
   
-* **ep-tcs-fragment** - TIBCO Cloud Streaming fragment
+* **ep-tcs-fragment** - Streaming Web fragment
   
 * **ep-application** - Application archive
 
@@ -52,9 +52,9 @@ other maven artifact.
 The maven plugin has been designed to require minimal configuration for most
 cases and yet allow for extensive configuration.  
 
-<a name="tibco-product-installation"></a>
+<a name="product-installation"></a>
 
-## TIBCO product installation
+## Product installation
 
 The location of the product installation is **product-group/product-artifact/product-version/**
 in a sibling directory to the local maven repository.  Thus, with the default maven 
@@ -246,7 +246,7 @@ This is sufficient to build the eventflow fragment, unit test using sbunit on
 a default environment and install the fragment to the local maven repository 
 for use by other modules.
   
-A TIBCO Cloud Streaming fragment module has a packaging type of 
+A Streaming Web fragment module has a packaging type of 
 **ep-tcs-fragment**, a list of project dependencies and build rules.
 
 ``` xml

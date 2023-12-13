@@ -30,9 +30,11 @@
 package com.tibco.ep.buildmavenplugin;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -264,34 +266,45 @@ public class StartNodesMojo extends BaseExecuteMojo {
         if (!installOnly && !skipStart) {
             if (!staticDiscovery) {
 
+                getLog().info("Static discovery disabled.");
                 newCommand(clusterName)
                     .commandAndTarget("start", "node")
                     .parameters(startArguments)
                     .run();
 
             } else {
+
+                getLog().info("Static discovery enabled. Node list: " + Arrays.toString(nodes));
+
+                AtomicReference<MojoExecutionException> caughtException = new AtomicReference<>();
+
                 Thread[] threads = new Thread[nodes.length];
                 for (int i=0; i<nodes.length; i++) {
 
                     // run start nodes in the background
                     //
                     final int adminPort = adminPorts.get(nodes[i]);
-                    threads[i] = new Thread(new Runnable() {
-                        public void run() {
-                            try {
+                    int finalI = i;
+                    threads[i] = new Thread(() -> {
 
-                                newCommand(adminPort)
-                                    .commandAndTarget("start", "node")
-                                    .parameters(startArguments)
-                                    .run();
-                            } catch (MojoExecutionException e) {
-                                e.printStackTrace();
-                            }
+                        try {
+
+                            newCommand(adminPort)
+                                .commandAndTarget("start", "node")
+                                .parameters(startArguments)
+                                .run();
+
+                        } catch (MojoExecutionException e) {
+                            //  Log the exception, keep it.
+                            //
+                            getLog().warn("Start node on " + nodes[finalI] + " failed", e);
+                            caughtException.compareAndSet(null, e);
                         }
                     });
                     threads[i].start(); 
                 }
-                // wait for them all to finish
+
+                // wait for the threads to finish.
                 //
                 for (int i=0; i<nodes.length; i++) {
                     try {
@@ -300,11 +313,14 @@ public class StartNodesMojo extends BaseExecuteMojo {
                         // ignore
                     }
                 }
+
+                MojoExecutionException anException = caughtException.get();
+                if (anException != null) {
+                    throw new MojoExecutionException("Could not start all nodes", anException);
+                }
             }
         } else {
             getLog().info("Start nodes is skipped");
         }
-
     }
-
 }

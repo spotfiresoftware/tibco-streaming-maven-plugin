@@ -423,7 +423,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
         @Override
         public void onBuildStarted(int nbModules) {
-            getLog().info("Found " + nbModules + " module" + (nbModules > 1 ? "s" : ""));
+            getLog().info("Found " + nbModules + " module" + (nbModules == 1 ? "" : "s"));
         }
 
         @Override

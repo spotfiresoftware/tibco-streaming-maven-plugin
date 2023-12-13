@@ -38,7 +38,7 @@
     <groupId>com.tibco.ep</groupId>
     <artifactId>ep-maven</artifactId>
     <packaging>pom</packaging>
-    <version>2.2.0-SNAPSHOT</version>
+    <version>2.2.1-SNAPSHOT</version>
     <name>Event Processing Maven Tools</name>
 
     <properties>
@@ -61,7 +61,7 @@
             The integration test version is a real version.
          -->
         <unit.test.sb.version>${project.version}</unit.test.sb.version>
-        <integration.test.sb.version>11.0.0-SNAPSHOT</integration.test.sb.version>
+        <integration.test.sb.version>11.1.0-SNAPSHOT</integration.test.sb.version>
         <slf4j.version>1.7.26</slf4j.version>
     </properties>
 
@@ -70,8 +70,8 @@
     <inceptionYear>2018</inceptionYear>
 
     <organization>
-        <name>TIBCO Software Inc.</name>
-        <url>http://www.tibco.com</url>
+        <name>Cloud Software Group, Inc.</name>
+        <url>https://www.cloud.com</url>
     </organization>
 
     <licenses>
@@ -89,7 +89,7 @@
             <id>plord</id>
             <name>Peter Lord</name>
             <email>plord@tibco.com</email>
-            <organization>TIBCO Software Inc.</organization>
+            <organization>Cloud Software Group, Inc.</organization>
             <roles>
                 <role>developer</role>
             </roles>
@@ -98,7 +98,7 @@
             <id>flionell</id>
             <name>Frederic Lionello</name>
             <email>flionell@tibco.com</email>
-            <organization>TIBCO Software Inc.</organization>
+            <organization>Cloud Software Group, Inc.</organization>
             <roles>
                 <role>developer</role>
             </roles>
@@ -590,25 +590,25 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.5.1</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>flatten-maven-plugin</artifactId>
-                    <version>1.2.7</version>
+                    <version>1.5.0</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>buildnumber-maven-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.2.0</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.10.1</version>
+                    <version>3.11.0</version>
                     <configuration>
                         <showDeprecation>true</showDeprecation>
                         <showWarnings>true</showWarnings>
@@ -654,6 +654,12 @@
                     </executions>
                 </plugin>
 
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.2.1</version>
+                </plugin>
+
                 <!-- configure both and xml reports for jenkins / sonar -->
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -669,13 +675,13 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.2</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.2.1</version>
+                    <version>3.3.0</version>
                 </plugin>
 
                 <plugin>
@@ -701,31 +707,31 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>3.0.0</version>
+                    <version>3.4.1</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>3.3.0</version>
+                    <version>3.4.5</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.4.0</version>
+                    <version>3.6.0</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jxr-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.1</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.0.0-M2</version>
+                    <version>3.1.1</version>
                 </plugin>
 
                 <plugin>
@@ -737,25 +743,50 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-resources-plugin</artifactId>
-                    <version>3.2.0</version>
+                    <version>3.3.1</version>
                 </plugin>
 
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>4.6.0.0</version>
+                    <version>4.7.3.6</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>3.0.1</version>
+                    <version>3.1.0</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-invoker-plugin</artifactId>
-                    <version>3.2.2</version>
+                    <version>3.6.0</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <version>8.4.2</version>
+                </plugin>
+
+                <!-- When asking for updated versions, ignore alphas
+                     and betas. We do not mind seeing M (milestone) or
+                     RC versions. -->
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>versions-maven-plugin</artifactId>
+                    <version>2.16.1</version>
+                    <configuration>
+                        <ruleSet>
+                            <ignoreVersions>
+                                <ignoreVersion>
+                                    <type>regex</type>
+                                    <version>.+-(alpha|beta).*</version>
+                                </ignoreVersion>
+                            </ignoreVersions>
+                        </ruleSet>
+                    </configuration>
                 </plugin>
 
             </plugins>
@@ -794,7 +825,7 @@
                         <configuration>
                             <rules>
                                 <requireMavenVersion>
-                                    <version>[3.6.3,4.0)</version>
+                                    <version>[3.8.8,4.0)</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
                                     <version>[11,18)</version>
@@ -932,7 +963,6 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>7.1.0</version>
                 <configuration>
                     <failBuildOnCVSS>8</failBuildOnCVSS>
                 </configuration>
