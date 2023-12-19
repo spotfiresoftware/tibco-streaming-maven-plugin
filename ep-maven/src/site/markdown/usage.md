@@ -35,7 +35,7 @@ The maven plugin supports the following packaging types :
   
 * **ep-liveview-fragment** - LiveView fragment
   
-* **ep-tcs-fragment** - TIBCO Cloud Streaming fragment
+* **ep-sw-fragment** - Streaming Web flow fragment
   
 * **ep-application** - Application archive
 
@@ -246,8 +246,8 @@ This is sufficient to build the eventflow fragment, unit test using sbunit on
 a default environment and install the fragment to the local maven repository 
 for use by other modules.
   
-A TIBCO Cloud Streaming fragment module has a packaging type of 
-**ep-tcs-fragment**, a list of project dependencies and build rules.
+A Spotfire Streaming Web flow fragment module has a packaging type of 
+**ep-sw-fragment**, a list of project dependencies and build rules.
 
 ``` xml
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -255,15 +255,15 @@ A TIBCO Cloud Streaming fragment module has a packaging type of
     <modelVersion>4.0.0</modelVersion>
     
     <groupId>com.tibco.ep.dtmexamples.eventflowfragment</groupId>
-    <artifactId>my-tcs-project</artifactId>
-    <packaging>ep-tcs-fragment</packaging>
+    <artifactId>my-sw-project</artifactId>
+    <packaging>ep-sw-fragment</packaging>
     <version>3.0.0</version>
-    <name>TCS Fragment - my-tcs-project</name>
+    <name>Streaming Web Flow Fragment - my-sw-project</name>
 
     <!-- common definitions for this version of StreamBase -->
     <parent>
         <groupId>com.tibco.ep.sb.parent</groupId>
-        <artifactId>ep-tcs-fragment</artifactId>
+        <artifactId>ep-sw-fragment</artifactId>
         <version>${sbrtVersion}</version>
     </parent>
 
@@ -282,7 +282,7 @@ A TIBCO Cloud Streaming fragment module has a packaging type of
 </project>
 ```
 
-This is sufficient to build the TCS fragment and install the fragment to the local maven
+This is sufficient to build the Streaming Web flow fragment and install the fragment to the local maven
 repository for use by other modules.
 
 

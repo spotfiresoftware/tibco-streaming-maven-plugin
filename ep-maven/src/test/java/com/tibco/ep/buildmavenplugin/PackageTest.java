@@ -242,57 +242,57 @@ public class PackageTest extends BetterAbstractMojoTestCase {
         //
         assertFalse(zipContains("target/projects/eventflow2/target/eventflow2-" + pomVersion + "-ep-eventflow-fragment.zip", "engine.conf"));
 
-        LOGGER.info("TCS packaging");
+        LOGGER.info("Streaming Web packaging");
         simulatedLog = new SimulatedLog(false);
 
-        pom = new File("target/projects/tcs", "pom.xml");
+        pom = new File("target/projects/sw", "pom.xml");
         Assert.assertNotNull(pom);
         Assert.assertTrue(pom.exists());
 
         // simulate process resources
         //
-        new File("target/projects/tcs/target/classes").mkdirs();
-        Files.copy(new File("target/projects/tcs/src/main/configurations/engine.conf")
-            .toPath(), new File("target/projects/tcs/target/classes/engine.conf")
+        new File("target/projects/sw/target/classes").mkdirs();
+        Files.copy(new File("target/projects/sw/src/main/configurations/engine.conf")
+            .toPath(), new File("target/projects/sw/target/classes/engine.conf")
             .toPath(), StandardCopyOption.REPLACE_EXISTING);
-        Files.copy(new File("target/projects/tcs/src/main/configurations/flow.conf")
-            .toPath(), new File("target/projects/tcs/target/classes/flow.conf")
+        Files.copy(new File("target/projects/sw/src/main/configurations/flow.conf")
+            .toPath(), new File("target/projects/sw/target/classes/flow.conf")
             .toPath(), StandardCopyOption.REPLACE_EXISTING);
-        Files.copy(new File("target/projects/tcs/src/main/resources/logback.xml")
-            .toPath(), new File("target/projects/tcs/target/classes/logback.xml")
+        Files.copy(new File("target/projects/sw/src/main/resources/logback.xml")
+            .toPath(), new File("target/projects/sw/target/classes/logback.xml")
             .toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-        new File("target/projects/tcs/target/classes/com/tibco/ep/testmavenplugin").mkdirs();
+        new File("target/projects/sw/target/classes/com/tibco/ep/testmavenplugin").mkdirs();
         Files
-            .copy(new File("target/projects/tcs/src/main/resources/com/tibco/ep/testmavenplugin/Test.schema")
+            .copy(new File("target/projects/sw/src/main/resources/com/tibco/ep/testmavenplugin/Test.schema")
                     .toPath(),
-                new File("target/projects/tcs/target/classes/com/tibco/ep/testmavenplugin/Test.schema")
+                new File("target/projects/sw/target/classes/com/tibco/ep/testmavenplugin/Test.schema")
                     .toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         LOGGER.info("   Package");
-        PackageTCSFragmentMojo packageTCS = (PackageTCSFragmentMojo) lookupConfiguredMojo(pom, "package-tcs-fragment");
-        Assert.assertNotNull(packageTCS);
-        pomVersion = packageTCS.project.getVersion();
+        PackageSWFragmentMojo packageSW = (PackageSWFragmentMojo) lookupConfiguredMojo(pom, "package-sw-fragment");
+        Assert.assertNotNull(packageSW);
+        pomVersion = packageSW.project.getVersion();
         simulatedLog.reset();
-        packageTCS.setLog(simulatedLog);
-        packageTCS.execute();
+        packageSW.setLog(simulatedLog);
+        packageSW.execute();
         assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
         assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
-        assertTrue(new File("target/projects/tcs/target/tcs-" + pomVersion + "-ep-tcs-fragment.zip")
+        assertTrue(new File("target/projects/sw/target/sw-" + pomVersion + "-ep-sw-fragment.zip")
             .exists());
-        assertTrue(zipContains("target/projects/tcs/target/tcs-" + pomVersion + "-ep-tcs-fragment.zip", "engine.conf"));
-        assertTrue(zipContains("target/projects/tcs/target/tcs-" + pomVersion + "-ep-tcs-fragment.zip", "flow.conf"));
-        assertTrue(zipContains("target/projects/tcs/target/tcs-" + pomVersion + "-ep-tcs-fragment.zip", "logback.xml"));
-        assertTrue(zipContains("target/projects/tcs/target/tcs-" + pomVersion + "-ep-tcs-fragment.zip", "com/tibco/ep/testmavenplugin/Test.schema"));
-        assertTrue(zipContains("target/projects/tcs/target/tcs-" + pomVersion + "-ep-tcs-fragment.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/tcs/pom.xml"));
-        assertTrue(zipContains("target/projects/tcs/target/tcs-" + pomVersion + "-ep-tcs-fragment.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/tcs/pom.properties"));
+        assertTrue(zipContains("target/projects/sw/target/sw-" + pomVersion + "-ep-sw-fragment.zip", "engine.conf"));
+        assertTrue(zipContains("target/projects/sw/target/sw-" + pomVersion + "-ep-sw-fragment.zip", "flow.conf"));
+        assertTrue(zipContains("target/projects/sw/target/sw-" + pomVersion + "-ep-sw-fragment.zip", "logback.xml"));
+        assertTrue(zipContains("target/projects/sw/target/sw-" + pomVersion + "-ep-sw-fragment.zip", "com/tibco/ep/testmavenplugin/Test.schema"));
+        assertTrue(zipContains("target/projects/sw/target/sw-" + pomVersion + "-ep-sw-fragment.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/sw/pom.xml"));
+        assertTrue(zipContains("target/projects/sw/target/sw-" + pomVersion + "-ep-sw-fragment.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/sw/pom.properties"));
 
         // simulate install
         //
-        File tcsDestDir = new File(this.regressionRepository, "com/tibco/ep/testmavenplugin/tcs/" + pomVersion + "");
-        tcsDestDir.mkdirs();
-        Files.copy(new File("target/projects/tcs/target/tcs-" + pomVersion + "-ep-tcs-fragment.zip")
-            .toPath(), new File(tcsDestDir, "tcs-" + pomVersion + ".zip")
+        File swDestDir = new File(this.regressionRepository, "com/tibco/ep/testmavenplugin/sw/" + pomVersion + "");
+        swDestDir.mkdirs();
+        Files.copy(new File("target/projects/sw/target/sw-" + pomVersion + "-ep-sw-fragment.zip")
+            .toPath(), new File(swDestDir, "sw-" + pomVersion + ".zip")
             .toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         LOGGER.info("LiveView packaging");
@@ -380,10 +380,10 @@ public class PackageTest extends BetterAbstractMojoTestCase {
         assertTrue(new File("target/projects/application/target/application-" + pomVersion + "-ep-application.zip")
             .exists());
         assertTrue(zipContains("target/projects/application/target/application-" + pomVersion + "-ep-application.zip", "com.tibco.ep.testmavenplugin-java-" + pomVersion + "-ep-java-fragment.zip"));
-        // tcs dep already includes the fragment so we shouldn't see it again
+        // sw dep already includes the fragment so we shouldn't see it again
         assertFalse(zipContains("target/projects/application/target/application-" + pomVersion + "-ep-application.zip", "com.tibco.ep.testmavenplugin-eventflow-" + pomVersion + "-ep-eventflow-fragment.zip"));
         assertTrue(zipContains("target/projects/application/target/application-" + pomVersion + "-ep-application.zip", "com.tibco.ep.testmavenplugin-liveview-" + pomVersion + "-ep-liveview-fragment.zip"));
-        assertTrue(zipContains("target/projects/application/target/application-" + pomVersion + "-ep-application.zip", "com.tibco.ep.testmavenplugin-tcs-" + pomVersion + "-ep-tcs-fragment.zip"));
+        assertTrue(zipContains("target/projects/application/target/application-" + pomVersion + "-ep-application.zip", "com.tibco.ep.testmavenplugin-sw-" + pomVersion + "-ep-sw-fragment.zip"));
         assertTrue(zipContains("target/projects/application/target/application-" + pomVersion + "-ep-application.zip", "org.slf4j-slf4j-api-1.7.26.jar"));
         assertTrue(zipContains("target/projects/application/target/application-" + pomVersion + "-ep-application.zip", "app.conf"));
         assertTrue(zipContains("target/projects/application/target/application-" + pomVersion + "-ep-application.zip", "META-INF/maven/com.tibco.ep.testmavenplugin/application/pom.xml"));

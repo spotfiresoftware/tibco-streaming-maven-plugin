@@ -1,8 +1,7 @@
 /*******************************************************************************
  *
  * COPYRIGHT
- *      Copyright 2019-2020 TIBCO Software Inc. ALL RIGHTS RESERVED.
- *      TIBCO Software Inc. Confidential Information
+ *      Copyright (c) 2019-2023 Cloud Software Group, Inc. All Rights Reserved. Confidential & Proprietary.
  *
  *******************************************************************************/
 package com.tibco.ep.buildmavenplugin;
@@ -14,7 +13,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
 
 /**
- * <p>Build a TCS fragment</p>
+ * <p>Build a Streaming Web flow fragment</p>
  *
  * <p>The packaging rules are as follows :-</p>
  * <ol>
@@ -42,14 +41,14 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
  * from the nar AOL values (http://maven-nar.github.io/aol.html) to internal
  * values.</p>
  *
- * <p>The generated filename is &lt;artifactId&gt;-&lt;version&gt;-ep-tcs-fragment.zip</p>
+ * <p>The generated filename is &lt;artifactId&gt;-&lt;version&gt;-ep-sw-fragment.zip</p>
  */
-@Mojo(name = "package-tcs-fragment", defaultPhase = PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true)
-public class PackageTCSFragmentMojo extends BasePackageMojo {
+@Mojo(name = "package-sw-fragment", defaultPhase = PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME, threadSafe = true)
+public class PackageSWFragmentMojo extends BasePackageMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
-        getLog().debug("Creating TCS fragment");
+        getLog().debug("Creating Streaming Web flow fragment");
 
         prechecks();
 

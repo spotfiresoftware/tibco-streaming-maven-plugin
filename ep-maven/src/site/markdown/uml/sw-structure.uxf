@@ -10,11 +10,11 @@
       <h>460</h>
     </coordinates>
     <panel_attributes>type=Package
-ep-tcs-fragment - pom.xml
+ep-sw-fragment - pom.xml
 
 	src
 		main
-			configurations - HOCON configuration files, including TCS flow definition
+			configurations - HOCON configuration files, including Streaming Web flow definition
 			resources - HOCON schemas, Logback configurations
 		test
 			configurations - HOCON test configuration files

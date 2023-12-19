@@ -21,7 +21,7 @@ The maven goals available are :
 
 * [com.tibco.ep:ep-maven-plugin:test-eventflow-fragment](${context.get("site.ep-maven-plugin.url")}/test-eventflow-fragment-mojo.html)
 
-* [com.tibco.ep:ep-maven-plugin:package-tcs-fragment](${context.get("site.ep-maven-plugin.url")}/package-tcs-fragment-mojo.html)
+* [com.tibco.ep:ep-maven-plugin:package-sw-fragment](${context.get("site.ep-maven-plugin.url")}/package-sw-fragment-mojo.html)
 
 * [com.tibco.ep:ep-maven-plugin:package-liveview-fragment](${context.get("site.ep-maven-plugin.url")}/package-liveview-fragment-mojo.html)
 
@@ -124,7 +124,7 @@ Clean lifecycle :-
 | pre-clean            | [com.tibco.ep:ep-maven-plugin:install-product](${context.get("site.ep-maven-plugin.url")}/install-product-mojo.html)
 | clean                | <br>[com.tibco.ep:ep-maven-plugin:stop-nodes](${context.get("site.ep-maven-plugin.url")}/stop-nodes-mojo.html),</br><br>[org.apache.maven.plugins:maven-clean-plugin:clean](https://maven.apache.org/plugins/maven-clean-plugin/clean-mojo.html)</br>
 
-* Packaging **ep-tcs-fragment**
+* Packaging **ep-sw-fragment**
 
 Default lifecycle :
   
@@ -135,7 +135,7 @@ Default lifecycle :
 | compile              | [org.apache.maven.plugins:maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)
 | process-test-resources | <br>[org.apache.maven.plugins:maven-resources-plugin:testResources](https://maven.apache.org/plugins/maven-resources-plugin/)</br>,<br>[org.apache.maven.plugins:maven-compiler-plugin:testCompile](https://maven.apache.org/plugins/maven-compiler-plugin/testCompile-mojo.html)</br><br>[com.tibco.ep:ep-maven-plugin:generate-main-eventflow](${context.get("site.ep-maven-plugin.url")}/generate-main-eventflow-mojo.html),</br>
 | test-compile         | [org.apache.maven.plugins:maven-compiler-plugin:testCompile](https://maven.apache.org/plugins/maven-compiler-plugin/testCompile-mojo.html)
-| package              | [com.tibco.ep:ep-maven-plugin:package-tcs-fragment](${context.get("site.ep-maven-plugin.url")}/package-tcs-fragment-mojo.html)
+| package              | [com.tibco.ep:ep-maven-plugin:package-sw-fragment](${context.get("site.ep-maven-plugin.url")}/package-sw-fragment-mojo.html)
 | install              | [org.apache.maven.plugins:maven-install-plugin:install](https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html)
 | deploy               | [org.apache.maven.plugins:maven-deploy-plugin:deploy](https://maven.apache.org/plugins/maven-deploy-plugin/)
 
