@@ -38,7 +38,7 @@
 					<goal>generate-test-eventflow</goal>
 					<goal>package-liveview-fragment</goal>
 					<goal>package-eventflow-fragment</goal>
-					<goal>package-tcs-fragment</goal>
+					<goal>package-sw-fragment</goal>
 					<goal>package-application</goal>
 				</goals>
 			</pluginExecutionFilter>

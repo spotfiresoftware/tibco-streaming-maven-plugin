@@ -1,4 +1,4 @@
-# Streaming Web fragment examples
+# Streaming Web flow fragment examples
 
 * [Directory structure](#directory-structure)
 * [Basic build and install](#basic-build-and-install)
@@ -10,7 +10,7 @@
 
 The recommended Streaming Web directory structure is :
 
-![EventFlow directory structure](uml/tcs-structure.svg)
+![EventFlow directory structure](uml/sw-structure.svg)
 
 Note that the default source directory is set by the plugin to 
 src/main/eventflow.
@@ -31,15 +31,15 @@ repository, a Streaming Web fragment.
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.tibco.ep</groupId>
-    <artifactId>tcsfrag</artifactId>
-    <packaging>ep-tcs-fragment</packaging>
+    <artifactId>swfrag</artifactId>
+    <packaging>ep-sw-fragment</packaging>
     <version>1.0.0</version>
     <name>hello world</name>
 
     <!-- common definitions for this version of StreamBase -->
     <parent>
         <groupId>com.tibco.ep.sb.parent</groupId>
-        <artifactId>ep-tcs-fragment</artifactId>
+        <artifactId>ep-sw-fragment</artifactId>
         <version>${sbrtVersion}</version>
     </parent>
 
@@ -54,8 +54,8 @@ maven to perform the following steps :
     installed.  If its not, maven will download the archive and the plugin
     will extract into $TIBCO_EP_HOME.
 
-2. Uses [package-tcs-fragment](${context.get("site.ep-maven-plugin.url")}/package-tcs-fragment-mojo.html) to create
-    a Streaming Web fragment zip file in the build directory (by default, set to target)
+2. Uses [package-sw-fragment](${context.get("site.ep-maven-plugin.url")}/package-sw-fragment-mojo.html) to create
+    a Streaming Web flow fragment zip file in the build directory (by default, set to target)
     and attaches it to the build.
 
 3. Uses the standard maven plugin [maven-install-plugin:install](https://maven.apache.org/plugins/maven-install-plugin/install-mojo.html)
@@ -68,30 +68,30 @@ $ mvn install
 [INFO] Scanning for projects...
 [INFO]                                                                         
 [INFO] ------------------------------------------------------------------------
-[INFO] Building TCS Fragment - GoldyLocks 3.0.0
+[INFO] Building Streaming Web Flow Fragment - GoldyLocks 3.0.0
 [INFO] ------------------------------------------------------------------------
 [INFO] 
 [INFO] --- ep-maven-plugin:1.0.0:install-product (default-install-product-1) @ goldylocks ---
 [INFO] com.tibco.ep.thirdparty:tibco-sb_osxx86_64:zip:7.6.0:test already installed
 [INFO] 
-[INFO] --- ep-maven-plugin:1.3.1-SNAPSHOT:package-tcs-fragment (default-package-tcs-fragment) @ tcs ---
-[INFO] Building zip: /Users/markl/examples/tcs/target/tcs-10.5.0-SNAPSHOT-ep-tcs-fragment.zip
+[INFO] --- ep-maven-plugin:1.3.1-SNAPSHOT:package-sw-fragment (default-package-sw-fragment) @ sw ---
+[INFO] Building zip: /Users/me/examples/sw/target/sw-10.5.0-SNAPSHOT-ep-sw-fragment.zip
 [INFO] 
-[INFO] >>> maven-source-plugin:3.0.1:jar (attach-sources) > generate-sources @ tcs >>>
+[INFO] >>> maven-source-plugin:3.0.1:jar (attach-sources) > generate-sources @ sw >>>
 [INFO] 
-[INFO] --- ep-maven-plugin:1.3.1-SNAPSHOT:install-product (default-install-product-1) @ tcs ---
-[INFO] com.tibco.ep.sb.rt:platform_osxx86_64:zip:10.5.0-SNAPSHOT:test already installed manually to /Users/markl/work/sb10dist
+[INFO] --- ep-maven-plugin:1.3.1-SNAPSHOT:install-product (default-install-product-1) @ sw ---
+[INFO] com.tibco.ep.sb.rt:platform_osxx86_64:zip:10.5.0-SNAPSHOT:test already installed manually to /Users/me/work/sb10dist
 [INFO] 
 [INFO] --- buildnumber-maven-plugin:1.4:create-timestamp (default) @ goldylocks ---
 [INFO] 
-[INFO] --- maven-source-plugin:3.0.1:jar (attach-sources) @ tcs ---
+[INFO] --- maven-source-plugin:3.0.1:jar (attach-sources) @ sw ---
 [INFO] 
-[INFO] --- maven-javadoc-plugin:3.0.1:jar (attach-javadocs) @ tcs ---
+[INFO] --- maven-javadoc-plugin:3.0.1:jar (attach-javadocs) @ sw ---
 [INFO] 
-[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ tcs ---
-[INFO] Installing /Users/markl/examples/tcs/target/tcs-10.5.0-SNAPSHOT-ep-tcs-fragment.zip to /Users/markl/workspace/BUILD/repository/com/tibco/example/tcs/10.5.0-SNAPSHOT/tcs-10.5.0-SNAPSHOT.zip
-[INFO] Installing /Users/markl/examples/tcs/pom.xml to /Users/markl/workspace/BUILD/repository/com/tibco/example/tcs/10.5.0-SNAPSHOT/tcs-10.5.0-SNAPSHOT.pom
-[INFO] Installing /Users/markl/examples/tcs/target/tcs-10.5.0-SNAPSHOT-sources.jar to /Users/markl/workspace/BUILD/repository/com/tibco/example/tcs/10.5.0-SNAPSHOT/tcs-10.5.0-SNAPSHOT-sources.jar
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ sw ---
+[INFO] Installing /Users/me/examples/sw/target/sw-10.5.0-SNAPSHOT-ep-sw-fragment.zip to /Users/me/workspace/BUILD/repository/com/tibco/example/sw/10.5.0-SNAPSHOT/sw-10.5.0-SNAPSHOT.zip
+[INFO] Installing /Users/me/examples/sw/pom.xml to /Users/me/workspace/BUILD/repository/com/tibco/example/sw/10.5.0-SNAPSHOT/sw-10.5.0-SNAPSHOT.pom
+[INFO] Installing /Users/me/examples/sw/target/sw-10.5.0-SNAPSHOT-sources.jar to /Users/me/workspace/BUILD/repository/com/tibco/example/sw/10.5.0-SNAPSHOT/sw-10.5.0-SNAPSHOT-sources.jar
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD SUCCESS
 [INFO] ------------------------------------------------------------------------

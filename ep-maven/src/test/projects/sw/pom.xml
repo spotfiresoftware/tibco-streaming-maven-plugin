@@ -2,13 +2,13 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <!-- vim: set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab : -->
-    <!-- Copyright 2019 Cloud Software Group, Inc. ALL RIGHTS RESERVED -->
+    <!-- Copyright (c) 2019-2023 Cloud Software Group, Inc. All Rights Reserved. Confidential & Proprietary. -->
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.tibco.ep.testmavenplugin</groupId>
-    <artifactId>tcs</artifactId>
-    <packaging>ep-tcs-fragment</packaging>
+    <artifactId>sw</artifactId>
+    <packaging>ep-sw-fragment</packaging>
 
     <parent>
         <groupId>com.tibco.ep.testmavenplugin</groupId>

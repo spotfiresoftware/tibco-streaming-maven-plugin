@@ -60,8 +60,8 @@
         </dependency>
         <dependency>
             <groupId>com.tibco.ep.testmavenplugin</groupId>
-            <artifactId>tcs</artifactId>
-            <type>ep-tcs-fragment</type>
+            <artifactId>sw</artifactId>
+            <type>ep-sw-fragment</type>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -126,9 +126,9 @@ abstract class BaseMojo extends AbstractMojo {
      */
     protected static String LIVEVIEW_TYPE = "ep-liveview-fragment";
     /**
-     * TIBCO Cloud Streaming packaging and type
+     * Streaming Web flow packaging and type
      */
-    protected static String TCS_TYPE = "ep-tcs-fragment";
+    protected static String TCS_TYPE = "ep-sw-fragment";
     /**
      * system property for reports
      */
