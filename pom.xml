@@ -51,7 +51,9 @@
         <!-- Only deploy select artifacts. -->
         <maven.deploy.skip>true</maven.deploy.skip>
 
-        <junit.version>4.13.1</junit.version>
+<!--        SBRT SUCCESS -->
+<!--        TSMP SUCCESS -->
+        <junit.version>4.13.2</junit.version>
 
         <!-- by default skip gpg signing.  Enabled in jenkins only -->
         <gpg.skip>true</gpg.skip>
@@ -368,19 +370,31 @@
         <dependencies>
             <!-- set of common dependencies to converge -->
             <dependency>
+                <groupId>org.sonatype.plexus</groupId>
+                <artifactId>plexus-cipher</artifactId>
+                <version>1.4</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>32.0.1-android</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.maven.shared</groupId>
                 <artifactId>maven-shared-utils</artifactId>
-                <version>3.2.1</version>
+                <version>3.4.2</version>
             </dependency>
             <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
-                <version>2.6</version>
+                <version>2.15.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-provider-api</artifactId>
-                <version>3.3.3</version>
+                <version>3.5.3</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.shared</groupId>
@@ -390,7 +404,7 @@
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-artifact</artifactId>
-                <version>3.6.0</version>
+                <version>3.9.6</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
@@ -400,17 +414,17 @@
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-repository-metadata</artifactId>
-                <version>3.6.0</version>
+                <version>3.9.6</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-slf4j-provider</artifactId>
-                <version>3.6.0</version>
+                <version>3.9.6</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-archiver</artifactId>
-                <version>4.1.0</version>
+                <version>4.9.0</version>
                 <exclusions>
                     <!-- see https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-12402 -->
                     <exclusion>
@@ -422,27 +436,27 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.19</version>
+                <version>1.21</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-classworlds</artifactId>
-                <version>2.6.0</version>
+                <version>2.7.0</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-component-annotations</artifactId>
-                <version>2.0.0</version>
+                <version>2.1.1</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-io</artifactId>
-                <version>3.1.1</version>
+                <version>3.4.1</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-utils</artifactId>
-                <version>3.2.1</version>
+                <version>3.5.1</version>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
@@ -453,7 +467,7 @@
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-api</artifactId>
-                <version>3.6.0</version>
+                <version>3.9.6</version>
             </dependency>
 
             <dependency>
@@ -471,10 +485,12 @@
             <dependency>
                 <groupId>org.apache.maven.plugin-tools</groupId>
                 <artifactId>maven-plugin-annotations</artifactId>
-                <version>3.6.0</version>
+                <version>3.10.2</version>
             </dependency>
 
 
+<!--            Upgrade to latest (3.6.0) causes build failure in BasePackageMojo.java          -->
+<!--            because a used method has been updated to include new parameters.               -->
             <dependency>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
@@ -554,12 +570,12 @@
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
-                <version>2.3.1</version>
+                <version>4.0.4</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
                 <artifactId>jaxb-runtime</artifactId>
-                <version>2.3.1</version>
+                <version>4.0.4</version>
             </dependency>
             <dependency>
                 <groupId>javax.activation</groupId>
@@ -657,7 +673,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.2.1</version>
+                    <version>3.2.3</version>
                 </plugin>
 
                 <!-- configure both and xml reports for jenkins / sonar -->
@@ -713,13 +729,13 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>3.4.5</version>
+                    <version>3.5.0</version>
                 </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>3.6.3</version>
                 </plugin>
 
                 <plugin>
@@ -749,7 +765,7 @@
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>4.7.3.6</version>
+                    <version>4.8.2.0</version>
                 </plugin>
 
                 <plugin>
@@ -767,7 +783,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>8.4.2</version>
+                    <version>9.0.7</version>
                 </plugin>
 
                 <!-- When asking for updated versions, ignore alphas
@@ -776,7 +792,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>versions-maven-plugin</artifactId>
-                    <version>2.16.1</version>
+                    <version>2.16.2</version>
                     <configuration>
                         <ruleSet>
                             <ignoreVersions>
