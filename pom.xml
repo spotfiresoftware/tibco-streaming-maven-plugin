@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2018-2023 Cloud Software Group, Inc.
+  Copyright (C) 2018-2024 Cloud Software Group, Inc.
   
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -61,7 +61,7 @@
             The integration test version is a real version.
          -->
         <unit.test.sb.version>${project.version}</unit.test.sb.version>
-        <integration.test.sb.version>11.1.0-SNAPSHOT</integration.test.sb.version>
+        <integration.test.sb.version>11.2.0-SNAPSHOT</integration.test.sb.version>
         <slf4j.version>1.7.26</slf4j.version>
     </properties>
 

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?><application-layout>
+    <component name="NYSE_Feed">
+        <param name="gui:x" value="39"/>
+        <param name="gui:y" value="107"/>
+    </component>
+    <component name="Bids_and_Asks">
+        <param name="gui:x" value="218"/>
+        <param name="gui:y" value="241"/>
+        <param name="gui:width" value="174"/>
+        <param name="gui:height" value="71"/>
+    </component>
+    <component name="IsNewBestAsk">
+        <param name="gui:x" value="440"/>
+        <param name="gui:y" value="107"/>
+    </component>
+    <component name="IsNewBestBid">
+        <param name="gui:x" value="440"/>
+        <param name="gui:y" value="8"/>
+        <param name="gui:bends:1" value="361,137;385,38"/>
+    </component>
+    <component name="PreserveAskInfo">
+        <param name="gui:x" value="548"/>
+        <param name="gui:y" value="107"/>
+    </component>
+    <component name="PreserveBidInfo">
+        <param name="gui:x" value="548"/>
+        <param name="gui:y" value="8"/>
+    </component>
+    <component name="Update_Bids_and_Asks">
+        <param name="gui:x" value="275"/>
+        <param name="gui:y" value="107"/>
+    </component>
+    <component name="BestAsks">
+        <param name="gui:x" value="650"/>
+        <param name="gui:y" value="107"/>
+    </component>
+    <component name="BestBids">
+        <param name="gui:x" value="650"/>
+        <param name="gui:y" value="8"/>
+    </component>
+    <component name="HoverOverMe">
+        <param name="gui:x" value="-91"/>
+        <param name="gui:y" value="206"/>
+        <param name="gui:width" value="289"/>
+        <param name="gui:height" value="201"/>
+    </component>
+</application-layout>

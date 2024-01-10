@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sbfs:Simulation xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:sbfs="http://www.streambase.com/schemas/feedsim/02/SBFS" Description="">
+  <SimStreams Name="NYSE_Feed">
+    <ProcessingOptions DataRatePerSecond="1000.0" DataGenerationMethod="DataFile" PrefillTupleBuffer="true" LoopOnTupleBuffer="true">
+      <DataSource Name="data.csv" DataSourceURI="data.csv"/>
+    </ProcessingOptions>
+    <Schema>
+      <Fields Name="time_int" DataTypeName="int" Description="">
+        <DataSourceMapping/>
+      </Fields>
+      <Fields Name="symbol" DataTypeName="string" Description="">
+        <DataSourceMapping DestFieldNum="2"/>
+      </Fields>
+      <Fields Name="bid_price" DataTypeName="double" Description="">
+        <DataSourceMapping DestFieldNum="3"/>
+      </Fields>
+      <Fields Name="bid_size" DataTypeName="int" Description="">
+        <DataSourceMapping DestFieldNum="4"/>
+      </Fields>
+      <Fields Name="ask_price" DataTypeName="double" Description="">
+        <DataSourceMapping DestFieldNum="5"/>
+      </Fields>
+      <Fields Name="ask_size" DataTypeName="int" Description="">
+        <DataSourceMapping DestFieldNum="6"/>
+      </Fields>
+      <Fields Name="sequence" DataTypeName="int" Description="">
+        <DataSourceMapping DestFieldNum="7"/>
+      </Fields>
+    </Schema>
+  </SimStreams>
+</sbfs:Simulation>

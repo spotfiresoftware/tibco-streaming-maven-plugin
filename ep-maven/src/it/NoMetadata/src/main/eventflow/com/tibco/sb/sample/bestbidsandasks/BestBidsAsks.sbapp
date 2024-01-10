@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<modify version="10.4.0">
+    <add>
+        <memory-model-settings/>
+        <dynamic-variables/>
+        <data name="Bids_and_Asks" shared="false" source="concrete" type="querytable">
+            <param name="storage-method" value="heap"/>
+            <param name="replicated" value="false"/>
+            <table-schema>
+                <schema>
+                    <field name="symbol" type="string"/>
+                    <field name="best_bid" type="double"/>
+                    <field name="best_ask" type="double"/>
+                </schema>
+                <primary-index type="hash">
+                    <field name="symbol"/>
+                </primary-index>
+            </table-schema>
+            <param name="truncate" value="false"/>
+            <preload format="csv" mode="empty"/>
+            <table-partitioning/>
+        </data>
+        <stream name="NYSE_Feed">
+            <property name="description" value="Feed from NYSE."/>
+            <schema description="Feed from NYSE.">
+                <field description="Timestamp as an integer" name="time_int" type="int"/>
+                <field description="Stock symbol" name="symbol" type="string"/>
+                <field description="Bid price in dollars" name="bid_price" type="double"/>
+                <field description="Number of shares in the bid" name="bid_size" type="int"/>
+                <field description="Ask price in dollars" name="ask_price" type="double"/>
+                <field description="Number of shares in the ask" name="ask_size" type="int"/>
+                <field description="Sequence number of this transaction" name="sequence" type="int"/>
+            </schema>
+        </stream>
+        <box name="Update_Bids_and_Asks" type="query">
+            <property name="description" value="Updates the Query Table based on the incoming tuple. If the new quote (bid or ask) is better than the current one, replace the row."/>
+            <input port="1" stream="NYSE_Feed"/>
+            <output port="1" stream="out:Update_Bids_and_Asks_1"/>
+            <dataref id="querytable" name="Bids_and_Asks"/>
+            <param name="operation" value="write"/>
+            <param name="where" value="primary-key"/>
+            <param name="key-field.0" value="symbol"/>
+            <param name="key-value.0" value="symbol"/>
+            <param name="write-type" value="update"/>
+            <param name="if-write-fails" value="insert"/>
+            <param name="no-match-mode" value="output-no-match-nothing"/>
+            <param name="order-by-direction" value="none"/>
+            <param name="query-scope" value="local-node"/>
+            <target-list>
+                <item name="input" selection="all">
+                    <remove field="bid_size"/>
+                    <remove field="ask_size"/>
+                    <remove field="sequence"/>
+                </item>
+                <item name="old" selection="none"/>
+                <item name="new" selection="all">
+                    <remove field="symbol"/>
+                </item>
+                <item name="current" selection="none"/>
+            </target-list>
+            <target-list goal-schema="null_logical_value" name="insert">
+                <item name="input" selection="none"/>
+                <expressions>
+                    <set field="best_bid">bid_price</set>
+                    <set field="best_ask">ask_price</set>
+                </expressions>
+            </target-list>
+            <target-list goal-schema="null_logical_value" name="update">
+                <item name="input" selection="none"/>
+                <expressions>
+                    <set field="best_bid">if bid_price &gt; best_bid then bid_price else best_bid</set>
+                    <set field="best_ask">if ask_price &lt; best_ask then ask_price else best_ask</set>
+                </expressions>
+            </target-list>
+            <target-list name="no-match">
+                <item name="input" selection="none"/>
+            </target-list>
+        </box>
+        <box name="IsNewBestAsk" type="filter">
+            <property name="description" value="Only pass quotes that are the current best ask price."/>
+            <input port="1" stream="out:Update_Bids_and_Asks_1"/>
+            <output port="1" stream="out:IsNewBestAsk_1"/>
+            <param name="autogen-nomatch-port" value="false"/>
+            <param name="expression.0" value="best_ask == ask_price"/>
+        </box>
+        <box name="IsNewBestBid" type="filter">
+            <property name="description" value="Only pass quotes that are the current best bid price."/>
+            <input port="1" stream="out:Update_Bids_and_Asks_1"/>
+            <output port="1" stream="out:IsNewBestBid_1"/>
+            <param name="autogen-nomatch-port" value="false"/>
+            <param name="expression.0" value="best_bid == bid_price"/>
+        </box>
+        <box name="PreserveAskInfo" type="map">
+            <property name="description" value="Only pass on the fields of interest."/>
+            <input port="1" stream="out:IsNewBestAsk_1"/>
+            <output port="1" stream="BestAsks"/>
+            <target-list>
+                <item name="input" selection="none"/>
+                <expressions>
+                    <include field="time_int">time_int</include>
+                    <include field="symbol">symbol</include>
+                    <include field="best_ask">best_ask</include>
+                </expressions>
+            </target-list>
+        </box>
+        <box name="PreserveBidInfo" type="map">
+            <property name="description" value="Only pass on the fields of interest."/>
+            <input port="1" stream="out:IsNewBestBid_1"/>
+            <output port="1" stream="BestBids"/>
+            <target-list>
+                <item name="input" selection="none"/>
+                <expressions>
+                    <include field="time_int">time_int</include>
+                    <include field="symbol">symbol</include>
+                    <include field="best_bid">best_bid</include>
+                </expressions>
+            </target-list>
+        </box>
+        <output-stream name="BestAsks">
+            <property name="description" value="Emits a tuple each time there is a new best ask price for a symbol."/>
+        </output-stream>
+        <output-stream name="BestBids">
+            <property name="description" value="Emits a tuple each time there is a new best bid price for a symbol."/>
+        </output-stream>
+        <gui.note name="HoverOverMe">
+            <property name="description" value="You can hover over each operator to see a brief description. Each operator displays its description property, if present; otherwise, it displays a generated description based on its other properties.&#13;&#10;&#13;&#10;While hovering, you can hold down the Ctrl key to toggle between the description field and the operator information."/>
+            <param name="gui:color" value="239,240,191"/>
+        </gui.note>
+    </add>
+</modify>
