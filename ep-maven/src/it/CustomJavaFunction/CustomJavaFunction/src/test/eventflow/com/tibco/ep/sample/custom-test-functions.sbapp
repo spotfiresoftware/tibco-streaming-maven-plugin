@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<modify version="10.5.0trunk_269772">
+    <add>
+        <annotations>
+            <annotation name="hygienic"/>
+        </annotations>
+        <type-metadata>
+            <param name="type" value="module"/>
+            <param name="fully-qualified-name" value="com.tibco.ep.sample.custom-test-functions"/>
+        </type-metadata>
+        <memory-model-settings/>
+        <dynamic-variables/>
+        <stream name="TriangleSidesIn">
+            <schema>
+                <field name="x" type="double"/>
+                <field name="y" type="double"/>
+            </schema>
+        </stream>
+        <stream name="VarArgsIsIn">
+            <schema>
+                <field name="needle" type="string"/>
+                <field name="haystack1" type="string"/>
+                <field name="haystack2" type="string"/>
+            </schema>
+        </stream>
+        <stream name="VarArgsSums">
+            <schema>
+                <field name="value1" type="double"/>
+                <field name="value2" type="double"/>
+                <field name="value3" type="double"/>
+            </schema>
+        </stream>
+        <box name="HypotenuseMap" type="map">
+            <input port="1" stream="TriangleSidesIn"/>
+            <output port="1" stream="TriangleDimOut"/>
+            <target-list>
+                <item name="input" selection="all"/>
+                <expressions>
+                    <include field="customHypot">hypotenuse(x, y)</include>
+                    <include field="customCalchyp">calchyp(x, y)</include>
+                    <include field="directMathHypot">calljava('java.lang.Math', 'hypot', x, y)</include>
+                    <include field="aliasedMathHypot">hypot(x, y)</include>
+                    <include field="aliasedMax">mx(x, y)</include>
+                </expressions>
+            </target-list>
+        </box>
+        <box name="IsIn" type="map">
+            <input port="1" stream="VarArgsIsIn"/>
+            <output port="1" stream="NeedleInHaystackOut"/>
+            <target-list>
+                <item name="input" selection="all"/>
+                <expressions>
+                    <include field="IsNeedleInHaystack">isIn(needle, haystack1, haystack2)</include>
+                </expressions>
+            </target-list>
+        </box>
+        <box name="SumAll" type="map">
+            <input port="1" stream="VarArgsSums"/>
+            <output port="1" stream="SumAllOut"/>
+            <target-list>
+                <item name="input" selection="all"/>
+                <expressions>
+                    <include field="sum">sumAll(value1,value2,value3)</include>
+                </expressions>
+            </target-list>
+        </box>
+        <output-stream name="NeedleInHaystackOut"/>
+        <output-stream name="SumAllOut"/>
+        <output-stream name="TriangleDimOut"/>
+    </add>
+</modify>

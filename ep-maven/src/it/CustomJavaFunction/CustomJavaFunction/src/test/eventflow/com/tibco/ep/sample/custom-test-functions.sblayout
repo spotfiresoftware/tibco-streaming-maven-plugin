@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?><application-layout>
+    <component name="TriangleSidesIn">
+        <param name="gui:x" value="-166"/>
+        <param name="gui:y" value="-124"/>
+    </component>
+    <component name="VarArgsIsIn">
+        <param name="gui:x" value="-166"/>
+        <param name="gui:y" value="-29"/>
+    </component>
+    <component name="VarArgsSums">
+        <param name="gui:x" value="-166"/>
+        <param name="gui:y" value="66"/>
+    </component>
+    <component name="HypotenuseMap">
+        <param name="gui:x" value="-32"/>
+        <param name="gui:y" value="-125"/>
+    </component>
+    <component name="IsIn">
+        <param name="gui:x" value="-32"/>
+        <param name="gui:y" value="-30"/>
+    </component>
+    <component name="SumAll">
+        <param name="gui:x" value="-32"/>
+        <param name="gui:y" value="65"/>
+    </component>
+    <component name="NeedleInHaystackOut">
+        <param name="gui:x" value="107"/>
+        <param name="gui:y" value="-30"/>
+    </component>
+    <component name="SumAllOut">
+        <param name="gui:x" value="107"/>
+        <param name="gui:y" value="65"/>
+    </component>
+    <component name="TriangleDimOut">
+        <param name="gui:x" value="107"/>
+        <param name="gui:y" value="-125"/>
+    </component>
+</application-layout>
