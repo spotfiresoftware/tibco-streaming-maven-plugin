@@ -410,7 +410,7 @@
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-archiver</artifactId>
-                <version>4.1.0</version>
+                <version>4.8.0</version>
                 <exclusions>
                     <!-- see https://cve.mitre.org/cgi-bin/cvename.cgi?name=CVE-2019-12402 -->
                     <exclusion>
