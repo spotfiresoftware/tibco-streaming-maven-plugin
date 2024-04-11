@@ -48,7 +48,7 @@ pipeline {
     }
 
     triggers {
-        pollSCM('H 0 * * 1-5')
+        pollSCM('H/30 * * * 0-5')
     }
 
     parameters {
