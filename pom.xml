@@ -884,6 +884,17 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+
+                <!-- Main only since test classes are seldom javadoc'ed. -->
+                <reportSets>
+                    <reportSet>
+                        <id>javadoc-main</id>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+
                 <configuration>
                     <source>11</source>
                     <sourcetab>4</sourcetab>
