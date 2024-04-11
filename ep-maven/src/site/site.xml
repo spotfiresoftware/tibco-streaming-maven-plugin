@@ -45,7 +45,7 @@
 	</custom>
 
 	<poweredBy>
-		<logo name="Tibco" href="http://www.tibco.com/" img="images/Tibco.svg" />
+	    <logo name="Spotfire" href="https://www.spotfire.com/" img="images/spotfireLogo.svg" />
 	</poweredBy>
 
 	<body>
