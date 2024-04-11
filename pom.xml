@@ -66,7 +66,7 @@
     </properties>
 
     <!-- Common project properties -->
-    <url>https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</url>
+    <url>https://github.com/spotfiresoftware/tibco-streaming-maven-plugin</url>
     <inceptionYear>2018</inceptionYear>
 
     <organization>
@@ -78,22 +78,13 @@
         <license>
             <name>BSD 3-Clause License</name>
             <url>
-                https://raw.githubusercontent.com/TIBCOSoftware/tibco-streaming-maven-plugin/master/docs/LICENSE
+                https://raw.githubusercontent.com/spotfiresoftware/tibco-streaming-maven-plugin/master/docs/LICENSE
             </url>
             <distribution>repo</distribution>
         </license>
     </licenses>
 
     <developers>
-        <developer>
-            <id>plord</id>
-            <name>Peter Lord</name>
-            <email>plord@tibco.com</email>
-            <organization>Cloud Software Group, Inc.</organization>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
         <developer>
             <id>flionell</id>
             <name>Frederic Lionello</name>
@@ -106,9 +97,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin
+        <connection>scm:git:https://github.com/spotfiresoftware/tibco-streaming-maven-plugin
         </connection>
-        <url>https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</url>
+        <url>https://github.com/spotfiresoftware/tibco-streaming-maven-plugin</url>
     </scm>
 
     <profiles>
@@ -190,7 +181,7 @@
             to create html docs in github pages :
 
             cd /tmp
-            git clone https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin.git
+            git clone https://github.com/spotfiresoftware/tibco-streaming-maven-plugin.git
             cd tibco-streaming-maven-plugin
             git checkout gh-page
             
