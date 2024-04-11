@@ -75,7 +75,7 @@ pipeline {
     
     agent {
         node {
-            label "(o.rockylinux8 || o.rh8 || o.almalinux8) && q.str"
+            label "(o.rockylinux8 || o.rh8 || o.almalinux8 || o.rh9 || o.almalinux9) && q.str"
         }
     }
 
