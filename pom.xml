@@ -309,6 +309,95 @@
             </properties>
         </profile>
 
+        <!-- Cloud Software Group use. -->
+        <!-- Artifactory Maven plugin with Jenkins. -->
+        <profile>
+            <id>artifactory-maven-plugin</id>
+            <activation>
+                <property>
+                    <name>epb.maven.deploy.artifactory-via-plugin</name>
+                </property>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-enforcer-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>enforce-buildinfo-properties</id>
+                                <goals>
+                                    <goal>enforce</goal>
+                                </goals>
+
+                                <configuration>
+                                    <rules>
+                                        <requireProperty>
+                                            <property>env.BUILD_NUMBER</property>
+                                        </requireProperty>
+                                    </rules>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.jfrog.buildinfo</groupId>
+                        <artifactId>artifactory-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>artifactory-build-info</id>
+                                <goals>
+                                    <goal>publish</goal>
+                                </goals>
+                                <configuration>
+                                    <artifactory>
+                                        <includeEnvVars>true</includeEnvVars>
+                                        <envVarsExcludePatterns>*password*,*secret*,*key*,*token*,*passphrase*</envVarsExcludePatterns>
+                                        <timeoutSec>60</timeoutSec>
+                                    </artifactory>
+                                    <buildInfo>
+                                        <agentName>{{ci-agent|"maven-local"}}</agentName>
+                                        <agentVersion>{{jenkins-version|"0"}}</agentVersion>
+                                        <!-- This has :: when using the Jenkins artifactory plugin -->
+                                        <buildName>{{ARTIFACTORY_BUILD_NAME|project.groupId}}</buildName>
+                                        <buildNumber>{{BUILD_NUMBER}}</buildNumber>
+                                        <buildUrl>{{BUILD_URL|"https://x-no-build-url.x-dev.spotfire.com"}}</buildUrl>
+                                        <principal>{{ARTIFACTORY_AUTH_USERNAME}}</principal>
+                                    </buildInfo>
+                                    <deployProperties>
+                                        <artifactory.licenses>BSD-3-Clause</artifactory.licenses>
+                                        <!-- Valid in Jenkins only -->
+                                        <vcs.url>${env.GIT_URL}</vcs.url>
+                                        <vcs.revision>${env.GIT_COMMIT}</vcs.revision>
+                                    </deployProperties>
+                                    <publisher>
+                                        <contextUrl>{{epb.maven.deploy.artifactory-via-plugin}}</contextUrl>
+                                        <username>${env.ARTIFACTORY_AUTH_USERNAME}</username>
+                                        <password>${env.ARTIFACTORY_AUTH_PASSWORD}</password>
+                                        <excludePatterns>${epb.deploy.excludePatterns}</excludePatterns>
+                                        <repoKey>{{epb.releaseRepo|"x-no-release"}}</repoKey>
+                                        <snapshotRepoKey>{{epb.snapshotRepo|"x-no-snapshots"}}</snapshotRepoKey>
+
+                                        <publishArtifacts>true</publishArtifacts>
+                                        <publishBuildInfo>true</publishBuildInfo>
+                                        <!-- excludePatterns, includePatterns -->
+                                        <filterExcludedArtifactsFromBuild>true</filterExcludedArtifactsFromBuild>
+                                        <recordAllDependencies>false</recordAllDependencies>
+                                        <!-- Minimum file size in KB for which the plugin performs checksum deploy optimization.
+                                             Default: 10. Set to 0 to disable uploading files with checksum that already exists
+                                             in Artifactory. -->
+                                        <minChecksumDeploySizeKb>10</minChecksumDeploySizeKb>
+                                    </publisher>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 
     <dependencyManagement>
@@ -726,6 +815,13 @@
                             </ignoreVersions>
                         </ruleSet>
                     </configuration>
+                </plugin>
+
+                <!-- Cloud Software Group use. -->
+                <plugin>
+                    <groupId>org.jfrog.buildinfo</groupId>
+                    <artifactId>artifactory-maven-plugin</artifactId>
+                    <version>3.6.2</version>
                 </plugin>
 
             </plugins>

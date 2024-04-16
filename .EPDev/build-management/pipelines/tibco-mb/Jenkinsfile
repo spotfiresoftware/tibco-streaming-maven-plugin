@@ -114,6 +114,7 @@ pipeline {
                     
                     epDeclarative.buildInit(
                         pomFile: 'src/pom.xml',
+                        mavenDeployMethod: 'artifactory-maven-plugin',
                         mavenSnapshotRepo: 'ep-snapshots',
                         mavenReleaseRepo: 'ep-rc',
                         javaTool: jobUtil.getOracleJava11Tool(),
