@@ -51,6 +51,9 @@
         <!-- Only deploy select artifacts. -->
         <maven.deploy.skip>true</maven.deploy.skip>
 
+        <!-- Keep as a property to allocate the cached database for each version. -->
+        <dependency-check-maven.version>9.1.0</dependency-check-maven.version>
+
         <junit.version>4.13.1</junit.version>
 
         <!-- Manage Maven plugin tools: annotations and plugins. -->
@@ -66,6 +69,13 @@
         <unit.test.sb.version>${project.version}</unit.test.sb.version>
         <integration.test.sb.version>11.2.0-SNAPSHOT</integration.test.sb.version>
         <slf4j.version>1.7.26</slf4j.version>
+
+        <!-- Properties owned by other plugins. -->
+        <!-- dependency-check-maven -->
+        <nvdApiDelay>10000</nvdApiDelay> <!-- Ten seconds; we are not in a hurry. -->
+        <nvdApiServerId>theNVDServer</nvdApiServerId>
+        <nvdValidForHours>12</nvdValidForHours>
+
     </properties>
 
     <!-- Common project properties -->
@@ -396,6 +406,20 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+
+        <profile>
+            <id>com.spotfire.impl.epb.build.executor-data-dir</id>
+            <activation>
+                <property>
+                    <name>env.EPB_EXECUTOR_DATA_DIR</name>
+                </property>
+            </activation>
+
+            <properties>
+                <!-- For dependency-check-maven in CI builds -->
+                <dataDirectory>${env.EPB_EXECUTOR_DATA_DIR}/cache/dependency-check-maven/${dependency-check-maven.version}</dataDirectory>
+            </properties>
         </profile>
 
     </profiles>
@@ -795,7 +819,7 @@
                 <plugin>
                     <groupId>org.owasp</groupId>
                     <artifactId>dependency-check-maven</artifactId>
-                    <version>8.4.2</version>
+                    <version>${dependency-check-maven.version}</version>
                 </plugin>
 
                 <!-- When asking for updated versions, ignore alphas
