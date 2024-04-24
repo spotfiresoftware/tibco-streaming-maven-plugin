@@ -650,7 +650,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-shade-plugin</artifactId>
-                    <version>3.5.2</version>
+                    <version>3.5.3</version>
                 </plugin>
 
                 <plugin>
@@ -679,6 +679,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
+                    <version>3.4.1</version>
                     <configuration>
                         <archive>
                             <manifestEntries>
@@ -807,7 +808,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-gpg-plugin</artifactId>
-                    <version>3.2.3</version>
+                    <version>3.2.4</version>
                 </plugin>
 
                 <plugin>
