@@ -108,11 +108,6 @@ public class ConfigurationSource extends AbstractAssemblyMojo {
     }
 
     @Override
-    public List<ArtifactRepository> getRemoteRepositories() {
-        return project.getRemoteArtifactRepositories();
-    }
-
-    @Override
     public File getSiteDirectory() {
         return siteDirectory;
     }
@@ -125,11 +120,6 @@ public class ConfigurationSource extends AbstractAssemblyMojo {
     @Override
     public File getWorkingDirectory() {
         return workingDirectory;
-    }
-    
-    @Override
-    public ArtifactRepository getLocalRepository() {
-        return localRepository;
     }
 
     @Override

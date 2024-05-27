@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -391,7 +392,8 @@ abstract class BasePackageMojo extends BaseMojo {
                 assemblyFile = assemblyArchiver
                     .createArchive(assembly, project.getArtifactId() + "-" + project
                         .getVersion() + "-" + project
-                        .getPackaging(), "zip", configSource, false, "merge");
+                        .getPackaging(), "zip",
+                        configSource, FileTime.fromMillis(System.currentTimeMillis()));
             } catch (Exception e) {
 
                 throw new MojoExecutionException(

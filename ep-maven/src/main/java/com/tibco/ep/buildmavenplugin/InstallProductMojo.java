@@ -255,7 +255,6 @@ public class InstallProductMojo extends BaseMojo {
                 ZipUnArchiver ua = new ZipUnArchiver();
                 ua.setSourceFile(sourceFile);
                 ua.setDestDirectory(productHome);
-                ua.enableLogging(new ConsoleLogger(Logger.LEVEL_INFO, "install-product"));
                 if (forceReplace) {
                     ua.setOverwrite(true);
                 }
