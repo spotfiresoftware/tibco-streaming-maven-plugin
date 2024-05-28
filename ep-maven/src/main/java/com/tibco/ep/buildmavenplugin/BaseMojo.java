@@ -43,8 +43,10 @@ import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.LegacySupport;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.internal.DefaultLegacySupport;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
@@ -52,10 +54,13 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.repository.RepositorySystem;
+import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
 import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
 import org.apache.maven.shared.dependency.graph.DependencyNode;
 import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
+import org.codehaus.plexus.component.annotations.Requirement;
+import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import java.io.File;
@@ -192,6 +197,10 @@ abstract class BaseMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${localRepository}", required = true, readonly = true)
     ArtifactRepository localRepository;
+
+    @Component
+    private LegacySupport legacySupport;
+
     /**
      * <p>Product home location.  This path is resolved in the following way :</p>
      *
@@ -720,6 +729,7 @@ abstract class BaseMojo extends AbstractMojo {
         request.setMirrors(session.getRequest().getMirrors());
         request.setProxies(session.getRequest().getProxies());
 
+        legacySupport.setSession(session);
         return artifactResolver.resolve(request).getArtifacts();
     }
 

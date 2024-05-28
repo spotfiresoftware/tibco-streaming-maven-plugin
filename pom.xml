@@ -45,7 +45,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- The maven version -->
-        <maven-api.version>3.6.0</maven-api.version>
+        <maven-api.version>3.8.8</maven-api.version>
 
         <!-- only generate docs for maven plugin -->
         <maven.site.skip>true</maven.site.skip>
