@@ -38,13 +38,6 @@
     <artifactId>parent</artifactId>
     <packaging>pom</packaging>
 
-    <parent>
-        <groupId>com.tibco.ep</groupId>
-        <artifactId>ep-maven</artifactId>
-        <version>${project.version}</version>
-        <relativePath>../../../..</relativePath>
-    </parent>  
-
     <dependencies>
 
         <!-- compile, test and deploy dependencies -->
