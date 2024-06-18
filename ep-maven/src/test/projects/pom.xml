@@ -86,8 +86,8 @@
 
     </dependencies>
 
-    <!-- Exercise the plugin. -->
     <build>
+        <!-- Exercise the plugin. -->
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -99,6 +99,21 @@
         </pluginManagement>
 
         <plugins>
+            <!-- Local IT repository list. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>it-list-repositories</id>
+                        <phase>initialize</phase>
+                        <goals>
+                            <goal>list-repositories</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>com.tibco.ep</groupId>
                 <artifactId>ep-maven-plugin</artifactId>
