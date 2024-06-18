@@ -43,16 +43,6 @@
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
             
-    <pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>com.tibco.ep</groupId>
-                <artifactId>ep-maven-plugin</artifactId>
-                <version>${ep-maven.version}</version>
-            </plugin>
-        </plugins>
-    </pluginManagement>
-
     <dependencies>
 
         <!-- compile, test and deploy dependencies -->
@@ -98,6 +88,16 @@
 
     <!-- Exercise the plugin. -->
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.tibco.ep</groupId>
+                    <artifactId>ep-maven-plugin</artifactId>
+                    <version>${ep-maven.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+
         <plugins>
             <plugin>
                 <groupId>com.tibco.ep</groupId>
