@@ -325,6 +325,7 @@
                     <postBuildHookScript>verify</postBuildHookScript>
                     <properties>
                         <ep-maven.version>${project.version}</ep-maven.version>
+                        <junit.version>${junit.version}</junit.version>
                     </properties>
                     <scriptVariables>
                         <CURRENT_PROJECT_VERSION>${project.version}</CURRENT_PROJECT_VERSION>
