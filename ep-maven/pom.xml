@@ -338,7 +338,6 @@
                     <execution>
                         <id>integration-test</id>
                         <goals>
-                            <goal>clean</goal>
                             <goal>install</goal>
                             <goal>run</goal>
                         </goals>
