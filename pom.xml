@@ -44,10 +44,13 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- The maven version -->
+        <!-- Targetted Java version. -->
+        <maven.compiler.release>11</maven.compiler.release>
+
+        <!-- The Maven version -->
         <maven-api.version>3.8.8</maven-api.version>
 
-        <!-- only generate docs for maven plugin -->
+        <!-- Only generate docs for maven plugin -->
         <maven.site.skip>true</maven.site.skip>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
 
@@ -653,7 +656,6 @@
                     <configuration>
                         <showDeprecation>true</showDeprecation>
                         <showWarnings>true</showWarnings>
-			<release>11</release>
                     </configuration>
                 </plugin>
 
@@ -918,8 +920,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <source>11</source>
-                    <sourcetab>4</sourcetab>
+                    <quiet>true</quiet>
                     <additionalJOptions>
                         <additionalJOption>-verbose</additionalJOption>
                         <additionalJOption>-Xdoclint:all</additionalJOption>
