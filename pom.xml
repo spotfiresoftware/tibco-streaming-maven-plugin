@@ -318,7 +318,7 @@
                 </property>
             </activation>
             <properties>
-                <unit.test.sb.version>11.0.0-SNAPSHOT</unit.test.sb.version>
+                <unit.test.sb.version>11.0.1-SNAPSHOT</unit.test.sb.version>
             </properties>
         </profile>
 
