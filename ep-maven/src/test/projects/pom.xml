@@ -36,7 +36,22 @@
 
     <groupId>com.tibco.ep.testmavenplugin</groupId>
     <artifactId>parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+            
+    <pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>com.tibco.ep</groupId>
+                <artifactId>ep-maven-plugin</artifactId>
+                <version>${ep-maven.version}</version>
+            </plugin>
+        </plugins>
+    </pluginManagement>
 
     <dependencies>
 
@@ -80,17 +95,13 @@
 
     </dependencies>
 
+    <!-- Exercise the plugin. -->
     <build>
         <plugins>
-
             <plugin>
                 <groupId>com.tibco.ep</groupId>
                 <artifactId>ep-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                </configuration>
             </plugin>
-
         </plugins>
     </build>
 

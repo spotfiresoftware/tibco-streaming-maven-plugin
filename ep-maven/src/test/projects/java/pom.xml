@@ -60,7 +60,6 @@
             <plugin>
                 <groupId>com.tibco.ep</groupId>
                 <artifactId>ep-maven-plugin</artifactId>
-                <version>${project.version}</version>
                 <configuration>
                     <mainClass>main</mainClass>
                 </configuration>

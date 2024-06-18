@@ -323,6 +323,9 @@
                         <pomInclude>*/pom.xml</pomInclude>
                     </pomIncludes>
                     <postBuildHookScript>verify</postBuildHookScript>
+                    <properties>
+                        <ep-maven.version>${project.version}</ep-maven.version>
+                    </properties>
                     <scriptVariables>
                         <CURRENT_PROJECT_VERSION>${project.version}</CURRENT_PROJECT_VERSION>
                     </scriptVariables>
