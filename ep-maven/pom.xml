@@ -54,6 +54,7 @@
         <oss-stage.skip>true</oss-stage.skip>
         <gpg.skip>${oss-stage.skip}</gpg.skip>
 
+        <ep-maven.version>${project.version}</ep-maven.version>
         <archetype.test.ignoreEOLStyle>true</archetype.test.ignoreEOLStyle>
 
         <!-- Skipping integration tests by default -->
@@ -324,7 +325,7 @@
                     </pomIncludes>
                     <postBuildHookScript>verify</postBuildHookScript>
                     <properties>
-                        <ep-maven.version>${project.version}</ep-maven.version>
+                        <ep-maven.version>${ep-maven.version}</ep-maven.version>
                         <junit.version>${junit.version}</junit.version>
                     </properties>
                     <scriptVariables>
