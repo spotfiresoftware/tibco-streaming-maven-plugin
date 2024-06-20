@@ -330,6 +330,7 @@
                     </properties>
                     <scriptVariables>
                         <CURRENT_PROJECT_VERSION>${project.version}</CURRENT_PROJECT_VERSION>
+                        <REGRESSION_REPOSITORY>${settings.localRepository}</REGRESSION_REPOSITORY>
                     </scriptVariables>
                     <settingsFile>src/it/settings.xml</settingsFile>
                     <skipInvocation>${skipIntegrationTests}</skipInvocation>
@@ -351,6 +352,7 @@
                 <configuration>
                     <systemPropertyVariables>
                         <CURRENT_PROJECT_VERSION>${project.version}</CURRENT_PROJECT_VERSION>
+                        <REGRESSION_REPOSITORY>${settings.localRepository}</REGRESSION_REPOSITORY>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2018, Cloud Software Group, Inc.
+  Copyright (C) 2018-2024. Cloud Software Group, Inc.
   
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -36,14 +36,8 @@
 
     <groupId>com.tibco.ep.testmavenplugin</groupId>
     <artifactId>java</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>ep-java-fragment</packaging>
-
-    <parent>
-        <groupId>com.tibco.ep.testmavenplugin</groupId>
-        <artifactId>parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
-        <relativePath>..</relativePath>
-    </parent>  
 
     <organization>
         <name>Cloud Software Group, Inc.</name>
@@ -60,6 +54,7 @@
             <plugin>
                 <groupId>com.tibco.ep</groupId>
                 <artifactId>ep-maven-plugin</artifactId>
+                <version>${ep-maven.version}</version>
                 <configuration>
                     <mainClass>main</mainClass>
                 </configuration>

@@ -192,8 +192,10 @@ public class PackageTest extends BetterAbstractMojoTestCase {
         packageStreambase.execute();
         assertEquals(simulatedLog.getErrorLog(), 0, simulatedLog.getErrorLog().length());
         assertEquals(simulatedLog.getWarnLog(), 0, simulatedLog.getWarnLog().length());
+        
+        final String eventflowFragmentVersion = getTestProjectsVersion();
         // there is no output to check for this target
-        String eventFlowFragmentZip = "target/projects/eventflow/target/eventflow-" + pomVersion + "-ep-eventflow-fragment.zip";
+        String eventFlowFragmentZip = "target/projects/eventflow/target/eventflow-" + eventflowFragmentVersion + "-ep-eventflow-fragment.zip";
         assertTrue(new File(eventFlowFragmentZip).exists());
         assertTrue(zipContains(eventFlowFragmentZip, "upgrade-plan.txt"));
         assertTrue(zipContains(eventFlowFragmentZip, "engine.conf"));
@@ -204,11 +206,11 @@ public class PackageTest extends BetterAbstractMojoTestCase {
 
         // simulate install
         //
-        File eventflowDestDir = new File(this.regressionRepository, "com/tibco/ep/testmavenplugin/eventflow/" + pomVersion);
+        File eventflowDestDir = new File(this.regressionRepository, "com/tibco/ep/testmavenplugin/eventflow/" + eventflowFragmentVersion);
         eventflowDestDir.mkdirs();
         Files
             .copy(new File(eventFlowFragmentZip)
-                .toPath(), new File(eventflowDestDir, "eventflow-" + pomVersion + ".zip")
+                .toPath(), new File(eventflowDestDir, "eventflow-" + eventflowFragmentVersion + ".zip")
                 .toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         // variation with eventflow deps

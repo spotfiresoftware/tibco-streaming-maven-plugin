@@ -668,7 +668,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.4.1</version>
+                    <version>3.4.2</version>
                     <configuration>
                         <archive>
                             <manifestEntries>
@@ -723,7 +723,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-clean-plugin</artifactId>
-                    <version>3.3.2</version>
+                    <version>3.4.0</version>
                 </plugin>
 
                 <plugin>
@@ -1005,10 +1005,7 @@
                 </reportSets>
 
                 <configuration>
-                    <source>11</source>
-                    <sourcetab>4</sourcetab>
                     <additionalJOptions>
-                        <additionalJOption>-verbose</additionalJOption>
                         <additionalJOption>-Xdoclint:all</additionalJOption>
                     </additionalJOptions>
                 </configuration>
