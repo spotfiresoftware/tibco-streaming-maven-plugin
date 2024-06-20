@@ -549,26 +549,6 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
             String groupId = artifact.getGroupId();
             String artifactId = artifact.getArtifactId();
 
-            // skip provided
-            //
-            if (scope != null && scope.equals(Artifact.SCOPE_PROVIDED)) {
-
-                // cobertura exception
-                //
-                if (artifactId.equals("cobertura") && groupId
-                    .equals("net.sourceforge.cobertura")) {
-                    for (String goal : session.getGoals()) {
-                        if (goal.equals("cobertura:cobertura")) {
-                            return true;
-                        }
-                    }
-                }
-
-                // cobertura not required
-                //
-                return false;
-            }
-
             // skip specific streambase dependencies that are in the runtime
             //
             if (groupId.equals("com.tibco.ep.thirdparty")) {

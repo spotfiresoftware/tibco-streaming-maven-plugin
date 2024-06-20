@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2020, TIBCO Software Inc.
+ * Copyright (C) 2018-2024. Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -45,10 +45,6 @@ import java.util.Properties;
  *
  * <p>A java runner for surefire is created and deployed to the test nodes -
  * this runner invokes surefire and hence junit to run the test cases.</p>
- *
- * <p>The java runner sets the system property <b>net.sourceforge.cobertura.datafile</b>
- * to a unique file in the build directory.  So when coverage is enabled, these
- * per-node reports are merged into a single report for processing.</p>
  *
  * <p>The java runner takes the configured reportsDirectory property and
  * appends the node name - the node specific test report files are created in

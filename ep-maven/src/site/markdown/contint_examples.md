@@ -53,17 +53,14 @@ $ mvn -DenvironmentVariables=BUILD_ID=${BUILD_ID} ...
 
 ## Other configurations
 
-1. The source code management has to be defined so that jenkins
-can find the source
+1. The source code management has to be defined so that Jenkins
+can find the source.
 
 2. Suitable build nodes have to be defined
 
-3. Additional maven goals such as site, cobertura and sonar can be defined
+3. Additional Maven goals such as `site` and `sonar` can be defined.
 
-4. Post-build actions to publish [coverage reports](https://wiki.jenkins-ci.org/display/JENKINS/Cobertura+Plugin)
-  results are very useful
-
-5. [Email notifications](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin) 
+4. [Email notifications](https://wiki.jenkins-ci.org/display/JENKINS/Email-ext+plugin) 
 to the development team
 
-6. Centralized [maven settings](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)
+5. Centralized [Maven settings](https://wiki.jenkins-ci.org/display/JENKINS/Config+File+Provider+Plugin)

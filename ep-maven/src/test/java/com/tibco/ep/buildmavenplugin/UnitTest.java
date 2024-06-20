@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, TIBCO Software Inc.
+ * Copyright (C) 2018-2024. Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -367,8 +367,6 @@ public class UnitTest extends BetterAbstractMojoTestCase {
         } catch (FileAlreadyExistsException e) {
             // ignore
         }
-
-        new File("target/projects/java/target/cobertura").mkdirs();
 
         LOGGER.info("   Start nodes");
         StartNodesMojo startNodes = (StartNodesMojo) lookupConfiguredMojo(startPom, "start-nodes");
