@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, TIBCO Software Inc.
+ * Copyright © 2018-2024. Cloud Software Group, Inc.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -50,14 +50,14 @@ import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.repository.LocalRepository;
 
-/** Use this as you would {@link AbstractMojoTestCase},
- * where you want more of the standard maven defaults to be set
- * (and where the {@link AbstractMojoTestCase} leaves them as null or empty).
- * This includes:
+/**
+ * Use this as you would {@link AbstractMojoTestCase}, where you want more of the
+ * standard Maven defaults to be set (and where the {@link AbstractMojoTestCase}
+ * leaves them as null or empty). This includes:
  * <ul>
- * <li> local repo, repo sessions and managers configured
- * <li> maven default remote repos installed (NB: this does not use your ~/.m2 local settings)
- * <li> system properties are copies
+ * <li> Local repository, repository sessions and managers configured
+ * <li> Maven default remote repo repositories installed (NB: this does not use your ~/.m2 local settings)
+ * <li> System properties are copies
  * </ul>
  * 
  */ 
