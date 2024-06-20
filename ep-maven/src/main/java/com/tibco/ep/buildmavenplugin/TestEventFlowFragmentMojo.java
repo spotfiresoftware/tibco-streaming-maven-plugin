@@ -29,18 +29,17 @@
  ******************************************************************************/
 package com.tibco.ep.buildmavenplugin;
 
+import static org.apache.maven.plugins.annotations.LifecyclePhase.TEST;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.Properties;
+
 import org.apache.maven.model.PluginExecution;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Properties;
-import java.util.stream.Stream;
-
-import static org.apache.maven.plugins.annotations.LifecyclePhase.TEST;
 
 /**
  * <p>Test a EventFlow fragment using sbunit.</p>

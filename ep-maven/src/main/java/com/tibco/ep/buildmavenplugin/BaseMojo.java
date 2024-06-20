@@ -29,40 +29,6 @@
  ******************************************************************************/
 package com.tibco.ep.buildmavenplugin;
 
-import com.tibco.ep.buildmavenplugin.admin.RuntimeCommandRunner;
-import com.tibco.ep.sb.services.RuntimeServices;
-import com.tibco.ep.sb.services.build.IRuntimeBuildService;
-import com.tibco.ep.sb.services.management.AbstractCommandBuilder;
-import com.tibco.ep.sb.services.management.IContext;
-import com.tibco.ep.sb.services.management.IRuntimeAdminService;
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
-import org.apache.maven.artifact.resolver.ArtifactResolver;
-import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
-import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.LegacySupport;
-import org.apache.maven.plugin.MojoExecution;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.internal.DefaultLegacySupport;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.project.DefaultProjectBuildingRequest;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectHelper;
-import org.apache.maven.project.ProjectBuildingRequest;
-import org.apache.maven.repository.RepositorySystem;
-import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
-import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
-import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
-import org.apache.maven.shared.dependency.graph.DependencyNode;
-import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
-import org.codehaus.plexus.component.annotations.Requirement;
-import org.eclipse.aether.DefaultRepositorySystemSession;
-import org.sonatype.plexus.build.incremental.BuildContext;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -86,6 +52,37 @@ import java.util.function.Supplier;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.repository.ArtifactRepository;
+import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
+import org.apache.maven.artifact.resolver.ArtifactResolver;
+import org.apache.maven.artifact.resolver.filter.ArtifactFilter;
+import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.LegacySupport;
+import org.apache.maven.plugin.MojoExecution;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.MavenProjectHelper;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.repository.RepositorySystem;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilder;
+import org.apache.maven.shared.dependency.graph.DependencyGraphBuilderException;
+import org.apache.maven.shared.dependency.graph.DependencyNode;
+import org.apache.maven.shared.dependency.graph.traversal.DependencyNodeVisitor;
+import org.sonatype.plexus.build.incremental.BuildContext;
+
+import com.tibco.ep.buildmavenplugin.admin.RuntimeCommandRunner;
+import com.tibco.ep.sb.services.RuntimeServices;
+import com.tibco.ep.sb.services.build.IRuntimeBuildService;
+import com.tibco.ep.sb.services.management.AbstractCommandBuilder;
+import com.tibco.ep.sb.services.management.IContext;
+import com.tibco.ep.sb.services.management.IRuntimeAdminService;
 
 /**
  * Base type

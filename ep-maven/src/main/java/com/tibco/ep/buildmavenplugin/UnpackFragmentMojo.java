@@ -29,6 +29,11 @@
  ******************************************************************************/
 package com.tibco.ep.buildmavenplugin;
 
+import static org.apache.maven.plugins.annotations.LifecyclePhase.PROCESS_RESOURCES;
+
+import java.io.File;
+
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -36,13 +41,6 @@ import org.codehaus.plexus.archiver.ArchiverException;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
-
-import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
-import static org.apache.maven.plugins.annotations.LifecyclePhase.PROCESS_RESOURCES;
-
-import java.io.File;
-
-import org.apache.maven.artifact.Artifact;
 
 /**
  * <p>

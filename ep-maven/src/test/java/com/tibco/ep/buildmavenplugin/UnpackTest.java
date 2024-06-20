@@ -30,18 +30,14 @@
 package com.tibco.ep.buildmavenplugin;
 
 import java.io.File;
+
 import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.plugin.testing.resources.TestResources;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.tibco.ep.buildmavenplugin.InstallProductMojo;
-import com.tibco.ep.buildmavenplugin.UnpackFragmentMojo;
-import com.tibco.ep.buildmavenplugin.UnpackNarMojo;
 
 /**
  * Unpack tests

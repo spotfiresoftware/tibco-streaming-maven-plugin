@@ -29,11 +29,23 @@
  ******************************************************************************/
 package com.tibco.ep.buildmavenplugin;
 
-import com.tibco.ep.buildmavenplugin.admin.RuntimeCommandRunner;
-import com.tibco.ep.buildmavenplugin.surefire.Runner;
-import com.tibco.ep.sb.services.management.AbstractDeployFragmentCommandBuilder;
-import com.tibco.ep.sb.services.management.FragmentType;
-import com.tibco.ep.sb.services.management.IDestination;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -44,30 +56,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.DirectoryScanner;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
+import com.tibco.ep.buildmavenplugin.admin.RuntimeCommandRunner;
+import com.tibco.ep.buildmavenplugin.surefire.Runner;
+import com.tibco.ep.sb.services.management.AbstractDeployFragmentCommandBuilder;
+import com.tibco.ep.sb.services.management.FragmentType;
+import com.tibco.ep.sb.services.management.IDestination;
 
 /**
  * Base test
