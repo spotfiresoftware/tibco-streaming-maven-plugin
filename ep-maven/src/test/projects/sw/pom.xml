@@ -22,7 +22,7 @@
             <groupId>com.tibco.ep.testmavenplugin</groupId>
             <artifactId>eventflow</artifactId>
             <type>ep-eventflow-fragment</type>
-            <version>${project.version}</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
         
