@@ -51,24 +51,18 @@
             <artifactId>java</artifactId>
             <type>ep-java-fragment</type>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../java/target/java-0.0.1-SNAPSHOT-ep-java-fragment.zip</systemPath>
         </dependency>
         <dependency>
             <groupId>com.tibco.ep.testmavenplugin</groupId>
             <artifactId>eventflow</artifactId>
             <type>ep-eventflow-fragment</type>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../eventflow/target/eventflow-0.0.1-SNAPSHOT-ep-eventflow-fragment.zip</systemPath>
         </dependency>
         <dependency>
             <groupId>com.tibco.ep.testmavenplugin</groupId>
             <artifactId>liveview</artifactId>
             <type>ep-liveview-fragment</type>
             <version>0.0.1-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../liveview/target/liveview-0.0.1-SNAPSHOT-ep-liveview-fragment.zip</systemPath>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
