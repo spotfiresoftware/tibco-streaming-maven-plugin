@@ -63,10 +63,6 @@ for each dependency.  So :
     cases.  Dependency is not included when compiling application.  Dependency 
     is included in shipped artifacts.
 
-One exception to this rule is cobertura - if set a a provided dependency <<and>>
-cobertura:cobertura goal is being run, then the maven plugin will include
-cobertura on the classpath when testing
-
 <a name="parent-poms"></a>
 
 ## Parent poms
@@ -1247,7 +1243,6 @@ pom.xml is shown below :
         <sonar.projectName>${projectgroupId}.${projectartifactId}</sonar.projectName>
         <sonar.junit.reportsPath>${project.build.directory}/test-reports</sonar.junit.reportsPath>
         <sonar.working.directory>${project.build.directory}${file.separator}sonar</sonar.working.directory>
-        <sonar.cobertura.reportPath>${project.build.directory}/site/cobertura/coverage.xml</sonar.cobertura.reportPath>
     </properties>
 ....
     <build>
@@ -1264,11 +1259,10 @@ pom.xml is shown below :
 ....
 ```
 
-Since SonarQube will process the junit test report, coverage report as well as
+Since SonarQube will process the JUnit test report as well as
 the source files in the tree, a typical run will include :
 
 ``` shell
-$ mvn cobertura:cobertura
 $ mvn site:site
 $ mvn sonar:sonar
 ```

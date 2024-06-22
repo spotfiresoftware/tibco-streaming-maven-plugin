@@ -2,7 +2,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <!-- vim: set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab : -->
-    <!-- Copyright (c) 2019-2023 Cloud Software Group, Inc. All Rights Reserved. Confidential & Proprietary. -->
+    <!-- Copyright (c) 2019-2024 Cloud Software Group, Inc. All Rights Reserved. Confidential & Proprietary. -->
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -13,7 +13,7 @@
     <parent>
         <groupId>com.tibco.ep.testmavenplugin</groupId>
         <artifactId>parent</artifactId>
-        <version>${project.version}</version>
+        <version>0.0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>  
 
@@ -22,7 +22,7 @@
             <groupId>com.tibco.ep.testmavenplugin</groupId>
             <artifactId>eventflow</artifactId>
             <type>ep-eventflow-fragment</type>
-            <version>${project.version}</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
         
@@ -31,7 +31,6 @@
             <plugin>
                 <groupId>com.tibco.ep</groupId>
                 <artifactId>ep-maven-plugin</artifactId>
-                <version>${project.version}</version>
             </plugin>
         </plugins>
     </build>

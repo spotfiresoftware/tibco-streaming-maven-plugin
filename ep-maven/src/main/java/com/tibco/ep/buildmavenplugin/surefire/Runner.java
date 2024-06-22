@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, TIBCO Software Inc.
+ * Copyright (C) 2018-2024. Cloud Software Group, Inc.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -61,16 +61,6 @@ public class Runner
     protected final static String NODE_NAME = "com.kabira.platform.node.name";
     
     /**
-     * cobertura sub directory
-     */
-    protected final static String COBERTURA_DIR = "cobertura";
-    
-    /**
-     * cobertura results file
-     */
-    protected final static String COBERTURA_RESULTS = "cobertura.ser";
-    
-    /**
      * Main method to run a set of unit tests on the node.
      * 
      * @param args
@@ -129,16 +119,6 @@ public class Runner
                     new Object[] { testResultsPort, traceCalls, traceSocketMessages, testFileNames } });
         }
         // ========================================================================================================================
-
-
-        // force coverage to a node-specific file
-        //
-        System.setProperty("net.sourceforge.cobertura.datafile", System.getProperty(REPORTS_DIRECTORY)+File.separator+COBERTURA_DIR+File.separator+System.getProperty(NODE_NAME)+"."+COBERTURA_RESULTS);
-        File reportDirectory = new File(System.getProperty(REPORTS_DIRECTORY)+File.separator+COBERTURA_DIR);
-        if (!reportDirectory.exists()) {
-            // we could run this in locker but it seems safe to just ignore mkdirs if already created
-            reportDirectory.mkdirs();
-        }
 
         if (args.length == 1) {
             // FIX THIS - this shouldn't happen if called correctly from maven

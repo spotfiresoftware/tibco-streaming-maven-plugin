@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2018, Cloud Software Group, Inc.
+  Copyright (C) 2018-2024. Cloud Software Group, Inc.
   
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -54,6 +54,7 @@
         <oss-stage.skip>true</oss-stage.skip>
         <gpg.skip>${oss-stage.skip}</gpg.skip>
 
+        <ep-maven.version>${project.version}</ep-maven.version>
         <archetype.test.ignoreEOLStyle>true</archetype.test.ignoreEOLStyle>
 
         <!-- Skipping integration tests by default -->
@@ -323,8 +324,13 @@
                         <pomInclude>*/pom.xml</pomInclude>
                     </pomIncludes>
                     <postBuildHookScript>verify</postBuildHookScript>
+                    <properties>
+                        <ep-maven.version>${ep-maven.version}</ep-maven.version>
+                        <junit.version>${junit.version}</junit.version>
+                    </properties>
                     <scriptVariables>
                         <CURRENT_PROJECT_VERSION>${project.version}</CURRENT_PROJECT_VERSION>
+                        <REGRESSION_REPOSITORY>${settings.localRepository}</REGRESSION_REPOSITORY>
                     </scriptVariables>
                     <settingsFile>src/it/settings.xml</settingsFile>
                     <skipInvocation>${skipIntegrationTests}</skipInvocation>
@@ -344,12 +350,10 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <systemProperties>
-                        <property>
-                            <name>CURRENT_PROJECT_VERSION</name>
-                            <value>${project.version}</value>
-                        </property>
-                    </systemProperties>
+                    <systemPropertyVariables>
+                        <CURRENT_PROJECT_VERSION>${project.version}</CURRENT_PROJECT_VERSION>
+                        <REGRESSION_REPOSITORY>${settings.localRepository}</REGRESSION_REPOSITORY>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
 

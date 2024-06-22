@@ -38,6 +38,16 @@ if (!buildStart) {
     return
 }
 
+def jobUtil = new com.tibco.workflow.JobUtil()
+
+def platform = "linux" // the one platform for which we build.
+
+// Java and Maven versions are still managed more conservatively.
+def labelExpr = jobUtil.getStreamingPlatformLabels(
+    streamingVersion: '11.1', // Streaming version compatiblity version.
+    platform: platform
+)
+
 pipeline {
     options {
         // Only keep a few builds, for up to week.
@@ -75,7 +85,7 @@ pipeline {
     
     agent {
         node {
-            label "(o.rockylinux8 || o.rh8 || o.almalinux8 || o.rh9 || o.almalinux9) && q.str"
+            label labelExpr
         }
     }
 
@@ -106,10 +116,6 @@ pipeline {
         stage ('Build') {
             steps {
                 script {
-                    def jobUtil = new com.tibco.workflow.JobUtil()
-
-                    def platform = "linux" // the one platform for which we build.
-
                     def publicPomFile = "src/ep-maven/pom.xml"
                     
                     epDeclarative.buildInit(

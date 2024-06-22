@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2018, Cloud Software Group, Inc.
+  Copyright (C) 2018-2024. Cloud Software Group, Inc.
   
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -36,15 +36,13 @@
 
     <groupId>com.tibco.ep.testmavenplugin</groupId>
     <artifactId>parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <parent>
-        <groupId>com.tibco.ep</groupId>
-        <artifactId>ep-maven</artifactId>
-        <version>${project.version}</version>
-        <relativePath>../../../..</relativePath>
-    </parent>  
-
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+            
     <dependencies>
 
         <!-- compile, test and deploy dependencies -->
@@ -59,6 +57,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
+            <version>${junit.version}</version>
         </dependency>
 
         <!-- build only dependencies - the runtime provides these -->
@@ -88,16 +87,23 @@
     </dependencies>
 
     <build>
-        <plugins>
+        <!-- Exercise the plugin. -->
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>com.tibco.ep</groupId>
+                    <artifactId>ep-maven-plugin</artifactId>
+                    <version>${ep-maven.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
 
+        <plugins>
             <plugin>
                 <groupId>com.tibco.ep</groupId>
                 <artifactId>ep-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <configuration>
-                </configuration>
+                <version>${ep-maven.version}</version>
             </plugin>
-
         </plugins>
     </build>
 

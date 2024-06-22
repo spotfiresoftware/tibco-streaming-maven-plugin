@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020, TIBCO Software Inc.
+ * Copyright © 2020-2024. Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -126,6 +126,10 @@ public abstract class AbstractDestinationBuilder extends AbstractBaseBuilder {
         return this;
     }
 
+    /**
+     * Build the destination.
+     * @return a new destination
+     */
     public abstract IDestination build();
 
     @Override

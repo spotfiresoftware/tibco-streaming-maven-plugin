@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018, TIBCO Software Inc.
+ * Copyright © 2018-2024. Cloud Software Group, Inc.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -50,37 +50,86 @@ import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.repository.LocalRepository;
 
-/** Use this as you would {@link AbstractMojoTestCase},
- * where you want more of the standard maven defaults to be set
- * (and where the {@link AbstractMojoTestCase} leaves them as null or empty).
- * This includes:
+/**
+ * Use this as you would {@link AbstractMojoTestCase}, where you want more of the
+ * standard Maven defaults to be set (and where the {@link AbstractMojoTestCase}
+ * leaves them as null or empty). This includes:
  * <ul>
- * <li> local repo, repo sessions and managers configured
- * <li> maven default remote repos installed (NB: this does not use your ~/.m2 local settings)
- * <li> system properties are copies
+ * <li> Local repository, repository sessions and managers configured
+ * <li> Maven default remote repositories installed <b>N.B.:</b> this does
+ * not use your {@code ~/.m2} local settings.
+ * <li> System properties are copies
  * </ul>
  * 
  */ 
 public abstract class BetterAbstractMojoTestCase extends AbstractMojoTestCase {
 
-    File regressionRepository;
+    protected File regressionRepository;
+
+    /**
+     * Get the regression repository, which should hold the other stub and test
+     * artifacts needed for tests.
+     * <p>
+     * Normally, this should be the local repository of the current build. It is OK
+     * to mix test-only artifacts into the local repository because the Maven build
+     * arranges for such artifacts to <b>not</b> be deployed.
+     * <p>
+     * This throws a runtime error if a suitable local repository cannot be
+     * determined.
+     * @return a local repository path
+     */
+    private File findRegressionRepository() {
+        // Can we figure out the current local repository form settings here?
+        // For now, set from the Surefire configuration based on the
+        // surrounding build's current Maven settings.
+        // So this means such tests cannot be run in IDE unless you set
+        // TIBCO_EP_HOME before/around its launcher, and that location is
+        // right for the local repository you intend to use.
+        final String regressionRepositoryFromExternal = System
+                .getProperty("REGRESSION_REPOSITORY");
+        if (null != regressionRepositoryFromExternal) {
+            return new File(regressionRepositoryFromExternal);
+        }
+
+        // Guesses based on older EP conventions
+        final String tibcoEPHome = System.getenv("TIBCO_EP_HOME");
+        if (null != tibcoEPHome) {
+            File regressionRepository = new File(
+                    tibcoEPHome + "/BUILD/repository");
+            if (regressionRepository.exists()) {
+                return regressionRepository;
+            }
+
+            regressionRepository = new File(tibcoEPHome + "/.repository");
+            if (regressionRepository.exists()) {
+                return regressionRepository;
+            }
+        }
+
+        // Error situations fall through to here.
+        throw new RuntimeException(
+                "Cannot determine Maven local repository from REGRESSION_REPOSITORY nor TIBCO_EP_HOME.");
+    }
+
+    /**
+     * Get the version of test-only projects.
+     * <p>
+     * This does <b>not</b> include stub projects.
+     * @return the Maven version of such projects
+     */
+    protected String getTestProjectsVersion() {
+        return "0.0.1-SNAPSHOT";
+    }
     
     protected MavenSession newMavenSession() {
         try {
             MavenExecutionRequest request = new DefaultMavenExecutionRequest();
             MavenExecutionResult result = new DefaultMavenExecutionResult();
-
-            regressionRepository = new File(System.getenv("TIBCO_EP_HOME")+"/BUILD/repository");
-            if (regressionRepository.exists()) {
-                request.setLocalRepositoryPath(regressionRepository);
-            } else {
-                regressionRepository = new File(System.getenv("TIBCO_EP_HOME")+"/.repository");
-                if (regressionRepository.exists()) {
-                    request.setLocalRepositoryPath(regressionRepository);
-                }
-            }
             
-            // populate sensible defaults, including repository basedir and remote repos
+            regressionRepository = findRegressionRepository();
+            request.setLocalRepositoryPath(regressionRepository);
+
+            // Populate sensible defaults, including repository basedir and remote repos
             MavenExecutionRequestPopulator populator;
             populator = getContainer().lookup( MavenExecutionRequestPopulator.class );
             populator.populateDefaults( request );
@@ -88,12 +137,21 @@ public abstract class BetterAbstractMojoTestCase extends AbstractMojoTestCase {
             // this is needed to allow java profiles to get resolved; i.e. avoid during project builds:
             // [ERROR] Failed to determine Java version for profile java-1.5-detected @ org.apache.commons:commons-parent:22, /Users/alex/.m2/repository/org/apache/commons/commons-parent/22/commons-parent-22.pom, line 909, column 14
             Properties properties = System.getProperties();
-            properties.put("env.TIBCO_EP_HOME", System.getenv("TIBCO_EP_HOME"));
-            request.setSystemProperties( properties );
+            String tibcoEPHome = System.getenv("TIBCO_EP_HOME");
+            if (null == tibcoEPHome) {
+                throw new RuntimeException("TIBCO_EP_HOME must be set for mojo tests.");
+                // Probably should force in the mojo configurations, since there
+                // is a parameter for the install location, instead of always needed
+                // TIBCO_EP_HOME.
+
+            } else {
+                properties.put("env.TIBCO_EP_HOME", tibcoEPHome);
+                request.setSystemProperties( properties );
+            }
             
-            // and this is needed so that the repo session in the maven session 
-            // has a repo manager, and it points at the local repo
-            // (cf MavenRepositorySystemUtils.newSession() which is what is otherwise done)
+            // And this is needed so that the repo session in the maven session 
+            // has a repository manager, and it points at the local repository.
+            // (cf. MavenRepositorySystemUtils.newSession() which is what is otherwise done)
             DefaultMaven maven = (DefaultMaven) getContainer().lookup( Maven.class );
             DefaultRepositorySystemSession repoSession =
                 (DefaultRepositorySystemSession) maven.newRepositorySession( request );
@@ -107,6 +165,10 @@ public abstract class BetterAbstractMojoTestCase extends AbstractMojoTestCase {
                 request, result );
             return session;
         } catch (Exception e) {
+            if (e instanceof RuntimeException) {
+                throw (RuntimeException)e; // we want the best backtrace 
+            }
+            
             throw new RuntimeException(e);
         }
     }

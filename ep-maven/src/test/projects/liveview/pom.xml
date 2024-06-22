@@ -41,7 +41,7 @@
     <parent>
         <groupId>com.tibco.ep.testmavenplugin</groupId>
         <artifactId>parent</artifactId>
-        <version>${project.version}</version>
+        <version>0.0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>  
 
@@ -51,7 +51,6 @@
             <plugin>
                 <groupId>com.tibco.ep</groupId>
                 <artifactId>ep-maven-plugin</artifactId>
-                <version>${project.version}</version>
             </plugin>
 
         </plugins>

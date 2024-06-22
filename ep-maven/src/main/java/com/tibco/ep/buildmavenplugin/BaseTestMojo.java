@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2023, Cloud Software Group, Inc.
+ * Copyright © 2018-2024, Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -29,11 +29,23 @@
  ******************************************************************************/
 package com.tibco.ep.buildmavenplugin;
 
-import com.tibco.ep.buildmavenplugin.admin.RuntimeCommandRunner;
-import com.tibco.ep.buildmavenplugin.surefire.Runner;
-import com.tibco.ep.sb.services.management.AbstractDeployFragmentCommandBuilder;
-import com.tibco.ep.sb.services.management.FragmentType;
-import com.tibco.ep.sb.services.management.IDestination;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.resolver.ArtifactNotFoundException;
 import org.apache.maven.artifact.resolver.ArtifactResolutionException;
@@ -44,30 +56,11 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.codehaus.plexus.util.DirectoryScanner;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.attribute.BasicFileAttributes;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
+import com.tibco.ep.buildmavenplugin.admin.RuntimeCommandRunner;
+import com.tibco.ep.buildmavenplugin.surefire.Runner;
+import com.tibco.ep.sb.services.management.AbstractDeployFragmentCommandBuilder;
+import com.tibco.ep.sb.services.management.FragmentType;
+import com.tibco.ep.sb.services.management.IDestination;
 
 /**
  * Base test
@@ -556,26 +549,6 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
             String groupId = artifact.getGroupId();
             String artifactId = artifact.getArtifactId();
 
-            // skip provided
-            //
-            if (scope != null && scope.equals(Artifact.SCOPE_PROVIDED)) {
-
-                // cobertura exception
-                //
-                if (artifactId.equals("cobertura") && groupId
-                    .equals("net.sourceforge.cobertura")) {
-                    for (String goal : session.getGoals()) {
-                        if (goal.equals("cobertura:cobertura")) {
-                            return true;
-                        }
-                    }
-                }
-
-                // cobertura not required
-                //
-                return false;
-            }
-
             // skip specific streambase dependencies that are in the runtime
             //
             if (groupId.equals("com.tibco.ep.thirdparty")) {
@@ -607,164 +580,6 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
         getLog().debug("Full classpath: [" + buf.toString() + "]");
 
         return buf.toString();
-    }
-
-    /**
-     * Merge node specific report to a cluster report in the expected location
-     */
-    private void mergeCobertura() {
-
-        // check to see if we've got anything to merge
-        //
-        File coberturaDirectory = new File(reportsDirectory, "cobertura");
-        if (!coberturaDirectory.exists()) {
-            return;
-        }
-        ArrayList<String> files = new ArrayList<>();
-        File[] coberturaFiles = coberturaDirectory.listFiles();
-        if (coberturaFiles == null) {
-            return;
-        }
-        for (File coberturaFile : coberturaFiles) {
-            if (coberturaFile.isFile() && coberturaFile.getName().endsWith(".cobertura.ser")) {
-                files.add(coberturaFile.getAbsolutePath());
-            }
-        }
-
-        if (files.size() > 0) {
-
-            if (coverageClassLoader == null) {
-                AccessController.doPrivileged(new PrivilegedAction<Void>() {
-                    public Void run() {
-                        coverageClassLoader = new PluginClassloader(new URL[0], this.getClass()
-                            .getClassLoader());
-                        return null;
-                    }
-                });
-            }
-
-            try {
-
-                // here we simulate cobertura-merge.sh script
-                //
-
-                // locate the jars we need and load
-                //
-                // should this be easier ?
-                //
-                Set<Artifact> coverageDependencies = new HashSet<>();
-
-                final ArtifactFilter filter = new ArtifactFilter() {
-                    @Override
-                    public boolean include(Artifact artifact) {
-                        if (artifact.getArtifactId().equals("cobertura") && artifact.getGroupId()
-                            .equals("net.sourceforge.cobertura")) {
-                            coverageDependencies.add(artifact);
-                            return true;
-                        }
-                        if (artifact.getArtifactId().equals("oro") && artifact.getGroupId()
-                            .equals("oro")) {
-                            coverageDependencies.add(artifact);
-                            return true;
-                        }
-                        if (artifact.getArtifactId().equals("slf4j-api") && artifact.getGroupId()
-                            .equals("org.slf4j")) {
-                            coverageDependencies.add(artifact);
-                            return true;
-                        }
-                        if (artifact.getArtifactId().equals("logback-core") && artifact.getGroupId()
-                            .equals("ch.qos.logback")) {
-                            coverageDependencies.add(artifact);
-                            return true;
-                        }
-                        if (artifact.getArtifactId().equals("logback-classic") && artifact
-                            .getGroupId().equals("ch.qos.logback")) {
-                            coverageDependencies.add(artifact);
-                            return true;
-                        }
-                        return false;
-                    }
-                };
-                try {
-                    DefaultArtifactResolver actualResolver = (DefaultArtifactResolver) artifactResolver;
-                    actualResolver
-                        .resolveTransitively(getProjectDependencies(), project.getArtifact(),
-                            project.getManagedVersionMap(), localRepository, project
-                                .getRemoteArtifactRepositories(),
-                            null, filter);
-                    for (Artifact artifact : coverageDependencies) {
-                        URL url = new File(getArtifactPath(artifact)).toURI().toURL();
-                        coverageClassLoader.addURL(url);
-                    }
-                } catch (final ArtifactResolutionException | ArtifactNotFoundException e) {
-                    getLog().debug(e);
-                }
-
-
-                // find cobertura class, constructors and methods
-                //
-                Class<?> argumentsBuilderClass = Class
-                    .forName("net.sourceforge.cobertura.dsl.ArgumentsBuilder", true, coverageClassLoader);
-                Constructor<?> argumentsBuilderConstructor = argumentsBuilderClass.getConstructor();
-                Method argumentsBuilder_addFileToMerge = argumentsBuilderClass
-                    .getMethod("addFileToMerge", String.class);
-                Method argumentsBuilder_setDataFile = argumentsBuilderClass
-                    .getMethod("setDataFile", String.class);
-                Method argumentsBuilder_build = argumentsBuilderClass.getMethod("build");
-                Class<?> argumentsClass = Class
-                    .forName("net.sourceforge.cobertura.dsl.Arguments", true, coverageClassLoader);
-                Class<?> coberturaClass = Class
-                    .forName("net.sourceforge.cobertura.dsl.Cobertura", true, coverageClassLoader);
-                Constructor<?> coberturaClassConstructor = coberturaClass
-                    .getConstructor(argumentsClass);
-                Method cobertura_merge = coberturaClass.getMethod("merge");
-                Method cobertura_saveProjectData = coberturaClass.getMethod("saveProjectData");
-
-
-                Object builder = argumentsBuilderConstructor.newInstance();
-
-                // add in source files
-                //
-                for (String sourceFile : files) {
-                    getLog().info("Reading node coverage report " + sourceFile);
-                    argumentsBuilder_addFileToMerge.invoke(builder, sourceFile);
-                }
-
-                // add in destination
-                //
-                String coverageOutput = project.getBuild()
-                    .getDirectory() + File.separator + "cobertura" + File.separator + "cobertura.ser";
-                argumentsBuilder_setDataFile.invoke(builder, coverageOutput);
-
-                getLog().info("Writing cluster coverage report " + coverageOutput);
-
-                // and merge
-                //
-                cobertura_saveProjectData.invoke(cobertura_merge.invoke(coberturaClassConstructor
-                    .newInstance(argumentsBuilder_build.invoke(builder))));
-
-            } catch (ClassNotFoundException
-                | NoSuchMethodException
-                | SecurityException
-                | IllegalAccessException
-                | IllegalArgumentException
-                | MalformedURLException
-                | InstantiationException e) {
-
-                getLog().warn("Cannot find cobertura class to start merge " + e.getMessage(), e);
-
-            } catch (InvocationTargetException e) {
-                getLog().warn("Cannot find cobertura class to start merge " + e.getCause()
-                    .getMessage(), e);
-            } finally {
-                try {
-                    coverageClassLoader.close();
-                } catch (IOException e) {
-                    //  Ignored.
-                }
-            }
-
-        }
     }
 
     /**
@@ -1114,8 +929,7 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
                     getLog().warn("Interrupted", e);
                 }
             }
-
-            mergeCobertura();
+            
             mergeTestReports();
         }
     }

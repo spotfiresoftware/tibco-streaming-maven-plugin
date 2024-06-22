@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020, TIBCO Software Inc.
+ * Copyright © 2020-2024, Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -30,7 +30,14 @@
 
 package com.tibco.ep.sb.services.management;
 
+/**
+ * Interface for wrappers of objects.
+ */
 public interface IWrappedObject {
 
+    /**
+     * Get the object wrapped by this one.
+     * @return object inside the wrapping
+     */
     Object getWrappedObject();
 }

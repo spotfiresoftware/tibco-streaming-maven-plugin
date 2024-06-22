@@ -41,7 +41,7 @@
     <parent>
         <groupId>com.tibco.ep.testmavenplugin</groupId>
         <artifactId>parent</artifactId>
-        <version>${project.version}</version>
+        <version>0.0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>  
 
@@ -50,25 +50,25 @@
             <groupId>com.tibco.ep.testmavenplugin</groupId>
             <artifactId>java</artifactId>
             <type>ep-java-fragment</type>
-            <version>${project.version}</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.tibco.ep.testmavenplugin</groupId>
             <artifactId>eventflow</artifactId>
             <type>ep-eventflow-fragment</type>
-            <version>${project.version}</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.tibco.ep.testmavenplugin</groupId>
             <artifactId>sw</artifactId>
             <type>ep-sw-fragment</type>
-            <version>${project.version}</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.tibco.ep.testmavenplugin</groupId>
             <artifactId>liveview</artifactId>
             <type>ep-liveview-fragment</type>
-            <version>${project.version}</version>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -83,7 +83,6 @@
             <plugin>
                 <groupId>com.tibco.ep</groupId>
                 <artifactId>ep-maven-plugin</artifactId>
-                <version>${project.version}</version>
                 <configuration>
                     <nodeDeployFile>${project.basedir}/src/test/configurations/node.conf</nodeDeployFile>
                 </configuration>

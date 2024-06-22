@@ -41,7 +41,7 @@
     <parent>
         <groupId>com.tibco.ep.testmavenplugin</groupId>
         <artifactId>parent</artifactId>
-        <version>${project.version}</version>
+        <version>0.0.1-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>  
 
@@ -50,25 +50,19 @@
             <groupId>com.tibco.ep.testmavenplugin</groupId>
             <artifactId>java</artifactId>
             <type>ep-java-fragment</type>
-            <version>${project.version}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../java/target/java-${project.version}-ep-java-fragment.zip</systemPath>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.tibco.ep.testmavenplugin</groupId>
             <artifactId>eventflow</artifactId>
             <type>ep-eventflow-fragment</type>
-            <version>${project.version}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../eventflow/target/eventflow-${project.version}-ep-eventflow-fragment.zip</systemPath>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.tibco.ep.testmavenplugin</groupId>
             <artifactId>liveview</artifactId>
             <type>ep-liveview-fragment</type>
-            <version>${project.version}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/../liveview/target/liveview-${project.version}-ep-liveview-fragment.zip</systemPath>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -83,7 +77,6 @@
             <plugin>
                 <groupId>com.tibco.ep</groupId>
                 <artifactId>ep-maven-plugin</artifactId>
-                <version>${project.version}</version>
             </plugin>
 
         </plugins>
