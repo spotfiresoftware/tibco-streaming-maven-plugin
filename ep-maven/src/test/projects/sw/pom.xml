@@ -2,7 +2,7 @@
     xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <!-- vim: set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab : -->
-    <!-- Copyright (c) 2019-2023 Cloud Software Group, Inc. All Rights Reserved. Confidential & Proprietary. -->
+    <!-- Copyright (c) 2019-2024 Cloud Software Group, Inc. All Rights Reserved. Confidential & Proprietary. -->
 
     <modelVersion>4.0.0</modelVersion>
 
