@@ -698,6 +698,7 @@
                     <version>${maven-plugin-tools.version}</version>
                     <configuration>
                         <requirementsHistoryDetectionRange>[2.2.1,)</requirementsHistoryDetectionRange>
+                        <jdk>${maven.compiler.release}</jdk>
                     </configuration>
                 </plugin>
 
@@ -748,7 +749,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-project-info-reports-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>3.6.1</version>
                 </plugin>
 
                 <plugin>
@@ -778,7 +779,7 @@
                 <plugin>
                     <groupId>com.github.spotbugs</groupId>
                     <artifactId>spotbugs-maven-plugin</artifactId>
-                    <version>4.8.5.0</version>
+                    <version>4.8.6.1</version>
                 </plugin>
 
                 <plugin>
