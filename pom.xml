@@ -59,6 +59,7 @@
 
         <!-- Keep as a property to allocate the cached database for each version. -->
         <dependency-check-maven.version>10.0.0</dependency-check-maven.version>
+        <dependency-check-maven.report.default-formats>HTML,CSV,SARIF,JSON</dependency-check-maven.report.default-formats>
 
         <junit.version>4.13.1</junit.version>
 
@@ -81,6 +82,7 @@
         <nvdApiDelay>21001</nvdApiDelay>
         <nvdApiServerId>theNVDServer</nvdApiServerId>
         <nvdValidForHours>12</nvdValidForHours>
+        <formats>${dependency-check-maven.report.default-formats}</formats>
 
     </properties>
 
