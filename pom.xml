@@ -58,7 +58,7 @@
         <maven.deploy.skip>true</maven.deploy.skip>
 
         <!-- Keep as a property to allocate the cached database for each version. -->
-        <dependency-check-maven.version>9.2.0</dependency-check-maven.version>
+        <dependency-check-maven.version>10.0.0</dependency-check-maven.version>
 
         <junit.version>4.13.1</junit.version>
 
@@ -78,7 +78,7 @@
 
         <!-- Properties owned by other plugins. -->
         <!-- dependency-check-maven -->
-        <nvdApiDelay>10000</nvdApiDelay> <!-- Ten seconds; we are not in a hurry. -->
+        <nvdApiDelay>21001</nvdApiDelay>
         <nvdApiServerId>theNVDServer</nvdApiServerId>
         <nvdValidForHours>12</nvdValidForHours>
 
