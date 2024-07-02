@@ -58,7 +58,7 @@
         <maven.deploy.skip>true</maven.deploy.skip>
 
         <!-- Keep as a property to allocate the cached database for each version. -->
-        <dependency-check-maven.version>10.0.0</dependency-check-maven.version>
+        <dependency-check-maven.version>10.0.1</dependency-check-maven.version>
         <dependency-check-maven.report.default-formats>HTML,CSV,SARIF,JSON</dependency-check-maven.report.default-formats>
 
         <junit.version>4.13.1</junit.version>
