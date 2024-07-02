@@ -8,12 +8,14 @@ All notable changes to this project will be documented in this file.
 
 - Support for Java code coverage. Cobertura does not work with
   versions of Java supported by Streaming 10.6 and newer.
+- Support for versions of Java prior to 17.
 
 ## 2.2.0
 
 ### Added
 
-- Support for upcoming Streaming releases.
+- Support for upcoming Streaming releases, notably by allowing
+  currently available newer JDKs for building and testing.
 
 ## 2.1.0
 

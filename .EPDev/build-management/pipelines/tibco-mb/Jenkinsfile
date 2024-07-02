@@ -1,5 +1,5 @@
 //
-//  Copyright (C) 2022-2024 Cloud Software Group, Inc.
+//  Copyright (C) 2022-2024. Cloud Software Group, Inc.
 //  
 //  Redistribution and use in source and binary forms, with or without
 //  modification, are permitted provided that the following conditions are met:
@@ -123,7 +123,7 @@ pipeline {
                         mavenDeployMethod: 'artifactory-maven-plugin',
                         mavenSnapshotRepo: 'ep-snapshots',
                         mavenReleaseRepo: 'ep-rc',
-                        javaTool: jobUtil.getOracleJava11Tool(),
+                        javaTool: jobUtil.getOracleJava17Tool(),
                         mavenTool: jobUtil.getMaven38Tool(),
                         // OSSH of release-work branches -- not ready.
                         mavenBranchOptions: [

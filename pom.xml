@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2018-2024 Cloud Software Group, Inc.
+  Copyright (C) 2018-2024. Cloud Software Group, Inc.
   
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -45,7 +45,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- Targetted Java version. -->
-        <maven.compiler.release>11</maven.compiler.release>
+        <maven.compiler.release>17</maven.compiler.release>
 
         <!-- The Maven version -->
         <maven-api.version>3.8.8</maven-api.version>
@@ -867,7 +867,7 @@
                                     <version>[3.8.8,4.0)</version>
                                 </requireMavenVersion>
                                 <requireJavaVersion>
-                                    <version>[11,18)</version>
+                                    <version>[17,23)</version>
                                 </requireJavaVersion>
                             </rules>
                         </configuration>
