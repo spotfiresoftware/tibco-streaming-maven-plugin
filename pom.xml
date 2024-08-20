@@ -61,10 +61,10 @@
         <dependency-check-maven.version>10.0.3</dependency-check-maven.version>
         <dependency-check-maven.report.default-formats>HTML,CSV,SARIF,JSON</dependency-check-maven.report.default-formats>
 
-        <junit.version>4.13.1</junit.version>
+        <junit.version>4.13.2</junit.version>
 
         <!-- Manage Maven plugin tools: annotations and plugins. -->
-        <maven-plugin-tools.version>3.13.1</maven-plugin-tools.version>
+        <maven-plugin-tools.version>3.14.0</maven-plugin-tools.version>
 
         <!-- by default skip gpg signing.  Enabled in jenkins only -->
         <gpg.skip>true</gpg.skip>
