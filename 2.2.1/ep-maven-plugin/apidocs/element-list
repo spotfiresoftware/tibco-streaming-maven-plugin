@@ -1,0 +1,4 @@
+com.tibco.ep.buildmavenplugin
+com.tibco.ep.buildmavenplugin.admin
+com.tibco.ep.buildmavenplugin.surefire
+com.tibco.ep.ep_maven_plugin

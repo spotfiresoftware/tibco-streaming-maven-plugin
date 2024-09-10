@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.1.1">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLHierarchy</id>
+    <coordinates>
+      <x>20</x>
+      <y>20</y>
+      <w>350</w>
+      <h>200</h>
+    </coordinates>
+    <panel_attributes>type=Package
+parent
+	ep-java-fragment module
+	ep-eventflow-fragment module
+	ep-liveview-fragment module
+	..... other fragments
+	ep-application module
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
