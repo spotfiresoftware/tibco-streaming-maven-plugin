@@ -416,6 +416,33 @@
             </build>
         </profile>
 
+        <!-- When associated with an Artifactory project. -->
+        <profile>
+            <id>artifactory-project</id>
+            <activation>
+                <property>
+                    <name>epb.artifactory.project</name>
+                </property>
+            </activation>
+
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jfrog.buildinfo</groupId>
+                            <artifactId>artifactory-maven-plugin</artifactId>
+
+                            <configuration>
+                                <buildInfo>
+                                    <project>${epb.artifactory.project}</project>
+                                </buildInfo>
+                            </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+
         <profile>
             <id>com.spotfire.impl.epb.build.executor-data-dir</id>
             <activation>
