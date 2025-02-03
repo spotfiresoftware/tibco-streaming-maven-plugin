@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2024 Cloud Software Group, Inc.
+ * Copyright (C) 2018-2025 Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -319,7 +319,7 @@ abstract class BaseMojo extends AbstractMojo {
                 //  Only create a context if we have a service.
                 //
                 try {
-                    context = adminService.newContext(productHome.toPath());
+                    context = adminService.newContext(productHome.getAbsoluteFile().toPath());
                 } catch (IllegalArgumentException e) {
 
                     if (errorHandling == ErrorHandling.IGNORE) {
@@ -806,7 +806,7 @@ abstract class BaseMojo extends AbstractMojo {
         if (productHome == null || productHome.getAbsolutePath().isEmpty()) {
             String epHome = System.getenv("TIBCO_EP_HOME");
             if (epHome != null) {
-                productHome = new File(epHome);
+                productHome = new File(epHome).getAbsoluteFile();
             } else {
 
                 File base = new File(session.getLocalRepository().getBasedir()).getParentFile();
@@ -856,47 +856,6 @@ abstract class BaseMojo extends AbstractMojo {
             return new ArrayList<>();
         }
         return Arrays.asList(array);
-    }
-
-    /**
-     * Use a default directory if the original value is null or empty. Only use the value if the
-     * default directory exists.
-     *
-     * @param originalValue The original value
-     * @param defaultDir    The default directory
-     * @return The array represented by the default value
-     */
-    private File[] initializeAndCheck(File[] originalValue, String defaultDir) {
-
-        if (originalValue == null || originalValue.length == 0) {
-
-            //  Default value, if it exists.
-            //
-            File defaultValue = new File(project.getBasedir(), defaultDir);
-            if (defaultValue.exists() && defaultValue.isDirectory()) {
-                return new File[]{defaultValue};
-            } else {
-                return new File[]{};
-            }
-        }
-
-        return originalValue;
-    }
-
-    /**
-     * @param pomValue The POM value for eventflowDirectories
-     * @return The actual value
-     */
-    File[] getOrDefaultSrcMainEventflow(File[] pomValue) {
-        return initializeAndCheck(pomValue, DEFAULT_SRC_MAIN_EVENTFLOW);
-    }
-
-    /**
-     * @param pomValue The POM value for testEventflowDirectories
-     * @return The actual value
-     */
-    File[] getOrDefaultSrcTestEventflow(File[] pomValue) {
-        return initializeAndCheck(pomValue, DEFAULT_SRC_TEST_EVENTFLOW);
     }
 
     /**

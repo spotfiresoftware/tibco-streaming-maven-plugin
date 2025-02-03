@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020-2024 Cloud Software Group, Inc.
+ * Copyright (C) 2020-2025 Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -40,8 +40,6 @@ import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -62,7 +60,6 @@ import java.util.stream.Stream;
  */
 public abstract class BaseGenerateMojo extends BaseMojo {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseGenerateMojo.class);
     private static final String COMPILER_PROPERTIES_EQUALS = "=";
     private static final String ENGINE_DATA_AREA = "com.tibco.ep.dtm.engine.data.area";
 
@@ -122,7 +119,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
      *
      * @since 2.0.0
      */
-    @Parameter(required = false, property = "eventflowDirectories")
+    @Parameter(required = false, property = "eventflowDirectories", defaultValue = "${project.basedir}/src/main/eventflow")
     File[] eventflowDirectories;
 
     /**
@@ -149,7 +146,7 @@ public abstract class BaseGenerateMojo extends BaseMojo {
      *
      * @since 2.0.0
      */
-    @Parameter(required = false, property = "testEventflowDirectories")
+    @Parameter(required = false, property = "testEventflowDirectories", defaultValue = "${project.basedir}/src/test/eventflow")
     File[] testEventflowDirectories;
 
     /**
@@ -252,9 +249,6 @@ public abstract class BaseGenerateMojo extends BaseMojo {
 
         prechecks();
         initializeService(PlatformService.CODE_GENERATION, ErrorHandling.FAIL);
-
-        eventflowDirectories = getOrDefaultSrcMainEventflow(eventflowDirectories);
-        testEventflowDirectories = getOrDefaultSrcTestEventflow(testEventflowDirectories);
 
         setupEngineDataArea();
 
@@ -411,10 +405,6 @@ public abstract class BaseGenerateMojo extends BaseMojo {
         return Stream.of(files)
             .filter(File::exists)
             .map(File::toPath).collect(Collectors.toList());
-    }
-
-    private List<Path> toPaths(File[] files) {
-        return Stream.of(files).map(File::toPath).collect(Collectors.toList());
     }
 
     private class BuildNotifier implements IBuildNotifier {

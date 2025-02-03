@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2023, Cloud Software Group, Inc.
+ * Copyright (C) 2018-2025 Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -90,7 +90,7 @@ public class PackageEventFlowFragmentMojo extends BasePackageMojo {
      *
      * @since 1.0.0
      */
-    @Parameter(required = false, property = "eventflowDirectories")
+    @Parameter(required = false, property = "eventflowDirectories", defaultValue = "${project.basedir}/src/main/eventflow")
     File[] eventflowDirectories;
 
     @Parameter(required = false, property = "skipGenerateSources", defaultValue = "false")
@@ -99,8 +99,6 @@ public class PackageEventFlowFragmentMojo extends BasePackageMojo {
     @Override
     public void execute() throws MojoExecutionException {
         getLog().debug("Creating eventflow fragment");
-
-        eventflowDirectories = getOrDefaultSrcMainEventflow(eventflowDirectories);
 
         prechecks();
 

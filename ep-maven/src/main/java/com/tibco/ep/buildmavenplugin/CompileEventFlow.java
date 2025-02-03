@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2024 Cloud Software Group, Inc.
+ * Copyright (C) 2018-2025 Cloud Software Group, Inc.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -70,12 +70,11 @@ public class CompileEventFlow extends BaseCompileMojo {
      * 
      * @since 1.0.0
      */
-    @Parameter(required = false, property = "eventflowDirectories")
+    @Parameter(required = false, property = "eventflowDirectories", defaultValue = "${project.basedir}/src/main/eventflow")
     File[] eventflowDirectories;
 
     @Override
     public void execute() throws MojoExecutionException {
-        eventflowDirectories = getOrDefaultSrcMainEventflow(eventflowDirectories);
         getLog().debug("Compiling EventFlow fragment");
         final File outputDirectory = new File(project.getBuild().getOutputDirectory());
         try {

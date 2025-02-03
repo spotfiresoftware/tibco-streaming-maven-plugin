@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2024. Cloud Software Group, Inc.
+ * Copyright (C) 2018-2025 Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -82,7 +82,7 @@ public class TestEventFlowFragmentMojo extends BaseTestMojo {
      *
      * @since 1.0.0
      */
-    @Parameter(required = false, property = "eventflowDirectories")
+    @Parameter(required = false, property = "eventflowDirectories", defaultValue = "${project.basedir}/src/main/eventflow")
     File[] eventflowDirectories;
 
     /**
@@ -119,14 +119,11 @@ public class TestEventFlowFragmentMojo extends BaseTestMojo {
      *
      * @since 2.0.1
      */
-    @Parameter(required = false, property = "testEventflowDirectories")
+    @Parameter(required = false, property = "testEventflowDirectories", defaultValue = "${project.basedir}/src/test/eventflow")
     File[] testEventflowDirectories;
 
     @Override
     public void execute() throws MojoExecutionException {
-
-        eventflowDirectories = getOrDefaultSrcMainEventflow(eventflowDirectories);
-        testEventflowDirectories = getOrDefaultSrcTestEventflow(testEventflowDirectories);
 
         getLog().debug("Testing eventflow fragment " + Arrays.toString(eventflowDirectories));
 
