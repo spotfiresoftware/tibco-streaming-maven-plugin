@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2024 Cloud Software Group, Inc.
+ * Copyright (C) 2018-2025 Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -29,14 +29,6 @@
  ******************************************************************************/
 package com.tibco.ep.buildmavenplugin;
 
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.assembly.archive.AssemblyArchiver;
-import org.apache.maven.plugins.assembly.model.Assembly;
-import org.apache.maven.plugins.assembly.model.FileItem;
-import org.apache.maven.plugins.assembly.model.FileSet;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -55,6 +47,17 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.stream.Stream;
 
+import org.apache.maven.archiver.ManifestSection;
+import org.apache.maven.archiver.MavenArchiveConfiguration;
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.assembly.archive.AssemblyArchiver;
+import org.apache.maven.plugins.assembly.model.Assembly;
+import org.apache.maven.plugins.assembly.model.FileItem;
+import org.apache.maven.plugins.assembly.model.FileSet;
+
 /**
  * Package base
  */
@@ -65,6 +68,14 @@ abstract class BasePackageMojo extends BaseMojo {
      */
     @Component
     AssemblyArchiver assemblyArchiver;
+
+    /**
+     * Archive configuration.
+     * 
+     * @since 2.2.2
+     */
+    @Parameter(required = false)
+    MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
 
     /**
      * @param groupId    The group Id
@@ -364,6 +375,15 @@ abstract class BasePackageMojo extends BaseMojo {
             //
             additionalManifestEntries.forEach((name, value) -> attributes.put(name(name), value));
 
+            // Add additional manifest data from the plugin configuration
+            archive.getManifestEntries().forEach((name, value) -> attributes.put(name(name), value));
+            for (ManifestSection section : archive.getManifestSections()) {
+                Attributes sectionAttributes = new Attributes();
+                section.getManifestEntries().forEach((key, value) -> sectionAttributes.put(name(key), value));
+                manifest.getEntries().put(section.getName(), sectionAttributes);
+            }
+
+            //  Write the manifest file
             try (FileOutputStream os = new FileOutputStream(new File(tempManifestPath))) {
                 manifest.write(os);
             }
