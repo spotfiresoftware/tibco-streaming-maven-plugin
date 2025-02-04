@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2024. Cloud Software Group, Inc.
+ * Copyright (C) 2018-2025 Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -81,7 +81,7 @@ public class TestLiveViewFragmentMojo extends BaseTestMojo {
      *
      * @since 1.0.0
      */
-    @Parameter( required = false, property = "eventflowDirectories" )
+    @Parameter( required = false, property = "eventflowDirectories", defaultValue = "${project.basedir}/src/main/eventflow" )
     File[] eventflowDirectories;
 
     /**
@@ -126,8 +126,6 @@ public class TestLiveViewFragmentMojo extends BaseTestMojo {
 
     public void execute() throws MojoExecutionException {
         getLog().debug( "Testing live data mart fragment" );
-
-        eventflowDirectories = getOrDefaultSrcMainEventflow(eventflowDirectories);
 
         Properties modelProperties = project.getModel().getProperties();
         boolean testCasesFound = true;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2024 Cloud Software Group, Inc.
+ * Copyright (C) 2018-2025 Cloud Software Group, Inc.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -87,7 +87,7 @@ public class SetResources extends BasePackageMojo {
      * 
      * @since 1.1.0
      */
-    @Parameter( required = false, property = "eventflowDirectories" )
+    @Parameter( required = false, property = "eventflowDirectories", defaultValue = "${project.basedir}/src/main/eventflow" )
     File[] eventflowDirectories;
 
     /**
@@ -110,8 +110,6 @@ public class SetResources extends BasePackageMojo {
         getLog().debug( "Set resources" );
 
         prechecks();
-
-        eventflowDirectories = getOrDefaultSrcMainEventflow(eventflowDirectories);
 
         if (configurationDirectory.exists()) {
             Resource resource = new Resource();

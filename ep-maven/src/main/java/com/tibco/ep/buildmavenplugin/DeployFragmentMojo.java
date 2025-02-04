@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2024 Cloud Software Group, Inc.
+ * Copyright (C) 2018-2025 Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -67,7 +67,7 @@ public class DeployFragmentMojo extends BaseTestMojo {
      *
      * @since 1.0.0
      */
-    @Parameter(required = false, property = "eventflowDirectories")
+    @Parameter(required = false, property = "eventflowDirectories", defaultValue = "${project.basedir}/src/main/eventflow")
     File[] eventflowDirectories;
 
     /**
@@ -124,7 +124,6 @@ public class DeployFragmentMojo extends BaseTestMojo {
     public void execute() throws MojoExecutionException {
         getLog().debug("Deploy");
 
-        eventflowDirectories = getOrDefaultSrcMainEventflow(eventflowDirectories);
 
         // determine if we have executions steps in the pom - if so we can skip id this
         // run is a default one
