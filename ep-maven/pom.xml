@@ -27,9 +27,7 @@
   ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
   POSSIBILITY OF SUCH DAMAGE.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <!-- vim: set tabstop=4 softtabstop=0 expandtab shiftwidth=4 smarttab : -->
 
@@ -38,7 +36,7 @@
     <parent>
         <groupId>com.tibco.ep</groupId>
         <artifactId>ep-maven</artifactId>
-        <version>2.2.2-SNAPSHOT</version>
+        <version>2.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ep-maven-plugin</artifactId>
@@ -244,8 +242,8 @@
                          of the plugin.
                     -->
                     <pomElements>
-                        <inceptionYear/>
-                        <organization/>
+                        <inceptionYear />
+                        <organization />
                     </pomElements>
                     <!--
                         By default the flattened POM is generated next to the plugin, so locate it
