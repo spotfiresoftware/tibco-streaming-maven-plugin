@@ -17,9 +17,9 @@ ep-liveview-fragment - pom.xml
 			eventflow - sbapp and sbint files
 			liveview - lvconf files
 				lv-web
-					plugins - liveview web plugins
-					theme - liveview web theme
-				lv-user-webapps - liveview web war file
+					plugins - LiveView Web plugins
+					theme - LiveView Web theme
+				lv-user-webapps - LiveView Web war file
 			java - java functions (if any)
 			configurations - HOCON configuration files
 			resources - upgrade plan, LiveView.h2.db and other resources

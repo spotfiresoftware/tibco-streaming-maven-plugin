@@ -85,9 +85,9 @@ These are :
 
 ## Build, test and install
 
-Run **mvn install**. This will compile the java files in the project, typecheck the eventflow 
-fragment, trigger the fragment code generation, compile the generated code, package the eventflow 
-fragment in an eventflow archive, start a test node, execute the tests, and stop the test node.
+Run **mvn install**. This will compile the java files in the project, typecheck the EventFlow 
+fragment, trigger the fragment code generation, compile the generated code, package the EventFlow 
+fragment in an EventFlow archive, start a test node, execute the tests, and stop the test node.
 For example:
 
 ``` shell
@@ -663,8 +663,8 @@ Some examples are shown below :
 ```
 
 The [maven-source-plugin](https://maven.apache.org/plugins/maven-source-plugin/)
-will include any files found in source directory paths - so will include
-java, eventflow and liveview source files.
+will include any files found in source directory paths — so will include
+java, EventFlow, and LiveView source files.
 
 <a name="javaoptions-and-nodeoptions"></a>
 
@@ -682,7 +682,7 @@ Node deployment supports both java options and node options.
     Node options may also be set on the maven command line using
     **-DnodeOptions**.
 
-Note that reading the client configuration file is disabled by default ( ie ignoreoptionsfile is set to true ) -
+Note that reading the client configuration file is disabled by default (i.e., ignoreoptionsfile is set to true) —
 this is to give stability to test runs.  However, the **nodeOptions** may be used to override this default :
 
 ```
@@ -1050,13 +1050,13 @@ some variables.
 The archetype site catalog contains the following archetypes :
 
 * **eventflow-fragment-archetype** - creates a project containing a single 
-    eventflow fragment
+    EventFlow fragment
   
 * **java-fragment-archetype**> - creates a project containing a single java 
     fragment
 
 * **liveview-fragment-archetype** - creates a project containing a single 
-    liveview fragment
+    LiveView fragment
 
 * **application-archetype** - creates a project containing a single 
     application archive
@@ -1065,12 +1065,12 @@ The archetype site catalog contains the following archetypes :
     application archive.  With docker support.
     
 * **eventflow-application-archetype** - creates a project containing a module 
-    for an eventflow fragment and a second module for an application archive 
-    that includes the eventflow fragment
+    for an EventFlow fragment and a second module for an application archive 
+    that includes the EventFlow fragment
 
 * **eventflow-application-docker-archetype** - creates a project containing a module 
-    for an eventflow fragment and a second module for an application archive 
-    that includes the eventflow fragment.  With docker support.
+    for an EventFlow fragment and a second module for an application archive 
+    that includes the EventFlow fragment.  With docker support.
     
 * **java-application-archetype** - creates a project containing a module 
     for an java fragment and a second module for an application archive 
@@ -1081,12 +1081,12 @@ The archetype site catalog contains the following archetypes :
     that includes the java fragment.  With docker support.
     
 * **liveview-application-archetype** - creates a project containing a module 
-    for an liveview fragment and a second module for an application archive 
-    that includes the liveview fragment
+    for a LiveView fragment and a second module for an application archive 
+    that includes the LiveView fragment
 
 * **liveview-application-docker-archetype** - creates a project containing a module 
-    for an liveview fragment and a second module for an application archive 
-    that includes the liveview fragment.  With docker support.
+    for a LiveView fragment and a second module for an application archive 
+    that includes the LiveView fragment.  With docker support.
 
     
 Projects can be created from the archetype via the command-line, eclipse

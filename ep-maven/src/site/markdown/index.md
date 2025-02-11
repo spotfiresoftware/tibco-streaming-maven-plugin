@@ -1,7 +1,7 @@
 # Event Processing Maven Plugin
 
 The Event Processing (EP) Maven Plugin provides
-Maven integration for Event Processing  projects.  With the 
+Maven integration for Event Processing projects.  With the 
 EP maven plugin you can:
 
 * Build java jars
@@ -12,13 +12,13 @@ EP maven plugin you can:
   
 * Unit test java fragments
   
-* Build **Spotfire&reg; Streaming EventFlow** fragments
+* Build **TIBCO StreamBase EventFlow&trade;** fragments
   
-* Unit test **Spotfire&reg; Streaming EventFlow** fragments and libraries
+* Unit test **TIBCO StreamBase EventFlow&trade;** fragments and libraries
 
-* Build **Spotfire&reg; LiveView** ( including **Spotfire&reg; LiveView Web** ) fragments
+* Build **TIBCO LiveView&trade;** (including **TIBCO LiveView&trade; Web**) fragments
   
-* Build **Spotfire&reg; Streaming Web** fragments
+* Build **TIBCO&reg; Streaming Web** fragments
   
 * Build application archives
 
@@ -28,4 +28,4 @@ EP maven plugin you can:
   
 * Utilize other maven plugins for further functionality such as test on the cloud
   
-* Spotfire&reg; Streaming product auto installation
+* TIBCO&reg; Streaming product auto installation

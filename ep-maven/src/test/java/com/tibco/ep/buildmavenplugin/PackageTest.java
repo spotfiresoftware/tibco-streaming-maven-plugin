@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2023, Cloud Software Group, Inc.
+ * Copyright (C) 2018-2025 Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -213,7 +213,7 @@ public class PackageTest extends BetterAbstractMojoTestCase {
                 .toPath(), new File(eventflowDestDir, "eventflow-" + eventflowFragmentVersion + ".zip")
                 .toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-        // variation with eventflow deps
+        // variation with EventFlow deps
         //
         pom = new File("target/projects/eventflow2", "pom.xml");
         Assert.assertNotNull(pom);

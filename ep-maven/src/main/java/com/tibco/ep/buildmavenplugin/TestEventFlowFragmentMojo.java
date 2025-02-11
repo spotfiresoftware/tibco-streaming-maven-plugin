@@ -125,7 +125,7 @@ public class TestEventFlowFragmentMojo extends BaseTestMojo {
     @Override
     public void execute() throws MojoExecutionException {
 
-        getLog().debug("Testing eventflow fragment " + Arrays.toString(eventflowDirectories));
+        getLog().debug("Testing EventFlow fragment " + Arrays.toString(eventflowDirectories));
 
         Properties modelProperties = project.getModel().getProperties();
         boolean testCasesFound = true;

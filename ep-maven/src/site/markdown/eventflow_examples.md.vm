@@ -47,8 +47,8 @@ Test sources (EventFlow, java, etc) are not included in the EventFlow fragment a
 
 # Basic build, sbunit test and install
 
-The following pom.xml will build, unit test and install to the local maven 
-repository, an eventflow fragment.
+The following pom.xml will build, unit test, and install an EventFlow fragment to the local maven 
+repository.
 
 ``` xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -83,7 +83,7 @@ maven to perform the following steps :
     will extract into $TIBCO_EP_HOME.
 
 2. Uses [set-resources](${context.get("site.ep-maven-plugin.url")}/set-resources-mojo.html) to add
-    configuration and eventflow directories to the Maven resources.
+    configuration and EventFlow directories to the Maven resources.
 
 3. Uses the standard maven plugin [maven-resources-plugin:resources](https://maven.apache.org/plugins/maven-resources-plugin/resources-mojo.html) to
     copy resources to the output directory.
@@ -98,11 +98,11 @@ maven to perform the following steps :
     to compile any java main sources to class files.
 
 7. Uses [generate-eventflow-fragment](${context.get("site.ep-maven-plugin.url")}/generate-eventflow-fragment-mojo.html)
-    to generate java classes for eventflows from the eventflowdirectories into the main output
+    to generate java classes for EventFlow modules from the eventflowdirectories into the main output
     directory.
 
 8. Uses [compile-eventflow-fragment](${context.get("site.ep-maven-plugin.url")}/compile-eventflow-fragment-mojo.html)
-    to copy eventflow resources to the main output directory.
+    to copy EventFlow resources to the main output directory.
 
 9. Uses the standard maven plugin [maven-compiler-plugin:compile](https://maven.apache.org/plugins/maven-compiler-plugin/compile-mojo.html)
     to compile any generated java classes.

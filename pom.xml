@@ -1,5 +1,5 @@
 <!--
-  Copyright (C) 2018-2025. Cloud Software Group, Inc.
+  Copyright (C) 2018-2025 Cloud Software Group, Inc.
   
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -87,7 +87,7 @@
     </properties>
 
     <!-- Common project properties -->
-    <url>https://github.com/spotfiresoftware/tibco-streaming-maven-plugin</url>
+    <url>https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</url>
     <inceptionYear>2018</inceptionYear>
 
     <organization>
@@ -99,7 +99,7 @@
         <license>
             <name>BSD 3-Clause License</name>
             <url>
-                https://raw.githubusercontent.com/spotfiresoftware/tibco-streaming-maven-plugin/master/docs/LICENSE
+                https://raw.githubusercontent.com/TIBCOSoftware/tibco-streaming-maven-plugin/master/docs/LICENSE
             </url>
             <distribution>repo</distribution>
         </license>
@@ -118,9 +118,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/spotfiresoftware/tibco-streaming-maven-plugin
+        <connection>scm:git:https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin
         </connection>
-        <url>https://github.com/spotfiresoftware/tibco-streaming-maven-plugin</url>
+        <url>https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin</url>
     </scm>
 
     <profiles>
@@ -156,7 +156,7 @@
             to create html docs in github pages :
 
             cd /tmp
-            git clone https://github.com/spotfiresoftware/tibco-streaming-maven-plugin.git
+            git clone https://github.com/TIBCOSoftware/tibco-streaming-maven-plugin.git
             cd tibco-streaming-maven-plugin
             git checkout gh-page
             

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright © 2018-2024, Cloud Software Group, Inc.
+ * Copyright © 2018-2025 Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -382,7 +382,7 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
         StringBuilder classPath = new StringBuilder();
         classPath.append(constructClassPath());
 
-        // add eventflow directories
+        // add EventFlow directories
         //
         for (File eventFlowDirectory : eventflowDirectories) {
             classPath.append(File.pathSeparatorChar);
@@ -509,7 +509,7 @@ abstract class BaseTestMojo extends BaseExecuteMojo {
             }
         }
 
-        // add in eventflow (if found) - needed by any dependant fragments)
+        // add in EventFlow (if found) - needed by any dependent fragments)
         //
         File testEventflowDirectory = new File(project.getBuild().getDirectory(), "eventflow");
         if (testEventflowDirectory.exists()) {

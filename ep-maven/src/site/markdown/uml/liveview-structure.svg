@@ -125,7 +125,7 @@
       /><path fill="none" d="M187.5 192.5 L187.5 198.5" clip-path="url(#clipPath2)"
       /><path fill="none" d="M184.5 195.5 L190.5 195.5" clip-path="url(#clipPath2)"
       /><text x="254.5" xml:space="preserve" y="218" clip-path="url(#clipPath2)" stroke="none"
-      >plugins - liveview web plugins</text
+      >plugins - LiveView Web plugins</text
     ></g
     ><g font-size="14" transform="translate(20,20)" fill-opacity="0" fill="rgb(255,255,255)" font-family="sans-serif" stroke="rgb(255,255,255)" stroke-opacity="0"
     ><path d="M220.5 234.5 L230.5 234.5 L230.5 239.5 L250.5 239.5 L250.5 254.5 L220.5 254.5 L220.5 234.5" stroke="none" clip-path="url(#clipPath2)"
@@ -135,7 +135,7 @@
       /><path fill="none" d="M220.5 239.5 L230.5 239.5" clip-path="url(#clipPath2)"
       /><path fill="none" d="M220.5 244.5 L187.5 244.5 L187.5 200.5" clip-path="url(#clipPath2)"
       /><text x="254.5" xml:space="preserve" y="250" clip-path="url(#clipPath2)" stroke="none"
-      >theme - liveview web theme</text
+      >theme - LiveView Web theme</text
     ></g
     ><g font-size="14" transform="translate(20,20)" fill-opacity="0" fill="rgb(255,255,255)" font-family="sans-serif" stroke="rgb(255,255,255)" stroke-opacity="0"
     ><path d="M178.5 266.5 L188.5 266.5 L188.5 271.5 L208.5 271.5 L208.5 286.5 L178.5 286.5 L178.5 266.5" stroke="none" clip-path="url(#clipPath2)"
@@ -145,7 +145,7 @@
       /><path fill="none" d="M178.5 271.5 L188.5 271.5" clip-path="url(#clipPath2)"
       /><path fill="none" d="M178.5 276.5 L145.5 276.5 L145.5 168.5" clip-path="url(#clipPath2)"
       /><text x="212.5" xml:space="preserve" y="282" clip-path="url(#clipPath2)" stroke="none"
-      >lv-user-webapps - liveview web war file</text
+      >lv-user-webapps - LiveView Web war file</text
     ></g
     ><g font-size="14" transform="translate(20,20)" fill-opacity="0" fill="rgb(255,255,255)" font-family="sans-serif" stroke="rgb(255,255,255)" stroke-opacity="0"
     ><path d="M136.5 298.5 L146.5 298.5 L146.5 303.5 L166.5 303.5 L166.5 318.5 L136.5 318.5 L136.5 298.5" stroke="none" clip-path="url(#clipPath2)"

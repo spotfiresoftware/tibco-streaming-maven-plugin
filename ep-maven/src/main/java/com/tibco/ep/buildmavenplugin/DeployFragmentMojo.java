@@ -49,7 +49,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.TEST;
  * <p>Example use in pom.xml:</p>
  * <img src="uml/deploy-fragment1.svg" alt="pom">
  *
- * <p>A liveview fragment requires fragmentType, target and project set:</p>
+ * <p>A LiveView fragment requires fragmentType, target and project set:</p>
  *
  * <img src="uml/deploy-fragment2.svg" alt="pom">
  */

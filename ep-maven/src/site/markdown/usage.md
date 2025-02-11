@@ -133,7 +133,7 @@ The top-level pom.xml file is likely to simply list the contained modules :
 
     <modules>
         <module>helloworld</module>   <!-- java fragment -->
-        <module>goldylocks</module>   <!-- eventflow fragment -->
+        <module>goldylocks</module>   <!-- EventFlow fragment -->
         <module>localtest</module>    <!-- application archive -->
     </modules>
 
@@ -193,7 +193,7 @@ This is sufficient to build the java fragment, unit test using junit on a
 default environment and install the fragment to the local maven repository for
 use by other modules.
   
-Likewise, a eventflow fragment module has a packaging type of 
+Likewise, an EventFlow fragment module has a packaging type of 
 **ep-eventflow-fragment**, a list of project dependencies and build rules.
 
 ``` xml
@@ -242,11 +242,11 @@ Likewise, a eventflow fragment module has a packaging type of
 ```
 
   
-This is sufficient to build the eventflow fragment, unit test using sbunit on 
+This is sufficient to build the EventFlow fragment, unit test using SBUnit on 
 a default environment and install the fragment to the local maven repository 
 for use by other modules.
   
-A Spotfire Streaming Web flow fragment module has a packaging type of 
+A TIBCO Streaming Web flow fragment module has a packaging type of 
 **ep-sw-fragment**, a list of project dependencies and build rules.
 
 ``` xml
@@ -319,7 +319,7 @@ download the appropriate version before using.
             <type>ep-java-fragment</type>
         </dependency>
 
-        <!-- eventflow fragment as a dependency -->
+        <!-- EventFlow fragment as a dependency -->
         <dependency>
             <groupId>com.tibco.ep.dtmexamples</groupId>
             <artifactId>goldylocks</artifactId>

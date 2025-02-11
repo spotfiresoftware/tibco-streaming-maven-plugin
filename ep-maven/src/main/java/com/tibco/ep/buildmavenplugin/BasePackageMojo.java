@@ -70,9 +70,9 @@ abstract class BasePackageMojo extends BaseMojo {
     AssemblyArchiver assemblyArchiver;
 
     /**
-     * Archive configuration.
+     * The archive configuration to use. Any headers or entries here are in addition to the ones already placed by ep-maven-plugin. See <a href=https://maven.apache.org/shared/maven-archiver/index.html>Maven Archiver Reference</a>.
      * 
-     * @since 2.2.2
+     * @since 2.3.0
      */
     @Parameter(required = false)
     MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
@@ -296,7 +296,7 @@ abstract class BasePackageMojo extends BaseMojo {
             try (FileOutputStream pos = new FileOutputStream(new File(tempPropertiesPath));
                  OutputStreamWriter osw = new OutputStreamWriter(pos)) {
 
-                osw.write("# Created by Spotfire Streaming Maven Plugin\n");
+                osw.write("# Created by TIBCO Streaming Maven Plugin\n");
                 osw.write("version=" + project.getVersion() + "\n");
                 osw.write("groupId=" + project.getGroupId() + "\n");
                 osw.write("artifactId=" + project.getArtifactId() + "\n");

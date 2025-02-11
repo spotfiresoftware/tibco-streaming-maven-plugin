@@ -2,7 +2,7 @@
 
 * [Directory structure](#directory-structure)
 * [Basic build](#basic-build)
-* [Launch liveview fragment](#launch-liveview-fragment)
+* [Launch LiveView fragment](#launch-liveview-fragment)
 
 <a name="directory-structure"></a>
 
@@ -80,14 +80,14 @@ maven to perform the following steps :
 
 <a name="launch-liveview-fragment"></a>
 
-## Launch liveview fragment
+## Launch LiveView fragment
 
-Whilst launching of liveview is usually done when an application archive is
+Whilst launching of LiveView is usually done when an application archive is
 deployed, its possible to start the fragment using [deploy-fragment](${context.get("site.ep-maven-plugin.url")}/deploy-fragment-mojo.html).
-For example a test case might want to start liveview and use playback to inject
+For example a test case might want to start LiveView and use playback to inject
 test data.
 
-One challenge, though, is waiting for liveview to be completely started up -
+One challenge, though, is waiting for LiveView to be completely started up -
 the [maven-antrun-plugin](http://maven.apache.org/plugins/maven-antrun-plugin/)
 can be used to monitor the log file.
   
@@ -147,7 +147,7 @@ can be used to monitor the log file.
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                 
-                    <!-- wait for liveview to be started  -->
+                    <!-- wait for LiveView to be started  -->
                     <execution>
                         <id>wait for liveview</id>
                         <phase>integration-test</phase>

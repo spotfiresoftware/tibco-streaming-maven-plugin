@@ -52,6 +52,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
  *              <li>Package-Version: project version and buildNumber</li>
  *              <li>Package-Vendor: project organization name (if set)</li>
  *              <li>TIBCO-EP-Build-Product-Version: product version</li>
+ *              <li>Any additional headers or entries defined by an {@code &lt;archive&gt;} configuration</li>
  *      </ul>
  * <li>pom.xml copied to /META-INF/maven/groupId/artifactId/pom.xml</li>
  * <li>pom.properties created in /META-INF/maven/groupId/artifactId/pom.properties</li>
@@ -98,7 +99,7 @@ public class PackageEventFlowFragmentMojo extends BasePackageMojo {
 
     @Override
     public void execute() throws MojoExecutionException {
-        getLog().debug("Creating eventflow fragment");
+        getLog().debug("Creating EventFlow fragment");
 
         prechecks();
 

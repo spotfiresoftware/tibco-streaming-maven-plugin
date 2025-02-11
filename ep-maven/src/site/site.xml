@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-   Copyright (C) 2018-2024. Cloud Software Group, Inc.
+   Copyright (C) 2018-2025 Cloud Software Group, Inc.
   
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions are met:
@@ -45,7 +45,7 @@
 	</custom>
 
 	<poweredBy>
-	    <logo name="Spotfire" href="https://www.spotfire.com/" img="images/spotfireLogo.svg" />
+	    <logo name="TIBCO" href="https://www.tibco.com/" img="images/tibco.svg" />
 	</poweredBy>
 
 	<body>

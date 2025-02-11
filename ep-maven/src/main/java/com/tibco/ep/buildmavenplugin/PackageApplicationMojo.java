@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2024 Cloud Software Group, Inc.
+ * Copyright (C) 2018-2025 Cloud Software Group, Inc.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -49,6 +49,7 @@ import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
  *              <li>Package-Vendor: project organization name (if set)</li>
  *              <li>TIBCO-EP-Application-Format-Version: 1</li>
  *              <li>TIBCO-EP-Build-Product-Version: product version</li>
+ *              <li>Any additional headers or entries defined by an {@code &lt;archive&gt;} configuration</li>
  *      </ul>
  * <li>pom.xml copied to /META-INF/maven/groupId/artifactId/pom.xml</li>
  * <li>pom.properties created in /META-INF/maven/groupId/artifactId/pom.properties</li>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2018-2024 Cloud Software Group, Inc.
+ * Copyright (C) 2018-2025 Cloud Software Group, Inc.
  * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -44,12 +44,12 @@ import org.codehaus.plexus.archiver.manager.NoSuchArchiverException;
 
 /**
  * <p>
- * Unpack any fragment archives listed in dependences.
+ * Unpack any fragment archives listed in dependencies.
  * </p>
  * 
  * <p>
  * Eventflow fragments are extracted into eventflow subdirectory of the build
- * directory ( default target/eventflow ) so they are not included onto the
+ * directory (default target/eventflow) so they are not included in the
  * fragment zip.
  * </p>
  * 
